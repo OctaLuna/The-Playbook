@@ -1,248 +1,372 @@
-# Backlog Inicial — The Playbook
+﻿# Backlog Inicial actualizado — The Playbook
 
 **Proyecto:** The Playbook
 **Equipo:** Sqleadores
-**Versión:** 2.0 (alineado a `docs/project_spec.md` v2.0)
-**Última actualización:** 16 de agosto de 2026
+**Versión:** 3.0
+**Última actualización:** 27 de agosto de 2026
 **Ubicación en repositorio:** `docs/backlog_inicial.md`
-**Deriva de:** `docs/product_goal.md` (todo ítem debe trazarse a uno de los 3 pilares del Product Goal: predicción, explicación con evidencia temporalmente honesta, o medición/transparencia del desempeño)
+**Base documental de referencia:**
+- `memory/constitution.md`
+- `openspec/project.md`
+- `openspec/changes/001-prediccion-partido/...`
+- `openspec/changes/002-explicacion-lenguaje-natural/...`
+- `openspec/changes/003-track-record-publico/...`
+- `specs/001-prediccion-partido/...`
+- `specs/002-explicacion-lenguaje-natural/...`
+- `specs/003-track-record-publico/...`
 
-> Regla de oro: si una decisión o avance no está registrado en GitHub, no es parte del avance del equipo. ClickUp enlaza a la evidencia, no la duplica.
-
----
-
-## Cómo leer este backlog
-
-Cada tarea sigue la fórmula: **Verbo + Objeto + Criterio + Evidencia**. Las tareas vagas tipo "investigar X" o "ver Y" no se aceptan como ítems de backlog — deben reescribirse hasta tener un resultado verificable.
-
-Campos obligatorios por tarea (los mismos que exige ClickUp):
-`Sprint` · `Dueño` · `Criterio de Aceptación` · `Enlace a Evidencia` · `Riesgo Asociado` · `Estado de Bloqueo`
-
----
-
-## 📋 Lista: Discovery
-
-### D1 — Validar y versionar el Product Goal con la fórmula usuario/valor/resultado medible
-- **Sprint:** Sprint 0
-- **Dueño:** Octavio Luna
-- **Criterio de Aceptación:** El documento responde "sí" a la pregunta de control, incluye el pilar de evidencia "temporalmente honesta" (corrección de la auditoría v2.0), y está aprobado por al menos 2 integrantes.
-- **Enlace a Evidencia:** `docs/product_goal.md`
-- **Riesgo Asociado:** Definir un usuario demasiado amplio ("todo aficionado al fútbol") diluye la priorización del backlog.
-- **Estado de Bloqueo:** No bloqueado.
-
-### D2 — Priorizar 3 mercados de predicción para el MVP y documentar el criterio de selección
-- **Sprint:** Sprint 0
-- **Dueño:** Octavio Luna
-- **Criterio de Aceptación:** Se identifican exactamente 3 mercados (1X2, over/under 2.5, BTTS), cada uno con justificación de por qué entra al MVP; se documenta explícitamente que LSTM y sentimiento pasan a stretch goal (no por falta de datos, sino por riesgo de cronograma).
-- **Enlace a Evidencia:** `docs/mvp_scope.md`
-- **Riesgo Asociado:** Sobre-alcance (scope creep) si el equipo intenta reincorporar los stretch goals antes de cerrar el MVP.
-- **Estado de Bloqueo:** No bloqueado.
-
-### D3 — Definir y versionar el Team Charter con roles, canales y Definition of Done
-- **Sprint:** Sprint 0
-- **Dueño:** Octavio Luna
-- **Criterio de Aceptación:** Los 5 integrantes tienen rol, disponibilidad y riesgo personal declarado registrado; el DoD incluye los 3 criterios adicionales de `ml/`/`rag/` introducidos por v2.0 (split cronológico, filtro temporal, aislamiento de Celery).
-- **Enlace a Evidencia:** `docs/team-charter.md`
-- **Riesgo Asociado:** Riesgos personales no declarados por integrantes generan sobrecarga de trabajo mal distribuida en sprints futuros.
-- **Estado de Bloqueo:** Bloqueado parcialmente — falta que cada integrante complete su "riesgo personal declarado" en la tabla.
+> Este backlog reemplaza el anterior porque la documentación del proyecto ha quedado más clara y más estricta: el producto no es una app de resultados aislada, sino un sistema con predicción, explicación grounded y transparencia del rendimiento real.
 
 ---
 
-## 📋 Lista: Data
+## 1. Visión y prioridad del proyecto
 
-### DA1 — Identificar fuentes multi-temporada (Football-Data.co.uk y Kaggle European Soccer Database) y registrar cobertura/licencia en el inventario de datos
-- **Sprint:** Sprint 0
-- **Dueño:** Einar Guillen
-- **Criterio de Aceptación:** El inventario documenta, por cada fuente: cobertura histórica (ligas y temporadas), formato de acceso, licencia de uso, y qué datasets aportan cuotas históricas para el baseline interno de log-loss.
-- **Enlace a Evidencia:** `docs/data_inventory.md`
-- **Riesgo Asociado:** Diferencias de formato/nomenclatura de equipos entre Football-Data.co.uk y Kaggle pueden generar duplicados o desalineación al combinar ambas fuentes.
-- **Estado de Bloqueo:** No bloqueado.
+El MVP está definido por 3 features dependientes:
 
-### DA2 — Cargar el histórico multi-temporada a PostgreSQL vía un job de Celery (carga única, no re-scraping por request)
-- **Sprint:** Sprint 0–1
-- **Dueño:** Einar Guillen
-- **Criterio de Aceptación:** El job corre como tarea de Celery (nunca síncrono dentro del proceso API, según la regla arquitectónica de la sección 4 del spec), carga al menos las ligas top de ambas fuentes, y queda documentado cuántos partidos se cargaron por liga.
-- **Enlace a Evidencia:** Link al PR del job de carga + `docs/data_inventory.md` (sección "Carga histórica")
-- **Riesgo Asociado:** Volumen de datos mayor al esperado puede alargar el tiempo de carga inicial más de lo planificado en Sprint 0.
-- **Estado de Bloqueo:** Bloqueado por DA1 (necesita el inventario para saber qué campos y cobertura tiene cada fuente).
+1. Predicción del partido
+2. Explicación en lenguaje natural con evidencia real y temporalmente válida
+3. Track record público del modelo
 
-### DA3 — Diseñar el esquema de base de datos (partidos, equipos, estadísticas, predicciones, track record, evidencia RAG) y versionarlo como diagrama
-- **Sprint:** Sprint 0
-- **Dueño:** Einar Guillen
-- **Criterio de Aceptación:** El diagrama incluye entidades equipo, partido, estadística_partido, predicción, track_record y noticia_indexada (con campo `fecha_publicacion` para soportar el filtro temporal del RAG), con relaciones y tipos de dato definidos.
-- **Enlace a Evidencia:** `docs/db_schema.md`
-- **Riesgo Asociado:** Un esquema mal normalizado obliga a migraciones costosas una vez el modelo de ML y el pipeline RAG ya dependen de la estructura.
-- **Estado de Bloqueo:** Bloqueado por DA1.
+Estas tres features deben implementarse en ese orden, porque la segunda depende de la primera y la tercera depende de la primera para poder comparar predicción vs. resultado real.
 
-### DA4 — Registrar en el inventario las fuentes operativas (API-Football, football-data.org) distinguidas de las fuentes históricas de entrenamiento
-- **Sprint:** Sprint 0
-- **Dueño:** Einar Guillen
-- **Criterio de Aceptación:** El inventario deja explícito que API-Football/football-data.org alimentan solo datos operativos (temporada en curso, lesiones), nunca el entrenamiento histórico — evita repetir la ambigüedad señalada en la auditoría v1.0.
-- **Enlace a Evidencia:** `docs/data_inventory.md` (sección "Fuentes operativas")
-- **Riesgo Asociado:** Límite de requests gratuito de API-Football puede ser insuficiente en temporada alta con varios partidos por jornada.
-- **Estado de Bloqueo:** No bloqueado.
+Las reglas no negociables del proyecto están en `memory/constitution.md` y son las que guían todo el backlog:
+
+- Integridad temporal obligatoria
+- Independencia del mercado frente a cuotas
+- Aislamiento de procesos: ML/RAG no corren en el mismo proceso que el API
+- Seguridad de la ingestión y sanitización de datos no confiables
+- Simplicidad del MVP
+- Test-first
 
 ---
 
-## 📋 Lista: Architecture
+## 2. Cómo se organiza este backlog
 
-### AR1 — Redactar ADR-001: elección de FastAPI como backend único
-- **Sprint:** Sprint 0
-- **Dueño:** Carol Zevallos
-- **Criterio de Aceptación:** El ADR documenta el contexto, al menos 2 alternativas descartadas (Node.js/Express, Django), y la justificación de la decisión final.
-- **Enlace a Evidencia:** `docs/adr/ADR-001-backend-fastapi.md`
-- **Riesgo Asociado:** Ninguna decisión registrada obliga a re-discutir la misma elección en sprints futuros, perdiendo tiempo.
-- **Estado de Bloqueo:** No bloqueado.
+Cada ítem incluye:
+- ID
+- Prioridad
+- Estado
+- Dependencias
+- Resultado esperado
+- Evidencia / criterio de aceptación
 
-### AR2 — Redactar ADR-002: elección de pgvector sobre un vector DB dedicado
-- **Sprint:** Sprint 0
-- **Dueño:** Carol Zevallos
-- **Criterio de Aceptación:** El ADR justifica la elección en función del volumen de noticias indexadas esperado del proyecto.
-- **Enlace a Evidencia:** `docs/adr/ADR-002-vector-storage.md`
-- **Riesgo Asociado:** Si el volumen de noticias indexadas crece más de lo previsto, pgvector puede no escalar igual que un vector DB dedicado.
-- **Estado de Bloqueo:** No bloqueado.
-
-### AR3 — Redactar ADR-003: adopción de AWS Bedrock (Claude + Titan Embeddings) sobre APIs directas
-- **Sprint:** Sprint 0
-- **Dueño:** Carol Zevallos
-- **Criterio de Aceptación:** El ADR documenta el motivo del cambio (autenticación IAM, facturación unificada, eliminación de la ambigüedad de embeddings de v1.0), y deja explícito que se usa el Converse API para no acoplar el backend a un formato específico de proveedor.
-- **Enlace a Evidencia:** `docs/adr/ADR-003-aws-bedrock.md`
-- **Riesgo Asociado:** Dependencia de un solo proveedor gestionado (Bedrock) para todo el pipeline generativo — si hay problemas de disponibilidad regional, afecta tanto LLM como embeddings a la vez.
-- **Estado de Bloqueo:** No bloqueado.
-
-### AR4 — Redactar ADR-004: capa de ensamble entre Dixon-Coles y XGBoost
-- **Sprint:** Sprint 0
-- **Dueño:** Leandro Colque
-- **Criterio de Aceptación:** El ADR documenta el esquema de promedio ponderado, el criterio de ajuste de pesos por backtesting cronológico, y cómo entra el LSTM como generador de features (no como modelo independiente) si se activa el stretch goal.
-- **Enlace a Evidencia:** `docs/adr/ADR-004-ensemble-layer.md`
-- **Riesgo Asociado:** Un ensamble mal calibrado puede terminar dándole más peso al modelo equivocado si el backtesting no cubre suficientes jornadas.
-- **Estado de Bloqueo:** No bloqueado.
-
-### AR5 — Diagramar la arquitectura general del sistema, incluyendo la separación obligatoria de Celery y el flujo del ensemble
-- **Sprint:** Sprint 0
-- **Dueño:** Carol Zevallos
-- **Criterio de Aceptación:** El diagrama muestra el flujo end-to-end (APIs/datasets → ML/ensemble → RAG con filtro temporal → frontend) y refleja explícitamente que ningún job pesado corre en el proceso API.
-- **Enlace a Evidencia:** `docs/architecture.md`
-- **Riesgo Asociado:** Un diagrama desactualizado respecto al código real genera confusión en la incorporación de nuevas tareas.
-- **Estado de Bloqueo:** Bloqueado por AR1, AR2, AR3 y AR4.
-
-### AR6 — Evaluar y documentar los riesgos técnicos principales del proyecto (incluye los hallazgos de la auditoría v2.0)
-- **Sprint:** Sprint 0
-- **Dueño:** Leandro Colque
-- **Criterio de Aceptación:** Se documentan al menos 6 riesgos técnicos (techo de predictibilidad, límite de requests, dependencia de scraping, fuga temporal en RAG, costo/latencia de Bedrock, riesgo de cronograma por stretch goals), cada uno con probabilidad, impacto y mitigación.
-- **Enlace a Evidencia:** `docs/risks.md`
-- **Riesgo Asociado:** — (esta tarea *es* el registro de riesgos; ver Lista Risk para el detalle operativo)
-- **Estado de Bloqueo:** No bloqueado.
+Se prioriza trabajo verificable sobre tareas genéricas. Si un ítem no puede medirse, no entra como tarea concreta.
 
 ---
 
-## 📋 Lista: Build / QA / Deploy
+## 3. Backlog por épicas
 
-### BQ1 — Configurar el repositorio con la estructura de monorepo del spec v2.0 y protección de rama main
-- **Sprint:** Sprint 0
-- **Dueño:** Carol Zevallos
-- **Criterio de Aceptación:** El repo replica la estructura de `docs/project_spec.md` sección 10 (`frontend/`, `backend/app/`, `backend/ml/`, `backend/rag/`, `backend/workers/`, `infra/`, `docs/`); `main` tiene protección activada; existe un PR de prueba validando el flujo.
-- **Enlace a Evidencia:** Link al PR de configuración inicial en GitHub
-- **Riesgo Asociado:** Sin protección de rama, un push accidental a `main` puede romper la demo.
-- **Estado de Bloqueo:** No bloqueado.
+## EP-00 — Base del proyecto y gobernanza
 
-### BQ2 — Habilitar acceso a modelos de AWS Bedrock (Claude + Titan Embeddings) y crear el rol IAM con permisos mínimos
-- **Sprint:** Sprint 0
-- **Dueño:** Carol Zevallos
-- **Criterio de Aceptación:** El "model access" está habilitado por región/cuenta para ambos modelos, existe un rol IAM dedicado con permiso `bedrock:InvokeModel` acotado a los ARNs usados, y se documenta el procedimiento (sin exponer credenciales) para que el equipo no dependa de una sola persona.
-- **Enlace a Evidencia:** `docs/adr/ADR-003-aws-bedrock.md` (sección de configuración) + captura del "model access" habilitado
-- **Riesgo Asociado:** Dejar esto para cuando el equipo ya esté implementando el RAG bloquearía todo el pipeline en un sprint avanzado — por eso se resuelve en Sprint 0.
-- **Estado de Bloqueo:** No bloqueado.
+### BKT-00.1 — Definir la estructura operativa del repositorio y el flujo de trabajo
+- **Prioridad:** P0
+- **Estado:** En curso / listo para cerrar si la estructura está validada
+- **Dependencias:** Ninguna
+- **Objetivo:** dejar el repositorio con el flujo correcto de trabajo para no mezclar specs, features y producción.
+- **Criterio de aceptación:**
+  - `docs/` contiene documentos de contexto y resumen.
+  - `openspec/changes/` concentra propuestas por feature.
+  - `specs/` mantiene la documentación de feature en estado listo para implementación.
+  - Hay una convención clara de ramas y PRs.
+- **Evidencia:** `openspec/project.md`, `openspec/AGENTS.md`, `docs/team-charter.md`
 
-### BQ3 — Implementar el modelo baseline de Dixon-Coles con split cronológico y prueba automatizada que lo verifique
-- **Sprint:** Sprint 1
-- **Dueño:** Leandro Colque
-- **Criterio de Aceptación:** El modelo entrena sobre el histórico combinado (Football-Data.co.uk + Kaggle), usa split cronológico (nunca `train_test_split` aleatorio), y existe un test que falla el build si algún pipeline de `ml/` no respeta el orden temporal.
-- **Enlace a Evidencia:** Link al PR con el código del modelo + resultados de pruebas
-- **Riesgo Asociado:** Equipos con pocos partidos históricos (recién ascendidos) producen predicciones poco confiables — necesita manejo explícito.
-- **Estado de Bloqueo:** Bloqueado por DA2 (requiere el histórico ya cargado en PostgreSQL).
+### BKT-00.2 — Confirmar principios de calidad y no-negociables de ingeniería
+- **Prioridad:** P0
+- **Estado:** Listo
+- **Dependencias:** Ninguna
+- **Objetivo:** garantizar que todo desarrollo se base en integridad temporal, TDD y aislamiento de procesos.
+- **Criterio de aceptación:**
+  - el equipo conoce las normas de la constitución,
+  - cualquier feature se valida contra esas reglas antes de desarrollarse.
+- **Evidencia:** `memory/constitution.md`
 
-### BQ4 — Implementar el modelo XGBoost y la capa de ensamble (promedio ponderado con Dixon-Coles), registrando pesos en MLflow
-- **Sprint:** Sprint 1
-- **Dueño:** Leandro Colque
-- **Criterio de Aceptación:** XGBoost entrena sobre las mismas features + forma/head-to-head/descanso; el ensamble combina ambos modelos por promedio ponderado ajustado por backtesting; los pesos finales y el proceso quedan registrados en MLflow.
-- **Enlace a Evidencia:** Link al PR + experimento de MLflow enlazado
-- **Riesgo Asociado:** Un ensamble mal calibrado puede terminar dándole más peso al modelo equivocado si el backtesting no cubre suficientes jornadas.
-- **Estado de Bloqueo:** Bloqueado por BQ3 y AR4.
-
-### BQ5 — Implementar el filtro temporal obligatorio en el retrieval del RAG (`fecha_publicacion_noticia < fecha_kickoff`)
-- **Sprint:** Sprint 1
-- **Dueño:** Rodrigo Rivera
-- **Criterio de Aceptación:** Toda query de retrieval contra pgvector incluye la restricción a nivel de SQL, no como convención de equipo; existe una prueba que confirma que noticias posteriores al kickoff nunca se recuperan para ese partido.
-- **Enlace a Evidencia:** Link al PR + resultado de la prueba de filtro temporal
-- **Riesgo Asociado:** Sin este filtro, el sistema podría explicar predicciones con evidencia que en la realidad no existía antes del partido, invalidando el pilar 2 del Product Goal.
-- **Estado de Bloqueo:** Bloqueado por DA3 (requiere el esquema con campo `fecha_publicacion`).
-
-### BQ6 — Configurar pipeline de CI en GitHub Actions para pruebas automáticas en cada PR
-- **Sprint:** Sprint 1
-- **Dueño:** Carol Zevallos
-- **Criterio de Aceptación:** Cada PR hacia `develop` o `qa` ejecuta automáticamente las pruebas existentes (incluye el test de split cronológico y el de filtro temporal) y bloquea el merge si fallan.
-- **Enlace a Evidencia:** `.github/workflows/ci.yml` + link a una ejecución exitosa
-- **Riesgo Asociado:** Sin CI, un PR con pruebas rotas puede fusionarse "a simple vista" sin que nadie corra las pruebas localmente.
-- **Estado de Bloqueo:** Bloqueado por BQ1.
+### BKT-00.3 — Definir ownership por feature y flujo de entrega
+- **Prioridad:** P1
+- **Estado:** Pendiente
+- **Dependencias:** BKT-00.1
+- **Objetivo:** asignar responsables por feature y evitar sobreposición de trabajo.
+- **Criterio de aceptación:** cada feature tiene responsable principal y criterio de finalización.
+- **Evidencia:** `docs/team-charter.md`
 
 ---
 
-## 📋 Lista: Risk
+## EP-01 — Preparación de datos y entorno de entrenamiento
 
-### R1 — Registrar el riesgo del "techo de predictibilidad" del fútbol y su plan de mitigación
-- **Sprint:** Sprint 0
-- **Dueño:** Leandro Colque
-- **Criterio de Aceptación:** El registro documenta que ningún modelo supera cierto nivel de precisión, y define log-loss/Brier score vs. baseline de mercado como métrica honesta de éxito, no accuracy cruda.
-- **Enlace a Evidencia:** `docs/risks.md` (entrada R1)
-- **Riesgo Asociado:** Comunicar mal este límite ante el tribunal puede leerse como que el proyecto "no funciona", cuando es honestidad científica esperable en el dominio.
-- **Estado de Bloqueo:** No bloqueado.
+### BKT-01.1 — Consolidar fuentes históricas y operativas del dominio
+- **Prioridad:** P0
+- **Estado:** Pendiente
+- **Dependencias:** Ninguna
+- **Objetivo:** preparar la base de datos histórica para cualquier entrenamiento y para la lógica del producto.
+- **Criterio de aceptación:**
+  - se define qué fuentes son históricas y qué fuentes son operativas,
+  - queda separada la información de entrenamiento de la información de temporada en curso.
+- **Evidencia:** `specs/001-prediccion-partido/data-model.md`, `docs/project_spec_v2.md`
 
-### R2 — Registrar el riesgo de límite de requests gratuito en APIs operativas y su plan de mitigación
-- **Sprint:** Sprint 0
-- **Dueño:** Einar Guillen
-- **Criterio de Aceptación:** El registro define el límite exacto de API-Football, la estrategia de cache en Redis, y football-data.org como fuente de respaldo — distinguiendo claramente que el histórico ya no depende de estas APIs (ver DA1/DA2).
-- **Enlace a Evidencia:** `docs/risks.md` (entrada R2)
-- **Riesgo Asociado:** Si se agota el límite diario durante una demo en vivo, el sistema puede mostrar datos operativos desactualizados.
-- **Estado de Bloqueo:** No bloqueado.
+### BKT-01.2 — Diseñar el esquema de datos del MVP
+- **Prioridad:** P0
+- **Estado:** Pendiente
+- **Dependencias:** BKT-01.1
+- **Objetivo:** representar `Partido`, `Equipo`, `Predicción`, `Explicación` y `EvaluaciónPredicción` sin duplicar modelos ni añadir complejidad innecesaria.
+- **Criterio de aceptación:**
+  - existe un modelo relacional claro,
+  - cada entidad tiene su propósito y su relación con las otras,
+  - se incluye `fecha_kickoff` y `fecha_publicacion` donde corresponde.
+- **Evidencia:** `specs/001-prediccion-partido/data-model.md`, `specs/002-explicacion-lenguaje-natural/data-model.md`, `specs/003-track-record-publico/data-model.md`
 
-### R3 — Registrar el riesgo de dependencia del scraping de Understat y su plan de mitigación
-- **Sprint:** Sprint 0
-- **Dueño:** Rodrigo Rivera
-- **Criterio de Aceptación:** El registro define qué pasa si Understat cambia su estructura HTML, y establece una prueba de scraping que se ejecuta periódicamente para detectar rupturas.
-- **Enlace a Evidencia:** `docs/risks.md` (entrada R3)
-- **Riesgo Asociado:** El scraping es la fuente menos estable del proyecto por no depender de una API oficial.
-- **Estado de Bloqueo:** No bloqueado.
-
-### R4 — Registrar el riesgo de fuga temporal en el RAG (evidencia posterior al partido) y su plan de mitigación
-- **Sprint:** Sprint 0
-- **Dueño:** Rodrigo Rivera
-- **Criterio de Aceptación:** El registro documenta el hallazgo crítico de la auditoría v1.0→v2.0 y confirma que la mitigación (filtro SQL obligatorio, tarea BQ5) es una restricción de query, no una convención de equipo.
-- **Enlace a Evidencia:** `docs/risks.md` (entrada R4)
-- **Riesgo Asociado:** Es el riesgo de mayor impacto reputacional/académico del proyecto: invalida la honestidad del track record si no se controla.
-- **Estado de Bloqueo:** No bloqueado.
-
-### R5 — Registrar el riesgo de costo/latencia por invocaciones a Bedrock y su plan de mitigación
-- **Sprint:** Sprint 0
-- **Dueño:** Carol Zevallos
-- **Criterio de Aceptación:** El registro documenta la mitigación vía caché de explicaciones en Redis (solo se regenera si cambió la evidencia subyacente) y define un umbral de latencia aceptable para la demo.
-- **Enlace a Evidencia:** `docs/risks.md` (entrada R5)
-- **Riesgo Asociado:** Invocar Bedrock en cada request sin cache puede volver el sistema lento o costoso durante la demo con jurado.
-- **Estado de Bloqueo:** No bloqueado.
-
-### R6 — Registrar el riesgo de cronograma por incluir LSTM/sentimiento en el núcleo del MVP y su mitigación
-- **Sprint:** Sprint 0
-- **Dueño:** Octavio Luna
-- **Criterio de Aceptación:** El registro documenta la decisión de mover ambos componentes a stretch goal (sección 2.3 del spec) y el criterio para reincorporarlos solo si el MVP (Dixon-Coles + XGBoost + RAG) está sólido antes de la fecha límite.
-- **Enlace a Evidencia:** `docs/risks.md` (entrada R6)
-- **Riesgo Asociado:** Intentar entregar los 5 componentes de IA a la vez sin priorización clara es la causa más común de que un taller no llegue a una demo funcional.
-- **Estado de Bloqueo:** No bloqueado.
+### BKT-01.3 — Cargar datos históricos y preparar el entorno de trabajo
+- **Prioridad:** P0
+- **Estado:** Pendiente
+- **Dependencias:** BKT-01.2
+- **Objetivo:** lograr una base mínima con partidos, equipos y resultados históricos para poder entrenar.
+- **Criterio de aceptación:**
+  - los datos se cargan de forma automatizada o por batch,
+  - no se depende de requests directos por cada consulta del usuario,
+  - la carga se hace por Celery o task runner, no en el proceso del API.
+- **Evidencia:** `docs/project_spec_v2.md`, `memory/constitution.md`
 
 ---
 
-## Trazabilidad
+## EP-02 — Feature 001: Predicción del partido
 
-- Todas las tareas listadas deben crearse como ítems individuales en **ClickUp**, cada una en la lista correspondiente (Discovery, Data, Architecture, Build/QA/Deploy, Risk), replicando exactamente estos 6 campos.
-- ClickUp **enlaza** a la evidencia en GitHub — no reescribe ni duplica el contenido de los archivos `.md`.
-- Cualquier tarea nueva que se agregue al backlog después del Sprint 0 debe seguir la misma fórmula (Verbo + Objeto + Criterio + Evidencia) y debe trazarse a alguno de los 3 pilares del Product Goal (`docs/product_goal.md`).
-- Este archivo se actualiza vía Pull Request, siguiendo el flujo de ramas definido en `docs/team-charter.md`.
+### BKT-02.1 — Implementar la API de listado de partidos y detalle
+- **Prioridad:** P0
+- **Estado:** Pendiente
+- **Dependencias:** BKT-01.3
+- **Objetivo:** exponer los partidos y su estado antes de que exista la predicción real.
+- **Criterio de aceptación:**
+  - `GET /api/matches/upcoming` entrega partidos próximos,
+  - `GET /api/matches/{match_id}` devuelve detalle del partido,
+  - soporta ligas de los 5 mercados del MVP.
+- **Evidencia:** `specs/001-prediccion-partido/contracts/matches-api.md`
+
+### BKT-02.2 — Crear la capa de predicción 1X2, O/U 2.5, BTTS y xG
+- **Prioridad:** P0
+- **Estado:** Pendiente
+- **Dependencias:** BKT-01.3
+- **Objetivo:** generar predicciones válidas con un enfoque racional y auditable.
+- **Criterio de aceptación:**
+  - modelo base con split cronológico,
+  - las predicciones incluyen 1X2, O/U 2.5, BTTS, xG por equipo,
+  - se respeta la regla de que las cuotas no forman parte del feature set.
+- **Evidencia:** `specs/001-prediccion-partido/spec.md`, `specs/001-prediccion-partido/data-model.md`
+
+### BKT-02.3 — Añadir grado de confianza y avisos de datos insuficientes
+- **Prioridad:** P1
+- **Estado:** Pendiente
+- **Dependencias:** BKT-02.2
+- **Objetivo:** que la predicción sea honesta y no parezca igual de fiable en todos los casos.
+- **Criterio de aceptación:**
+  - `confidence` es alta/media/baja,
+  - si hay historial insuficiente, se marca aviso visual claramente,
+  - no se usa una lógica de confianza arbitraria.
+- **Evidencia:** `specs/001-prediccion-partido/spec.md`
+
+### BKT-02.4 — Validar que la predicción esté disponible antes de kickoff
+- **Prioridad:** P1
+- **Estado:** Pendiente
+- **Dependencias:** BKT-02.2
+- **Objetivo:** asegurar que la funcionalidad cumple la ventana esperada del negocio.
+- **Criterio de aceptación:** la predicción debe existir al menos 24 horas antes del partido.
+- **Evidencia:** `specs/001-prediccion-partido/spec.md`
+
+---
+
+## EP-03 — Feature 002: Explicación en lenguaje natural
+
+### BKT-03.1 — Preparar el pipeline de ingesta y sanitización para evidencia
+- **Prioridad:** P0
+- **Estado:** Pendiente
+- **Dependencias:** BKT-02.2, BKT-01.2
+- **Objetivo:** convertir noticias y contenido externo en evidencia útil y segura para el sistema.
+- **Criterio de aceptación:**
+  - se aplican sanitización y validación,
+  - todo contenido externo se trata como no confiable,
+  - la ingesta no genera acciones ni código.
+- **Evidencia:** `memory/constitution.md`, `specs/002-explicacion-lenguaje-natural/spec.md`
+
+### BKT-03.2 — Implementar retrieval con filtro temporal obligatorio
+- **Prioridad:** P0
+- **Estado:** Pendiente
+- **Dependencias:** BKT-03.1
+- **Objetivo:** impedir que la explicación use noticias publicadas después del kickoff.
+- **Criterio de aceptación:**
+  - consulta SQL incluye `fecha_publicacion_noticia < fecha_kickoff_del_partido`,
+  - un test de integración falla si se recupera evidencia posterior.
+- **Evidencia:** `specs/002-explicacion-lenguaje-natural/spec.md`, `memory/constitution.md`
+
+### BKT-03.3 — Crear la explicación inicial para cada predicción
+- **Prioridad:** P0
+- **Estado:** Pendiente
+- **Dependencias:** BKT-02.2, BKT-03.2
+- **Objetivo:** generar una explicación natural que conecte evidencia con variables del modelo.
+- **Criterio de aceptación:**
+  - explica el porqué de la predicción,
+  - usa evidencia previa al kickoff,
+  - menciona variables del modelo relevantes,
+  - no contradice la predicción numérica.
+- **Evidencia:** `specs/002-explicacion-lenguaje-natural/contracts/explanations-api.md`
+
+### BKT-03.4 — Añadir preguntas de seguimiento sobre la explicación
+- **Prioridad:** P2
+- **Estado:** Pendiente
+- **Dependencias:** BKT-03.3
+- **Objetivo:** permitir profundizar en un aspecto sin romper las reglas temporales.
+- **Criterio de aceptación:**
+  - la respuesta sigue usando la misma evidencia y SHAP,
+  - no introduce predicciones nuevas ni información posterior al kickoff.
+- **Evidencia:** `specs/002-explicacion-lenguaje-natural/spec.md`
+
+---
+
+## EP-04 — Feature 003: Track record público
+
+### BKT-04.1 — Diseñar la capa de evaluación de predicciones
+- **Prioridad:** P0
+- **Estado:** Pendiente
+- **Dependencias:** BKT-02.2
+- **Objetivo:** comparar cada predicción contra el resultado real y calcular métricas útiles.
+- **Criterio de aceptación:**
+  - se calcula hit rate, Brier y log-loss,
+  - se distingue versión del modelo,
+  - se excluyen partidos pospuestos/cancelados según la regla del spec.
+- **Evidencia:** `specs/003-track-record-publico/spec.md`, `specs/003-track-record-publico/data-model.md`
+
+### BKT-04.2 — Exponer el agregado del track record público
+- **Prioridad:** P0
+- **Estado:** Pendiente
+- **Dependencias:** BKT-04.1
+- **Objetivo:** mostrar rendimiento resumido de los últimos 50 partidos predichos.
+- **Criterio de aceptación:**
+  - `GET /api/track-record` devuelve hit rate y métricas agregadas,
+  - hay soporte de filtro por liga,
+  - la métrica es consistente con la usada internamente.
+- **Evidencia:** `specs/003-track-record-publico/contracts/track-record-api.md`
+
+### BKT-04.3 — Exponer el detalle partido a partido y la comparación con baseline del mercado
+- **Prioridad:** P1
+- **Estado:** Pendiente
+- **Dependencias:** BKT-04.1
+- **Objetivo:** permitir auditoría honesta del sistema y comparación con cuotas únicamente como baseline interno.
+- **Criterio de aceptación:**
+  - se puede comparar predicción original vs resultado real,
+  - `avg_market_log_loss` aparece solo como referencia de baseline,
+  - no se expone un comparador independiente de cuotas.
+- **Evidencia:** `specs/003-track-record-publico/spec.md`
+
+---
+
+## EP-05 — QA, CI/CD y robustez operativa
+
+### BKT-05.1 — Preparar CI con pruebas mínimas para integridad temporal
+- **Prioridad:** P0
+- **Estado:** Pendiente
+- **Dependencias:** BKT-02.2, BKT-03.2
+- **Objetivo:** asegurar que el proyecto no rompa la regla constitucional de integridad temporal.
+- **Criterio de aceptación:**
+  - CI ejecuta pruebas relevantes,
+  - falla si se usa split aleatorio o si la RAG recupera evidencia futura.
+- **Evidencia:** `memory/constitution.md`, `specs/...` + workflow de GitHub Actions
+
+### BKT-05.2 — Definir pruebas de contrato API para frontend y backend
+- **Prioridad:** P1
+- **Estado:** Pendiente
+- **Dependencias:** BKT-02.1, BKT-03.3, BKT-04.2
+- **Objetivo:** que frontend y backend hablen con contratos claros.
+- **Criterio de aceptación:**
+  - endpoints definidos y validados por tests,
+  - las respuestas HTTP cumplen el formato documentado.
+- **Evidencia:** `specs/*/contracts/*.md`
+
+### BKT-05.3 — Establecer observabilidad y gestión de riesgos de infraestructura
+- **Prioridad:** P1
+- **Estado:** Pendiente
+- **Dependencias:** BKT-03.1, BKT-05.1
+- **Objetivo:** controlar latencia, costo y disponibilidad de Bedrock, Redis y PostgreSQL.
+- **Criterio de aceptación:**
+  - hay una estrategia de cache para explicaciones,
+  - se documentan límites y fallbacks,
+  - se evitan bloqueos operativos en la demo.
+- **Evidencia:** `docs/project_spec_v2.md`, `memory/constitution.md`
+
+---
+
+## EP-06 — Stretch goals y trabajo posterior al MVP
+
+### BKT-06.1 — Evaluar LSTM como mejora posterior al MVP
+- **Prioridad:** P3
+- **Estado:** Fuera del MVP
+- **Dependencias:** BKT-02.2, BKT-03.3, BKT-04.2
+- **Objetivo:** decidir si aporta valor real una vez que el MVP esté estable.
+- **Criterio de aceptación:**
+  - solo se incorpora si no pone en riesgo la entrega del MVP,
+  - no se considera bloqueante para la primera versión del producto.
+- **Evidencia:** `docs/project_spec_v2.md`
+
+### BKT-06.2 — Evaluar análisis de sentimiento o features adicionales de contexto
+- **Prioridad:** P3
+- **Estado:** Fuera del MVP
+- **Dependencias:** BKT-03.1
+- **Objetivo:** explorar mejor valor marginal sin robar foco del MVP.
+- **Criterio de aceptación:** se deja documentado y fuera del camino crítico del proyecto.
+- **Evidencia:** `docs/project_spec_v2.md`
+
+---
+
+## 4. Priorización recomendada
+
+### Sprint 0 / fundación
+- BKT-00.1
+- BKT-00.2
+- BKT-01.1
+- BKT-01.2
+- BKT-01.3
+- BKT-05.1 inicial
+
+### Sprint 1 / MVP funcional
+- BKT-02.1
+- BKT-02.2
+- BKT-03.1
+- BKT-03.2
+- BKT-03.3
+- BKT-04.1
+- BKT-04.2
+
+### Sprint 2 / cierre y refuerzo
+- BKT-02.3
+- BKT-02.4
+- BKT-03.4
+- BKT-04.3
+- BKT-05.2
+- BKT-05.3
+
+### Post-MVP
+- BKT-06.1
+- BKT-06.2
+
+---
+
+## 5. Regla de ejecución
+
+Todo ítem del backlog debe responder estas preguntas:
+- ¿Qué entrega concreta aporta al producto?
+- ¿A qué feature del MVP pertenece?
+- ¿Qué evidencia lo valida?
+- ¿Qué dependencia tiene?
+- ¿Qué regla de la constitución respeta o no respeta?
+
+Si una tarea no responde eso, no se implementa como backlog. Esto mantiene el proyecto alineado con la especificación real y evita scope creep.
+
+---
+
+## 6. Estado actual del proyecto
+
+El proyecto está en una fase de definición ejecutiva y preparación técnica. La documentación de specs ya está bastante madura y define una base sólida para implementar las 3 features del MVP sin caer en improvisación.
+
+La prioridad del equipo debe ser:
+1. construir la base de datos y los contratos del dominio,
+2. implementar la predicción,
+3. blindar la explicabilidad temporalmente honesta,
+4. cerrar el track record público con métricas verificables,
+5. reforzar QA y CI.
+
+Este es el orden que más respeta el producto, la constitución y la lógica real del negocio.
