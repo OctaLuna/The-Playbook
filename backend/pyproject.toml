@@ -1,0 +1,80 @@
+[project]
+name = "the-playbook-backend"
+version = "0.1.0"
+description = "Predicción de fútbol explicable y auditable — backend, ML y RAG"
+requires-python = ">=3.12"
+
+# Las dependencias se añaden cuando la tarea que las necesita las introduce.
+# Artículo VII (Simplicidad): no se declara nada "por si acaso".
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "pytest-asyncio>=0.24",
+  "ruff>=0.8",
+  "mypy>=1.13",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["."]
+
+[tool.ruff.lint]
+select = [
+  "E", "W",   # pycodestyle
+  "F",        # pyflakes
+  "I",        # isort
+  "N",        # pep8-naming
+  "UP",       # pyupgrade
+  "B",        # flake8-bugbear
+  "ASYNC",    # flake8-async
+  "S",        # flake8-bandit (seguridad)
+  "T20",      # flake8-print (nada de print() en producción)
+  "SIM",      # flake8-simplify
+  "PTH",      # usar pathlib
+  "RUF",
+]
+ignore = [
+  "S101",  # assert: es el mecanismo de pytest
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Los tests pueden usar asserts, credenciales de prueba y prints de diagnóstico.
+"tests/**" = ["S105", "S106", "T20"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app", "ml", "rag", "workers"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+# Artículo I: ml/ y rag/ no importan de app/api/. mypy no lo comprueba por sí solo,
+# pero mantener los módulos tipados hace evidente cualquier import cruzado.
+files = ["app", "ml", "rag", "workers"]
+
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "ml"]
+asyncio_mode = "auto"
+# Artículo III (Test-First): estos marcadores permiten correr por fase.
+markers = [
+  "contract: pruebas de contrato de API — obligatorias antes de implementar un endpoint",
+  "integration: pruebas contra servicios reales (Postgres, Redis, pgvector)",
+  "unit: pruebas unitarias puras",
+  "constitucional: guardianes de la constitución — su fallo bloquea el build",
+  "pendiente_implementacion: fase Red del Artículo III — DEBE fallar hasta que exista el código",
+]
+# En local, `pytest` corre todo: los tests en fase Red se ven fallar, que es lo que
+# exige el Artículo III. En CI se usa `-m 'not pendiente_implementacion'` para que el
+# build gatee sobre los guardianes sin quedar rojo de forma permanente y perder sentido.
+addopts = "-q --strict-markers"

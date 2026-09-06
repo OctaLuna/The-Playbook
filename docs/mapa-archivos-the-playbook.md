@@ -6,7 +6,8 @@ Este documento sirve como guía rápida para entender la función de cada archiv
 
 | Archivo | Descripción | Para qué sirve |
 |---|---|---|
-| [README.md](../README.md) | Archivo principal del repositorio. Actualmente aparece vacío o muy básico. | Sirve como punto de entrada general, pero hoy no tiene todavía un resumen funcional del proyecto. |
+| [README.md](../README.md) | Punto de entrada del repositorio. | Presenta el producto, los 3 pilares, el estado de cada feature, el mapa del repo y el stack. |
+| [CLAUDE.md](../CLAUDE.md) | Guía para agentes de IA. Se autocarga en cada sesión. | **El documento más importante para trabajar con IA aquí.** Fija la precedencia entre fuentes de verdad, el mapa de rutas canónicas, el protocolo test-first, los 9 artículos resumidos y las prohibiciones duras. |
 
 ## 2. Memoria y constitución
 
@@ -96,14 +97,28 @@ Estas carpetas contienen la documentación técnica y funcional de cada feature 
 |---|---|---|
 | [docs/resumen-proyecto-the-playbook.md](./resumen-proyecto-the-playbook.md) | Resumen ejecutivo del proyecto. | Sirve para entender el producto en una sola lectura. |
 | [docs/mapa-archivos-the-playbook.md](./mapa-archivos-the-playbook.md) | Mapa de archivos Markdown. | Sirve para saber qué hace cada documento del repositorio y cómo relacionarse con él. |
+| [docs/skills-y-hooks.md](./skills-y-hooks.md) | Automatizaciones del repositorio. | Explica qué corre solo (hooks de validación y formato, skills de proyecto), por qué existe cada uno y cómo desactivarlo. |
+
+## 6.1 Decisiones arquitectónicas
+
+| Archivo | Descripción | Para qué sirve |
+|---|---|---|
+| [docs/adr/README.md](./adr/README.md) | Índice de ADRs y cuándo escribir uno. | Exigido por la §10 de `docs/project_spec.md`: toda decisión que se aparte de ese documento se registra aquí. |
+| [docs/adr/0001-badge-confianza-calibrado.md](./adr/0001-badge-confianza-calibrado.md) | El nivel de confianza se deriva de calibración empírica. | Resuelve la contradicción entre §2.1 del spec técnico y el `RF-005` de los tres specs de feature. |
 
 ## 7. Regla mental para entender todo el repo
 
-La estructura del repositorio está organizada de esta manera:
+Precedencia entre fuentes: **si dos documentos se contradicen, gana el de arriba.**
 
-- [memory/constitution.md](../memory/constitution.md): no negocia y establece principios.
-- [openspec/](../openspec): propone cambios y define el proceso.
-- [specs/](../specs): documenta cada feature en detalle y con contratos.
-- [docs/](./): documentos de resumen y navegación para el equipo.
+1. [memory/constitution.md](../memory/constitution.md) — ley. Los 9 artículos no negociables.
+2. [specs/00X-*/](../specs) — **canónico** para spec, plan, modelo de datos, contratos y **tareas**.
+3. [docs/project_spec.md](./project_spec.md) — decisiones de producto y stack.
+4. [docs/adr/](./adr/) — decisiones que se apartan de lo anterior.
+5. [openspec/changes/00X/](../openspec/changes) — **solo** `proposal.md` y `design.md`. Su `tasks.md` es un stub que no debe editarse.
 
-En resumen: la documentación está diseñada para que el proyecto sea entendible, verificable y trazable. No es un repositorio caótico; está construido como una especificación disciplinada.
+[CLAUDE.md](../CLAUDE.md) contiene esta misma tabla junto con el mapa de rutas canónicas
+y las prohibiciones duras; es lo que un agente lee primero.
+
+La consistencia entre todos estos documentos no se confía a la disciplina: la verifica
+`npm run audit:sdd`, que corre como hook tras cada edición y en CI. Ver
+[docs/skills-y-hooks.md](./skills-y-hooks.md).

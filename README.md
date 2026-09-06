@@ -7,7 +7,7 @@ propio historial de aciertos** para que cualquiera pueda auditarlo.
 > Para aficionados y analistas amateur que quieren entender —no solo adivinar— qué puede
 > pasar en un partido.
 
-**Equipo:** Sqleadores · **Materia:** Taller de Sistemas Inteligentes
+**Equipo:** The-Playbook · **Materia:** Taller de Sistemas Inteligentes
 
 ## Los 3 pilares
 

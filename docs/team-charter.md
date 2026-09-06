@@ -1,4 +1,4 @@
-# Team Charter — Sqleadores
+# Team Charter — The-Playbook
 
 **Proyecto:** The Playbook — Sistema de predicción de resultados de fútbol con ML/DL/RAG
 **Materia:** Taller de Sistemas Inteligentes

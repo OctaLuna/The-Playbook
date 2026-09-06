@@ -1,7 +1,7 @@
 ﻿# Backlog Inicial actualizado — The Playbook
 
 **Proyecto:** The Playbook
-**Equipo:** Sqleadores
+**Equipo:** The-Playbook
 **Versión:** 3.0
 **Última actualización:** 27 de agosto de 2026
 **Ubicación en repositorio:** `docs/backlog_inicial.md`

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(node scripts/audit-sdd.mjs*)",
+      "Bash(npm run audit:sdd)",
+      "Bash(pytest*)",
+      "Bash(ruff*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/sot-guard.mjs\"",
+            "timeout": 10,
+            "statusMessage": "Verificando fuente única de verdad..."
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/secrets-guard.mjs\"",
+            "timeout": 10,
+            "statusMessage": "Buscando secretos..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/format.mjs\"",
+            "timeout": 60,
+            "statusMessage": "Formateando..."
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/spec-lint.mjs\"",
+            "timeout": 40,
+            "statusMessage": "Validando consistencia SDD..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/scripts/audit-sdd.mjs\" --quiet",
+            "timeout": 40,
+            "statusMessage": "Auditoría SDD final..."
+          }
+        ]
+      }
+    ]
+  }
+}

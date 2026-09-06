@@ -1,6 +1,6 @@
 # Especificación Oficial del Proyecto — The Playbook
 
-**Equipo:** Sqleadores
+**Equipo:** The-Playbook
 **Materia:** Taller de Sistemas Inteligentes
 **Versión:** 2.0 (reemplaza a v1.0 tras auditoría técnica)
 **Fecha:** 16 de agosto de 2026

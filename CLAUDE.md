@@ -2,7 +2,7 @@
 
 Sistema que **predice** resultados de fútbol (1X2, O/U 2.5, BTTS, xG), **explica** cada
 predicción en lenguaje natural con evidencia verificable, y **publica** su propio track
-record para que cualquiera lo audite. Proyecto académico del equipo Sqleadores (Taller de
+record para que cualquiera lo audite. Proyecto académico del equipo The-Playbook (Taller de
 Sistemas Inteligentes).
 
 Los **3 pilares de valor** — todo feature debe trazarse a uno:
@@ -160,7 +160,15 @@ arregla la referencia — no la silencies.
 
 ## 8. Estado actual
 
-**No hay código.** El repositorio es documentación SDD más el andamiaje de carpetas.
+**No hay código de implementación.** El repositorio es documentación SDD, el andamiaje de
+carpetas, y los dos guardianes constitucionales.
+
+`cd backend && pytest` está **en rojo a propósito**: los contratos de comportamiento de
+`ml.evaluation.split` y `ml.features.build` fallan porque esos módulos aún no existen. Es
+la fase Red del Artículo III y no debe "arreglarse" borrando o saltando los tests — se
+arregla implementándolos. CI usa `-m "not pendiente_implementacion"` para gatear sobre los
+guardianes estáticos, que sí están en verde.
+
 El siguiente paso real es `specs/001-prediccion-partido/tasks.md` T001-T005: escribir las
 cuatro pruebas de contrato y **verlas fallar**.
 

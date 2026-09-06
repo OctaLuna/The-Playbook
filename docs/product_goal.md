@@ -1,7 +1,7 @@
 # Product Goal — The Playbook
 
 **Proyecto:** The Playbook
-**Equipo:** Sqleadores
+**Equipo:** The-Playbook
 **Versión:** 2.0 (alineado a `docs/project_spec.md` v2.0)
 **Última actualización:** 16 de agosto de 2026
 **Ubicación en repositorio:** `docs/product_goal.md`
