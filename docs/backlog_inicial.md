@@ -100,7 +100,7 @@ Se prioriza trabajo verificable sobre tareas genéricas. Si un ítem no puede me
 - **Criterio de aceptación:**
   - se define qué fuentes son históricas y qué fuentes son operativas,
   - queda separada la información de entrenamiento de la información de temporada en curso.
-- **Evidencia:** `specs/001-prediccion-partido/data-model.md`, `docs/project_spec_v2.md`
+- **Evidencia:** `specs/001-prediccion-partido/data-model.md`, `docs/project_spec.md`
 
 ### BKT-01.2 — Diseñar el esquema de datos del MVP
 - **Prioridad:** P0
@@ -122,7 +122,7 @@ Se prioriza trabajo verificable sobre tareas genéricas. Si un ítem no puede me
   - los datos se cargan de forma automatizada o por batch,
   - no se depende de requests directos por cada consulta del usuario,
   - la carga se hace por Celery o task runner, no en el proceso del API.
-- **Evidencia:** `docs/project_spec_v2.md`, `memory/constitution.md`
+- **Evidencia:** `docs/project_spec.md`, `memory/constitution.md`
 
 ---
 
@@ -286,7 +286,7 @@ Se prioriza trabajo verificable sobre tareas genéricas. Si un ítem no puede me
   - hay una estrategia de cache para explicaciones,
   - se documentan límites y fallbacks,
   - se evitan bloqueos operativos en la demo.
-- **Evidencia:** `docs/project_spec_v2.md`, `memory/constitution.md`
+- **Evidencia:** `docs/project_spec.md`, `memory/constitution.md`
 
 ---
 
@@ -300,7 +300,7 @@ Se prioriza trabajo verificable sobre tareas genéricas. Si un ítem no puede me
 - **Criterio de aceptación:**
   - solo se incorpora si no pone en riesgo la entrega del MVP,
   - no se considera bloqueante para la primera versión del producto.
-- **Evidencia:** `docs/project_spec_v2.md`
+- **Evidencia:** `docs/project_spec.md`
 
 ### BKT-06.2 — Evaluar análisis de sentimiento o features adicionales de contexto
 - **Prioridad:** P3
@@ -308,7 +308,7 @@ Se prioriza trabajo verificable sobre tareas genéricas. Si un ítem no puede me
 - **Dependencias:** BKT-03.1
 - **Objetivo:** explorar mejor valor marginal sin robar foco del MVP.
 - **Criterio de aceptación:** se deja documentado y fuera del camino crítico del proyecto.
-- **Evidencia:** `docs/project_spec_v2.md`
+- **Evidencia:** `docs/project_spec.md`
 
 ---
 

@@ -44,9 +44,9 @@ Como usuario curioso, quiero poder hacer una pregunta de seguimiento sobre la ex
 1. **Dado** una explicación ya generada para un partido, **Cuando** el usuario hace una pregunta de seguimiento sobre ella, **Entonces** recibe una respuesta anclada a la misma evidencia y variables del modelo ya usadas (o declara ausencia de más evidencia, Historia 2), sin introducir predicciones nuevas ni evidencia posterior al kickoff.
 
 ## Casos límite
-- ¿Qué pasa si las alineaciones/lesiones se confirman muy poco antes del kickoff, después de la última generación de la explicación? → cubierto por el reindexado más frecuente en horas previas (sección 7.7); **[SUPUESTO]** sí se muestra un indicador de "última actualización" (timestamp) en la explicación, consistente con el patrón de transparencia ya adoptado en el resto del producto.
+- ¿Qué pasa si las alineaciones/lesiones se confirman muy poco antes del kickoff, después de la última generación de la explicación? → cubierto por el reindexado más frecuente en horas previas (sección 7.5); **[SUPUESTO]** sí se muestra un indicador de "última actualización" (timestamp) en la explicación, consistente con el patrón de transparencia ya adoptado en el resto del producto.
 - ¿Qué pasa si el usuario pide la explicación en un idioma distinto al español? → Resuelto: el MVP es español-only (decisión de producto); no hay requisito de generar ni traducir explicaciones a otros idiomas en esta fase.
-- ¿Qué tan larga puede ser la explicación mostrada al usuario? → **[SUPUESTO]** objetivo de UX: 3-5 oraciones, legible en menos de 30 segundos. El límite técnico exacto de tokens (sección 7.8) se fija en el plan técnico/Sprint 1 sin cambiar esta expectativa de experiencia.
+- ¿Qué tan larga puede ser la explicación mostrada al usuario? → **[SUPUESTO]** objetivo de UX: 3-5 oraciones, legible en menos de 30 segundos. El límite técnico exacto de tokens (sección 7.1) se fija en el plan técnico/Sprint 1 sin cambiar esta expectativa de experiencia.
 - ¿Cuántas preguntas de seguimiento puede hacer un usuario sobre la misma explicación (Historia 4)? → **[SUPUESTO]** sin tope duro visible al usuario en el MVP; el control de costo de Bedrock se maneja vía el cache/rate-limiting ya presente en el stack (Redis), no vía un límite de preguntas expuesto en el producto.
 
 ## Requisitos funcionales
@@ -61,9 +61,9 @@ Como usuario curioso, quiero poder hacer una pregunta de seguimiento sobre la ex
 - **Evidencia (noticia indexada):** artículo con fecha de publicación, verificada contra la fecha de kickoff del partido antes de poder citarse.
 
 ## Criterios de éxito
-- **CE-001:** 0% de explicaciones citan evidencia publicada después del kickoff del partido que explican (medible vía el test de integración de la sección 7.3, y vía el muestreo continuo de groundedness/faithfulness de la sección 7.9).
+- **CE-001:** 0% de explicaciones citan evidencia publicada después del kickoff del partido que explican (medible vía el test de integración de la sección 7.3, y vía el muestreo continuo de groundedness/faithfulness de la sección 7.6).
 - **CE-002:** **[SUPUESTO]** Al menos el 90% de los partidos cubiertos por 001-prediccion-partido deben tener una explicación generada con evidencia real (vs. casos declarados de "evidencia insuficiente", Historia 2) para considerar la feature exitosa. Umbral ajustable según la cobertura mediática real observada en Sprint 1.
-- **CE-003:** La proporción de explicaciones marcadas como no fundamentadas (groundedness/faithfulness) en el muestreo continuo de producción se mantiene bajo el umbral que defina el equipo (sección 7.9).
+- **CE-003:** La proporción de explicaciones marcadas como no fundamentadas (groundedness/faithfulness) en el muestreo continuo de producción se mantiene bajo el umbral que defina el equipo (sección 7.6).
 
 ## Checklist de completitud del requisito
 - [x] No quedan marcadores `[NECESITA CLARIFICACIÓN]` — resueltos; los marcados `[SUPUESTO]` son asunciones razonables abiertas a ajuste

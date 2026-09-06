@@ -18,10 +18,10 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 - [ ] T008 [P] Crear schemas Pydantic (`TrackRecordSummaryOut`, `TrackRecordMatchOut`) en `backend/app/schemas/track_record.py`, siguiendo `contracts/track-record-api.md`
 
 ## Grupo 3 — Implementación (hace pasar las pruebas del Grupo 1)
-- [ ] T009 Implementar `app/services/track_record_service.py`: reutiliza `ml/evaluation/` (log-loss, Brier) ya existente para 001 — no reimplementar las métricas
+- [ ] T009 Implementar `backend/app/services/track_record_service.py`: reutiliza `backend/ml/evaluation/` (log-loss, Brier) ya existente para 001 — no reimplementar las métricas
 - [ ] T010 Implementar el cálculo de `log_loss_mercado_contribution` a partir de `CuotaMercado`, solo cuando `tiene_cuota_mercado = true`
-- [ ] T011 Implementar `workers/tasks/update_track_record.py`: job diario de Celery que recalcula `TrackRecordAgregado` (global y por liga) a partir de partidos con `estado = jugado`
-- [ ] T012 Implementar routers de `app/api/track_record.py` (2 endpoints, filtro `league`) — solo lectura de `TrackRecordAgregado`/`EvaluaciónPredicción`, debe hacer pasar T001-T002
+- [ ] T011 Implementar `backend/workers/tasks/update_track_record.py`: job diario de Celery que recalcula `TrackRecordAgregado` (global y por liga) a partir de partidos con `estado = jugado`
+- [ ] T012 Implementar routers de `backend/app/api/track_record.py` (2 endpoints, filtro `league`) — solo lectura de `TrackRecordAgregado`/`EvaluaciónPredicción`, debe hacer pasar T001-T002
 
 ## Grupo 4 — Integración
 - [ ] T013 Prueba de integración: Historia 1, escenario 1 — agregado de los últimos 50 partidos con `hit_rate`, `avg_brier_score`, `avg_log_loss`
@@ -31,7 +31,7 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 - [ ] T017 Prueba de integración: caso límite — partido `pospuesto` no se incluye en `matches_included` hasta que cambia a `jugado`
 - [ ] T017b Prueba de integración: caso límite — simular un reentrenamiento a mitad de la ventana de 50 partidos (dos `version_modelo` distintas dentro del mismo período) y verificar que `EvaluaciónPredicción` conserva la versión correcta por partido, y que `GET /api/track-record/matches` la refleja sin mezclar versiones (hallazgo #6 de Analyze)
 - [ ] T018 Prueba de integración: caso límite — partido sin `CuotaMercado` cuenta para `hit_rate`/`avg_brier_score` pero no para `avg_market_log_loss`
-- [ ] T019 Verificar que esta feature reutiliza (no reintroduce) el test existente en `ml/features/` que bloquea columnas de odds en el feature set de entrenamiento (Artículo V) — confirma que no se abre una vía nueva de fuga de cuotas hacia el modelo
+- [ ] T019 Verificar que esta feature reutiliza (no reintroduce) el test existente en `backend/ml/features/` que bloquea columnas de odds en el feature set de entrenamiento (Artículo V) — confirma que no se abre una vía nueva de fuga de cuotas hacia el modelo
 
 ## Grupo 5 — Pulido
 - [ ] T020 [P] Manejo del caso `matches_included < 50` (aún no hay suficientes partidos jugados para completar la ventana) en la respuesta de `GET /api/track-record`

@@ -78,7 +78,7 @@ No se aprueba ni fusiona ningún PR que:
 - Contenga **secretos, API keys, credenciales o roles/ARNs de IAM** (incluye credenciales de AWS Bedrock — ver `docs/project_spec.md` sección 5.1).
 - Contenga **datos personales o sensibles** sin anonimizar.
 - Tenga **pruebas fallidas** en CI/CD o pruebas manuales documentadas como no exitosas.
-- Toque `ml/` o `rag/` sin que el split de entrenamiento sea cronológico (ver DoD, sección 6) o sin respetar el filtro temporal obligatorio del retrieval RAG.
+- Toque `backend/ml/` o `backend/rag/` sin que el split de entrenamiento sea cronológico (ver DoD, sección 6) o sin respetar el filtro temporal obligatorio del retrieval RAG.
 
 ---
 
@@ -143,7 +143,7 @@ Una tarea se considera **terminada** únicamente cuando cumple **todos** los sig
 - [ ] **Pruebas ejecutadas y pasando**, cuando la tarea lo amerite (pruebas unitarias para lógica de backend/modelos, pruebas manuales documentadas para UI).
 - [ ] **Revisión de al menos 1 integrante** distinto al autor, con aprobación explícita en el PR.
 
-**Criterios adicionales para tareas de `ml/` o `rag/` (introducidos por project_spec v2.0):**
+**Criterios adicionales para tareas de `backend/ml/` o `backend/rag/` (introducidos por project_spec v2.0):**
 - [ ] Si la tarea entrena o valida un modelo, el split es **cronológico**, no aleatorio, y pasa el test automatizado que lo verifica.
 - [ ] Si la tarea toca el retrieval del RAG, respeta el filtro temporal obligatorio (`fecha_publicacion_noticia < fecha_kickoff`).
 - [ ] Ningún job de entrenamiento o reindexado corre de forma síncrona dentro del proceso API — pasa por Celery.

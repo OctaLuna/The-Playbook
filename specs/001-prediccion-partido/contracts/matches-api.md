@@ -1,7 +1,7 @@
 # Contrato de API: Partidos y Predicciones
 
 **Basado en:** `specs/001-prediccion-partido/plan.md`
-Todos los endpoints son de solo lectura (GET). Formato de respuesta: JSON, contratos definidos como Pydantic schemas en `app/schemas/`.
+Todos los endpoints son de solo lectura (GET). Formato de respuesta: JSON, contratos definidos como Pydantic schemas en `backend/app/schemas/`.
 
 ## GET /api/leagues
 Lista las ligas cubiertas en el MVP.
@@ -75,4 +75,4 @@ Query params: `league` (opcional), `from`, `to` (opcional, default: próximos 7 
 ```
 **Response 404** si el partido no tiene predicción generada aún (ej. fuera de la ventana de 24h, RF-007).
 
-Nota: `top_shap_features` NO se incluye en este contrato público — es un campo interno consumido por `app/services/` para 002-explicacion-lenguaje-natural, no se expone al frontend en este endpoint.
+Nota: `top_shap_features` NO se incluye en este contrato público — es un campo interno consumido por `backend/app/services/` para 002-explicacion-lenguaje-natural, no se expone al frontend en este endpoint.

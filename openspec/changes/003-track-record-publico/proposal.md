@@ -12,7 +12,7 @@ Sin un registro público y auditable del desempeño real del modelo, el usuario 
 
 ## Impact
 - **Specs afectadas:** `track-record-publico` (capability nueva)
-- **Código afectado:** `app/services/track_record_service.py`, `app/api/track_record.py`, `workers/tasks/update_track_record.py`, reutiliza `ml/evaluation/` existente
+- **Código afectado:** `backend/app/services/track_record_service.py`, `backend/app/api/track_record.py`, `backend/workers/tasks/update_track_record.py`, reutiliza `backend/ml/evaluation/` existente
 - **Dependencias:** requiere `prediccion-partido` (001) ya implementada — consume `Predicción.version_modelo` y `Partido.resultado_real`.
 - **Restricción legal/ética:** las cuotas de mercado se usan únicamente como baseline interno (convención #2 de `../../project.md`); ningún endpoint puede exponer un comparador de casas de apuestas independiente.
 

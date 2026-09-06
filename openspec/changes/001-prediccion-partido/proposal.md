@@ -14,10 +14,10 @@ Para aficionados y analistas amateur de fútbol que quieren entender —no solo 
 
 ## Impact
 - **Specs afectadas:** `prediccion-partido` (capability nueva — no existe aún en `openspec/specs/`, hoy vive solo como propuesta)
-- **Código afectado:** `ml/models/ensemble/`, `ml/evaluation/calibration.py`, `app/models/{partido,equipo,prediccion,calibracion_historica}.py`, `app/services/predictions_service.py`, `app/api/matches.py`, `workers/tasks/generate_predictions.py`
+- **Código afectado:** `backend/ml/ensemble/`, `backend/ml/evaluation/calibration.py`, `backend/app/models/{partido,equipo,prediccion,calibracion_historica}.py`, `backend/app/services/predictions_service.py`, `backend/app/api/matches.py`, `backend/workers/tasks/generate_predictions.py`
 - **Dependencias:** ninguna — es la primera capability del proyecto; `explicacion-lenguaje-natural` y `track-record-publico` dependen de esta (consumen `Predicción.top_shap_features` y `Predicción.version_modelo` respectivamente).
 - **Datos:** requiere Football-Data.co.uk + Kaggle European Soccer Database ya cargados (Sprint 0-1, sección 6.2 de `docs/project_spec.md`).
-- **No negociables constitucionales que aplican:** split cronológico obligatorio en el entrenamiento (nunca ver el futuro) y prohibición de usar columnas de cuotas como feature — ambos ya verificados por tests existentes en `ml/evaluation/` y `ml/features/` (ver `openspec/project.md`).
+- **No negociables constitucionales que aplican:** split cronológico obligatorio en el entrenamiento (nunca ver el futuro) y prohibición de usar columnas de cuotas como feature — ambos ya verificados por tests existentes en `backend/ml/evaluation/` y `backend/ml/features/` (ver `openspec/project.md`).
 
 ---
 *Migrado desde `specs/001-prediccion-partido/spec.md` (formato spec-kit) al adoptar OpenSpec. El detalle completo de historias de usuario, escenarios Dado/Cuando/Entonces y criterios de éxito vive ahora en `specs/prediccion-partido/spec.md` (delta spec de este change, no en este proposal). Las decisiones técnicas y los gates de la Fase -1 viven en `design.md`. Las tareas ejecutables viven en `tasks.md` (idéntico al `tasks.md` ya auditado en Analyze).*

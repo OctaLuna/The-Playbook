@@ -12,7 +12,7 @@ Un número de probabilidad solo no le dice a un aficionado o analista amateur *p
 
 ## Impact
 - **Specs afectadas:** `explicacion-lenguaje-natural` (capability nueva)
-- **Código afectado:** `rag/ingestion/`, `rag/retrieval/`, `rag/generation/`, `app/services/explanations_service.py`, `app/api/explanations.py`, `workers/tasks/{ingest_news,reindex_rag}.py`
+- **Código afectado:** `backend/rag/ingestion/`, `backend/rag/retrieval/`, `backend/rag/generation/`, `backend/app/services/explanations_service.py`, `backend/app/api/explanations.py`, `backend/workers/tasks/{ingest_news,reindex_rag}.py`
 - **Dependencias:** requiere `prediccion-partido` (001) ya implementada — consume `Predicción.top_shap_features`.
 - **Riesgo de seguridad:** ingiere contenido externo no confiable (News API/RSS); requiere sanitización y delimitación explícita en el prompt para mitigar prompt injection (ver `../../project.md`, convención #4).
 

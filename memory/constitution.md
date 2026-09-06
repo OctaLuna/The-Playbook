@@ -9,16 +9,23 @@
 Cada feature debe nacer como un componente/módulo independiente y reutilizable
 antes de integrarse en la aplicación. Nada de lógica de negocio metida
 directamente en el punto de entrada de la app. En este proyecto, esto se
-traduce en: `ml/`, `rag/` y `app/services/` como módulos aislados que no
-importan nada de `app/api/` — se comunican con el backend únicamente a
-través de `app/services/`.
+traduce en: `backend/ml/`, `backend/rag/` y `backend/app/services/` como módulos aislados que no
+importan nada de `backend/app/api/` — se comunican con el backend únicamente a
+través de `backend/app/services/`.
 
 ## Artículo II — Interfaz CLI / API observable
 Cada módulo debe exponer su funcionalidad de forma verificable desde fuera
 (CLI, API, o función pura con entrada/salida clara). Nada de "cajas negras"
 que solo se puedan probar a través de la UI. En este proyecto: cada
-componente de `ml/models/*/` expone `train.py`, `predict.py`, `evaluate.py`
+componente de `backend/ml/models/*/` expone `train.py`, `predict.py`, `evaluate.py`
 con contratos consistentes entre sí.
+
+> **Alcance del contrato.** El trío `train/predict/evaluate` obliga únicamente a los
+> modelos base bajo `backend/ml/models/*/` (`dixon_coles/`, `xgboost/`, y `lstm/` en
+> fase stretch). La capa de ensamble vive en `backend/ml/ensemble/` —hermana de
+> `models/`, no hija— porque no se entrena: combina salidas ya calculadas. Expone
+> solo `predict.py`. Sus pesos se ajustan dentro del backtesting de
+> `backend/ml/evaluation/` (sección 6.4 de `docs/project_spec.md`).
 
 ## Artículo III — Test-First (no negociable)
 No se escribe código de implementación antes de:
@@ -34,7 +41,7 @@ real de la predicción.
 
 - **Split cronológico obligatorio**, nunca aleatorio, en entrenamiento y
   validación de cualquier modelo (Dixon-Coles, XGBoost, LSTM). Un test
-  automatizado en `ml/evaluation/` debe fallar el build si algún pipeline
+  automatizado en `backend/ml/evaluation/` debe fallar el build si algún pipeline
   usa `train_test_split` sin el parámetro de orden temporal.
 - **Toda query de retrieval RAG** contra pgvector debe incluir el filtro
   `fecha_publicacion_noticia < fecha_kickoff_del_partido`. Es una
@@ -53,7 +60,7 @@ consenso de mercado, no una que aprende a imitarlo.
   (log-loss del modelo vs. log-loss implícito del mercado).
 - Ninguna columna derivada de cuotas puede formar parte del feature set de
   entrenamiento de Dixon-Coles, XGBoost o LSTM. Un test automatizado en
-  `ml/features/` debe fallar el build si alguna columna de odds llega al
+  `backend/ml/features/` debe fallar el build si alguna columna de odds llega al
   feature set de entrenamiento.
 - El comparador de cuotas **nunca** se expone como funcionalidad visible al
   usuario final (zona gris legal/ética para un proyecto académico).
@@ -66,7 +73,7 @@ consenso de mercado, no una que aprende a imitarlo.
   como **dato no confiable**: se inserta en el prompt dentro de un bloque
   delimitado explícitamente y las instrucciones de sistema aclaran que
   cualquier instrucción contenida en ese bloque debe ignorarse. Se aplica
-  sanitización básica en `rag/ingestion/` antes de indexar.
+  sanitización básica en `backend/rag/ingestion/` antes de indexar.
 - El LLM nunca ejecuta acciones ni genera código a partir de contenido
   indexado — su única salida es texto explicativo.
 
@@ -89,8 +96,8 @@ consenso de mercado, no una que aprende a imitarlo.
   sobre mocks siempre que sea viable, incluso en desarrollo local vía
   docker-compose.
 - Las pruebas de contrato son obligatorias antes de implementar, en
-  particular para los endpoints de `app/api/` y para los contratos de
-  `ml/models/*/` (train/predict/evaluate).
+  particular para los endpoints de `backend/app/api/` y para los contratos de
+  `backend/ml/models/*/` (train/predict/evaluate).
 
 ## Proceso de enmienda
 Modificar esta constitución requiere:

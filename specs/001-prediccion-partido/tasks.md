@@ -20,11 +20,11 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 - [ ] T011 [P] Crear schemas Pydantic (`MatchOut`, `PredictionOut`, `LeagueOut`) en `backend/app/schemas/matches.py`, siguiendo exactamente los contratos de `contracts/matches-api.md` (sin incluir `top_shap_features`, que es interno)
 
 ## Grupo 3 — Implementación (hace pasar las pruebas del Grupo 1)
-- [ ] T012 Implementar `ml/models/ensemble/predict.py`: combina Dixon-Coles + XGBoost por promedio ponderado, pesos leídos desde MLflow (sección 6.3 de project_spec.md)
-- [ ] T013 Implementar `ml/evaluation/calibration.py`: lookup de `CalibraciónHistórica` por (mercado, rango de probabilidad) → nivel de confianza; default "baja" si `n_observaciones` está bajo el umbral
-- [ ] T014 Implementar `app/services/predictions_service.py`: orquesta lectura de `Partido`/`Equipo`/`Predicción`, arma `low_data_warning` (a partir de `tiene_historial_suficiente`) y `head_to_head_available`
-- [ ] T015 Implementar routers de `app/api/matches.py` para los 4 endpoints — delgados, delegan a `predictions_service` — debe hacer pasar T001-T004
-- [ ] T016 Implementar `workers/tasks/generate_predictions.py`: tarea Celery que genera predicciones para partidos dentro de la ventana de 24h antes del kickoff (RF-007), persiste `Predicción` incl. `top_shap_features` y `version_modelo`
+- [ ] T012 Implementar `backend/ml/ensemble/predict.py`: combina Dixon-Coles + XGBoost por promedio ponderado, pesos leídos desde MLflow (sección 6.4 de project_spec.md)
+- [ ] T013 Implementar `backend/ml/evaluation/calibration.py`: lookup de `CalibraciónHistórica` por (mercado, rango de probabilidad) → nivel de confianza; default "baja" si `n_observaciones` está bajo el umbral
+- [ ] T014 Implementar `backend/app/services/predictions_service.py`: orquesta lectura de `Partido`/`Equipo`/`Predicción`, arma `low_data_warning` (a partir de `tiene_historial_suficiente`) y `head_to_head_available`
+- [ ] T015 Implementar routers de `backend/app/api/matches.py` para los 4 endpoints — delgados, delegan a `predictions_service` — debe hacer pasar T001-T004
+- [ ] T016 Implementar `backend/workers/tasks/generate_predictions.py`: tarea Celery que genera predicciones para partidos dentro de la ventana de 24h antes del kickoff (RF-007), persiste `Predicción` incl. `top_shap_features` y `version_modelo`
 
 ## Grupo 4 — Integración
 - [ ] T017 Prueba de integración: Historia 1, escenario 1 — partido con datos suficientes devuelve 1X2 que suma 1.0
@@ -32,12 +32,12 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 - [ ] T019 Prueba de integración: Historia 4, escenario 2 — rango de probabilidad sin calibración suficiente devuelve `confidence: "baja"` por defecto
 - [ ] T020 Prueba de integración: caso límite — partido marcado `pospuesto` conserva su predicción original y devuelve `status: "postponed"`
 - [ ] T021 Prueba de integración: caso límite — partido sin head-to-head previo devuelve `head_to_head_available: false`
-- [ ] T022 Verificar que el pipeline de esta feature efectivamente reutiliza (no reescribe) el test existente en `ml/features/` que bloquea columnas de odds en el feature set (Artículo V)
+- [ ] T022 Verificar que el pipeline de esta feature efectivamente reutiliza (no reescribe) el test existente en `backend/ml/features/` que bloquea columnas de odds en el feature set (Artículo V)
 
 ## Grupo 5 — Pulido
-- [ ] T023 [P] Manejo de errores 404 documentado (partido inexistente, predicción aún no generada) en las respuestas de `app/api/matches.py`
+- [ ] T023 [P] Manejo de errores 404 documentado (partido inexistente, predicción aún no generada) en las respuestas de `backend/app/api/matches.py`
 - [ ] T024 [P] Actualizar `quickstart.md` reemplazando los comandos de ejemplo por los definitivos una vez implementado
-- [ ] T025 [P] Registrar en MLflow los pesos finales del ensamble (sección 6.3) como evidencia para la defensa académica
+- [ ] T025 [P] Registrar en MLflow los pesos finales del ensamble (sección 6.4) como evidencia para la defensa académica
 
 ---
 **Regla:** cada tarea debe ser lo bastante concreta para completarla sin

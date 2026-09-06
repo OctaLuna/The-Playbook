@@ -22,10 +22,17 @@ Detalle completo y justificación de cada elección: `docs/project_spec.md`, sec
 
 ## Estructura del repositorio
 - `openspec/` — este árbol: propuestas de cambio (`changes/`) y especificaciones vigentes (`specs/`, vacío hasta el primer `archive`).
-- `memory/` + `specs/00X-.../` — documentación spec-kit completa (historias de usuario, planes técnicos, modelo de datos, contratos, quickstarts) que respalda cada change de `openspec/changes/`. Cada `design.md` de OpenSpec referencia estos archivos en vez de duplicarlos, para no tener dos fuentes de verdad.
+- `memory/` + `specs/00X-.../` — **fuente canónica** de la documentación spec-kit (historias de usuario, planes técnicos, modelo de datos, contratos, quickstarts, **y tareas**). Cada `design.md` de OpenSpec referencia estos archivos en vez de duplicarlos.
+
+> **Precedencia (resuelto en la auditoría SDD).** spec-kit es canónico. OpenSpec aporta
+> únicamente `proposal.md` y `design.md`. Los `changes/*/tasks.md` son **stubs que apuntan
+> a `specs/00X-.../tasks.md`** y no deben editarse: hasta la auditoría eran copias byte a
+> byte, es decir, dos fuentes de verdad sin regla de desempate. El hook
+> `.claude/hooks/sot-guard.mjs` bloquea las escrituras a esos stubs.
 - `backend/`, `frontend/`, `infra/`, `docs/` — según la sección 10 de `docs/project_spec.md`.
 
 ## Cómo usar este proyecto con OpenSpec
 - Los tres changes actuales (`001-prediccion-partido`, `002-explicacion-lenguaje-natural`, `003-track-record-publico`) están en estado de **propuesta**, no implementados — por eso `openspec/specs/` todavía está vacío. Al completar e implementar cada uno, se archiva (`openspec archive <id>`) y sus specs delta se fusionan a `openspec/specs/<capability>/spec.md`.
 - El detalle de modelo de datos y contratos de API de cada change vive en `specs/00X-.../data-model.md` y `specs/00X-.../contracts/` (spec-kit) — el `design.md` de cada change de OpenSpec apunta ahí en vez de repetirlo.
+- **Las tareas se marcan `[x]` solo en `specs/00X-.../tasks.md`.** El archivo homónimo bajo `changes/` es un stub.
 - `002-explicacion-lenguaje-natural` depende de `001-prediccion-partido` (usa `Predicción.top_shap_features`); `003-track-record-publico` depende de `001` (usa `Predicción.version_modelo` y `Partido.resultado_real`).

@@ -33,7 +33,7 @@ Como analista amateur, quiero ver el xG calculado por el modelo para cada equipo
 **Prueba independiente:** Se puede probar mostrando el xG de ambos equipos para un partido, sin depender de las historias 1 o 2.
 
 **Escenarios de aceptación:**
-1. **Dado** un partido con predicción generada, **Cuando** el usuario ve la ficha del partido, **Entonces** ve el xG esperado de cada equipo (calculado por el modelo propio, no el xG histórico de Understat, según sección 6.1).
+1. **Dado** un partido con predicción generada, **Cuando** el usuario ve la ficha del partido, **Entonces** ve el xG esperado de cada equipo (calculado por el modelo propio, no el xG histórico de Understat, según sección 6.2).
 2. **Dado** que existe una fuente de referencia externa (Understat) para validar el xG del modelo, **Cuando** el usuario ve el xG, **Entonces** no ve ninguna nota al respecto — **[SUPUESTO]** esa validación es un proceso interno del equipo (control de calidad del modelo), no una funcionalidad expuesta en la UI; se prioriza simplicidad de interfaz (Artículo VII) sobre exponer un detalle que no añade acción para el usuario.
 
 ### Historia 4 — Ver nivel de confianza calibrado de la predicción (Prioridad: P1)
@@ -43,7 +43,7 @@ Como aficionado, quiero ver un badge (Alta/Media/Baja) que indique qué tan conf
 **Prueba independiente:** Se puede probar verificando que el badge mostrado corresponde a la precisión histórica real del modelo para probabilidades en ese rango, usando un conjunto de predicciones ya evaluadas.
 
 **Escenarios de aceptación:**
-1. **Dado** una predicción con una probabilidad dentro de un rango con precisión histórica calibrada, **Cuando** el usuario ve la ficha del partido, **Entonces** ve un badge Alta/Media/Baja derivado de esa calibración empírica (backtesting cronológico, sección 6.4), nunca de la distancia a un reparto uniforme.
+1. **Dado** una predicción con una probabilidad dentro de un rango con precisión histórica calibrada, **Cuando** el usuario ve la ficha del partido, **Entonces** ve un badge Alta/Media/Baja derivado de esa calibración empírica (backtesting cronológico, sección 6.5), nunca de la distancia a un reparto uniforme.
 2. **Dado** que el modelo aún no tiene suficiente historial de backtesting para calibrar un rango de probabilidad específico, **Cuando** se genera una predicción en ese rango, **Entonces** el sistema asigna por defecto el badge de confianza Baja (posición conservadora hasta contar con calibración empírica suficiente).
 
 ## Casos límite

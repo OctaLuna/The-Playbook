@@ -37,7 +37,7 @@ Como analista amateur, quiero saber si el modelo predice mejor o peor que las cu
 
 ## Casos límite
 - ¿Qué pasa si un partido predicho se pospone o cancela? → Resuelto: se excluye del cálculo de aciertos/Brier/log-loss mientras esté marcado como "pospuesto/cancelado" (consistente con 001, donde la predicción sigue visible pero el partido no cuenta como resultado real hasta que se juegue).
-- ¿Qué pasa si el modelo se reentrena a mitad del período de "los últimos N partidos"? → Resuelto: el track record distingue qué versión del modelo generó cada predicción (cada predicción queda asociada a la versión de modelo registrada en MLflow, sección 6.3), en vez de tratarse como una sola serie continua sin distinción.
+- ¿Qué pasa si el modelo se reentrena a mitad del período de "los últimos N partidos"? → Resuelto: el track record distingue qué versión del modelo generó cada predicción (cada predicción queda asociada a la versión de modelo registrada en MLflow, sección 6.4), en vez de tratarse como una sola serie continua sin distinción.
 - ¿Qué pasa si no hay cuota de mercado disponible para un partido (liga con poca cobertura de casas de apuestas)? → **[SUPUESTO]** se excluye solo de la comparación contra el baseline de mercado; el partido sigue contando normalmente para el % de aciertos y el Brier score/log-loss del modelo, ya que esas métricas no dependen de la cuota.
 
 ## Requisitos funcionales

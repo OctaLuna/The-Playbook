@@ -14,13 +14,13 @@ Relación 1:1 con `Predicción` (entidad de 001-prediccion-partido).
 | es_fallback_sin_evidencia | boolean | true si se usó el mensaje de ausencia de datos (Historia 2) |
 | shap_features_usadas | JSON | Copia de `top_shap_features` de la Predicción, congelada al momento de generación (trazabilidad) |
 | generado_en | datetime | |
-| actualizado_en | datetime | Se actualiza solo si se regenera por cambio de evidencia (sección 7.7) |
+| actualizado_en | datetime | Se actualiza solo si se regenera por cambio de evidencia (sección 7.5) |
 
 ## Evidencia (noticia indexada)
 | Campo | Tipo | Notas |
 |---|---|---|
 | id | UUID | PK |
-| texto_sanitizado | text | Ya pasó por `rag/ingestion/` (sección 7.5) |
+| texto_sanitizado | text | Ya pasó por `backend/rag/ingestion/` (Artículo VI de la constitución) |
 | fecha_publicacion | datetime | Verificada contra `fecha_kickoff` del partido en cada query de retrieval (7.3) |
 | embedding | vector (Titan V2) | Índice HNSW en pgvector |
 | equipo_relacionado_id | FK → Equipo (001), opcional | |

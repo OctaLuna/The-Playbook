@@ -3,10 +3,10 @@
 **Referencia completa:** `specs/002-explicacion-lenguaje-natural/plan.md`, `data-model.md`, `contracts/explanations-api.md` (spec-kit) — resumen orientado a OpenSpec; el detalle completo no se duplica aquí.
 
 ## Resumen técnico
-Para cada `Predicción` ya calculada (001), se genera una explicación anclada a dos fuentes: noticias pre-partido recuperadas vía RAG con filtro temporal obligatorio (`fecha_publicacion_noticia < fecha_kickoff_del_partido`), y los `top_shap_features` ya persistidos en la Predicción. Pipeline en `rag/ingestion/` (scraping + chunking + sanitización), `rag/retrieval/` (queries a pgvector con el filtro temporal) y `rag/generation/` (prompts versionados, cliente Bedrock Converse API, caché Redis). La ingesta corre vía Celery, nunca síncrona. Las preguntas de seguimiento reutilizan el mismo contexto de evidencia/SHAP que la generación inicial.
+Para cada `Predicción` ya calculada (001), se genera una explicación anclada a dos fuentes: noticias pre-partido recuperadas vía RAG con filtro temporal obligatorio (`fecha_publicacion_noticia < fecha_kickoff_del_partido`), y los `top_shap_features` ya persistidos en la Predicción. Pipeline en `backend/rag/ingestion/` (scraping + chunking + sanitización), `backend/rag/retrieval/` (queries a pgvector con el filtro temporal) y `backend/rag/generation/` (prompts versionados, cliente Bedrock Converse API, caché Redis). La ingesta corre vía Celery, nunca síncrona. Las preguntas de seguimiento reutilizan el mismo contexto de evidencia/SHAP que la generación inicial.
 
 ## Gates de simplicidad y arquitectura (ver `../../project.md`)
-- ≤3 módulos: `rag/ingestion`, `rag/retrieval`, `rag/generation` son submódulos de un único módulo `rag/`.
+- ≤3 módulos: `backend/rag/ingestion`, `backend/rag/retrieval`, `backend/rag/generation` son submódulos de un único módulo `backend/rag/`.
 - Sin future-proofing: sin soporte multi-idioma (español-only ya decidido); sin motor de conversación de propósito general.
 - Framework directo: LangChain sin envoltura adicional; Bedrock vía Converse API directo.
 - Integration-first: el test del filtro temporal corre contra pgvector real, sin excepción (ver Registro de complejidad).
