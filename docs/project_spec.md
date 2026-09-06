@@ -186,7 +186,7 @@ v1.0 no definía cómo se combinaban los tres modelos de predicción. Se adopta 
 
 ### 6.5 Split de entrenamiento (corrige hallazgo M2 de la auditoría)
 
-**Obligatorio: split cronológico, nunca aleatorio.** Se entrena con partidos anteriores a una fecha de corte y se valida/testea con partidos posteriores a esa fecha, replicando cómo el sistema se usaría en producción (nunca "ver" resultados futuros al momento de predecir un partido pasado). Este criterio se documenta en `ml/evaluation/` y se verifica con un test automatizado que falla el build si algún pipeline usa `train_test_split` sin el parámetro de orden temporal.
+**Obligatorio: split cronológico, nunca aleatorio.** Se entrena con partidos anteriores a una fecha de corte y se valida/testea con partidos posteriores a esa fecha, replicando cómo el sistema se usaría en producción (nunca "ver" resultados futuros al momento de predecir un partido pasado). Este criterio se documenta en `backend/ml/evaluation/` y se verifica con un test automatizado que falla el build si algún pipeline usa `train_test_split` sin el parámetro de orden temporal.
 
 Criterio de reentrenamiento (sustituye al vacío señalado como hallazgo M5): reentrenar manualmente al cierre de cada jornada/fecha FIFA, o antes si el log-loss del track record público se degrada más de un umbral definido por el equipo (a fijar en Sprint 1). El disparador automático de drift queda fuera de alcance del MVP (sección 2.3).
 
@@ -297,9 +297,9 @@ the-playbook/
 
 **Reglas de la estructura:**
 
-- La lógica de negocio vive en `app/services/`, nunca directamente en los routers de `app/api/` — mantiene los endpoints delgados y testeables.
-- `ml/` y `rag/` no importan nada de `app/api/`; se comunican con el backend únicamente a través de `app/services/`, lo que permite testear el pipeline de ML/RAG de forma aislada.
-- Todo lo que corre en `workers/` se invoca vía Celery, nunca de forma síncrona dentro de un endpoint (regla de la sección 4).
+- La lógica de negocio vive en `backend/app/services/`, nunca directamente en los routers de `backend/app/api/` — mantiene los endpoints delgados y testeables.
+- `backend/ml/` y `backend/rag/` no importan nada de `backend/app/api/`; se comunican con el backend únicamente a través de `backend/app/services/`, lo que permite testear el pipeline de ML/RAG de forma aislada.
+- Todo lo que corre en `backend/workers/` se invoca vía Celery, nunca de forma síncrona dentro de un endpoint (regla de la sección 4).
 - Cada decisión que se aparte de este documento debe registrarse como un ADR en `docs/adr/`.
 
 ---
@@ -332,11 +332,16 @@ the-playbook/
 
 ### 12.1 Registro de cambios v2.0 → v2.1 (auditoría SDD)
 
+<!-- audit-sdd:ignore-start — esta tabla cita a propósito los nombres y rutas antiguos -->
+
 | Área | v2.0 | v2.1 | Motivo |
 |---|---|---|---|
 | Nivel de confianza (§2.1) | Badge derivado de la distancia a un reparto uniforme (33/33/33) | Badge derivado de la precisión histórica calibrada (backtesting cronológico, §6.5) | §2.1 contradecía directamente a `RF-005` de `specs/001-prediccion-partido/spec.md` y al spec delta de OpenSpec, que ya prohibían explícitamente la distancia a uniforme. Un badge basado en la forma de la distribución mide *decisión del modelo*, no *fiabilidad*, y rompe los pilares 2 y 3 del product goal. Ver ADR [0001](adr/0001-badge-confianza-calibrado.md) |
 | Ubicación de este documento | `docs/project_spec_v2.md` (con la cabecera declarando `docs/project_spec.md`) | `docs/project_spec.md` | 24 referencias en 15 archivos apuntaban a `docs/project_spec.md`, que no existía. El rename cierra el grafo de referencias en lugar de reescribir 24 enlaces |
 | Ruta del ensamble | Ambigua: `ml/ensemble/` (§10) vs `ml/models/ensemble/` (plan y tasks de 001) | `backend/ml/ensemble/` canónico en §10, plan y tasks | Tres fuentes daban tres rutas distintas. `ml/models/*/` conlleva el contrato `train/predict/evaluate` del Artículo II, que no aplica al ensamble |
+| Referencias de sección | 14 apuntaban a secciones inexistentes (`7.7`, `7.8`, `7.9`) o desfasadas en uno | Todas resuelven a un heading real, verificado por `npm run audit:sdd` | `T011` de 002 remitía a "sección 7.5" para la sanitización anti-prompt-injection, que es en realidad la caché de explicaciones — un agente habría implementado el control equivocado |
+
+<!-- audit-sdd:ignore-end -->
 
 ---
 

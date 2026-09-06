@@ -47,14 +47,47 @@ Como usuario curioso, quiero poder hacer una pregunta de seguimiento sobre la ex
 - ¿Qué pasa si las alineaciones/lesiones se confirman muy poco antes del kickoff, después de la última generación de la explicación? → cubierto por el reindexado más frecuente en horas previas (sección 7.5); **[SUPUESTO]** sí se muestra un indicador de "última actualización" (timestamp) en la explicación, consistente con el patrón de transparencia ya adoptado en el resto del producto.
 - ¿Qué pasa si el usuario pide la explicación en un idioma distinto al español? → Resuelto: el MVP es español-only (decisión de producto); no hay requisito de generar ni traducir explicaciones a otros idiomas en esta fase.
 - ¿Qué tan larga puede ser la explicación mostrada al usuario? → **[SUPUESTO]** objetivo de UX: 3-5 oraciones, legible en menos de 30 segundos. El límite técnico exacto de tokens (sección 7.1) se fija en el plan técnico/Sprint 1 sin cambiar esta expectativa de experiencia.
-- ¿Cuántas preguntas de seguimiento puede hacer un usuario sobre la misma explicación (Historia 4)? → **[SUPUESTO]** sin tope duro visible al usuario en el MVP; el control de costo de Bedrock se maneja vía el cache/rate-limiting ya presente en el stack (Redis), no vía un límite de preguntas expuesto en el producto.
+- ¿Cuántas preguntas de seguimiento puede hacer un usuario sobre la misma explicación (Historia 4)? → **[SUPUESTO]** sin tope duro visible al usuario en el MVP; el coste de generación se controla reutilizando explicaciones ya producidas (RF-006), no con un límite de preguntas expuesto en el producto.
 
 ## Requisitos funcionales
-- **RF-001:** El sistema DEBE generar una explicación en lenguaje natural para cada predicción, citando evidencia real (forma, lesiones, head-to-head) y las variables del modelo con mayor influencia.
-- **RF-002:** El sistema NUNCA DEBE generar una explicación que use evidencia (noticias, análisis) publicada después del kickoff del partido que predice.
-- **RF-003:** El sistema DEBE declarar explícitamente la ausencia de evidencia suficiente cuando el retrieval no encuentra cobertura mediática adecuada, en vez de generar una justificación no verificable.
-- **RF-004:** La explicación NUNCA DEBE contradecir ni reemplazar la predicción numérica generada por el modelo — el LLM explica, no predice.
-- **RF-005:** El usuario DEBE poder pedir más detalle o hacer preguntas de seguimiento sobre una explicación ya generada, además del texto inicial de una sola generación por partido.
+
+> Escritos en sintaxis **EARS**. El patrón de cada requisito está anotado entre paréntesis
+> al final. Ver `CLAUDE.md` § Convenciones de documentación.
+
+- **RF-001:** CUANDO existe una predicción generada para un partido, el sistema DEBE producir una explicación en lenguaje natural que cite evidencia real (forma, lesiones, head-to-head) y las variables del modelo con mayor influencia. *(event-driven)*
+- **RF-002:** SI un fragmento de evidencia tiene fecha de publicación igual o posterior al kickoff del partido, ENTONCES el sistema DEBE excluirlo del contexto de generación y no citarlo. *(unwanted behaviour)*
+- **RF-003:** SI el retrieval no encuentra cobertura mediática suficiente para un partido, ENTONCES el sistema DEBE declarar explícitamente la ausencia de evidencia, en vez de generar una justificación no verificable. *(unwanted behaviour)*
+- **RF-004:** SI el texto generado afirmara un resultado, mercado ganador o valor numérico distinto al ya calculado por el modelo, ENTONCES el sistema DEBE tratarlo como fallo de generación y no publicarlo — el LLM explica, no predice. *(unwanted behaviour)*
+- **RF-005:** DONDE existe una explicación ya generada, el usuario DEBE poder pedir más detalle o hacer preguntas de seguimiento sobre ella. *(optional feature)*
+- **RF-006:** MIENTRAS una explicación se sirve desde caché, el sistema DEBE regenerarla únicamente si la evidencia relevante para ese partido cambió desde la última generación. *(state-driven)*
+
+### Requisitos no funcionales
+
+- **RNF-001:** El sistema DEBE servir una explicación ya generada en menos de 500 ms en el percentil 95; la generación con el LLM es asíncrona y nunca bloquea la lectura.
+- **RNF-002:** El sistema DEBE mantener el consumo de invocaciones al LLM dentro del presupuesto acordado por el equipo, apoyándose en la caché de RF-006 en lugar de un límite de preguntas visible al usuario.
+- **RNF-003:** Todo contenido ingerido automáticamente DEBE insertarse en el prompt dentro de un bloque delimitado explícito, con instrucción de sistema que ignore cualquier orden contenida en él (Artículo VI).
+
+## Fuera de alcance
+
+| Fuera de alcance | Dónde vive |
+|---|---|
+| Generar o modificar predicciones numéricas | `001-prediccion-partido`. El LLM solo explica |
+| Métricas agregadas de acierto del modelo | `003-track-record-publico` |
+| Modelo de sentimiento sobre noticias | Stretch goal — `docs/project_spec.md` §2.3 |
+| Tope visible de preguntas de seguimiento por usuario | No se expone en el MVP; el coste se controla vía caché (RNF-002) |
+| Explicaciones en idiomas distintos del español | No confirmado para el MVP (Artículo VII: prohibido el future-proofing) |
+| Citar evidencia posterior al kickoff, aun con aviso | Prohibido sin excepción (RF-002, Artículo IV) |
+
+## Definition of Done
+
+Aplica la [DoD del equipo](../../docs/team-charter.md#6-definition-of-done-dod-inicial), **más**:
+
+- [ ] Todas las tareas de `tasks.md` cerradas y cada RF cubierto por al menos una.
+- [ ] La prueba de integración del filtro temporal contra pgvector real **se escribió primero** y se la vio fallar. Es la prueba crítica del feature (Artículo IV).
+- [ ] El filtro `fecha_publicacion_noticia < fecha_kickoff` está en la query SQL, no como post-filtro en memoria.
+- [ ] Los prompts viven en archivos versionados, no como strings embebidos en el código.
+- [ ] El contenido scrapeado se sanitiza y se delimita explícitamente en el prompt (Artículo VI).
+- [ ] El muestreo de groundedness/faithfulness está documentado y es reproducible.
 
 ## Entidades clave
 - **Explicación:** texto en lenguaje natural asociado a una Predicción (feature 001), con las citas de evidencia usadas y las variables del modelo referenciadas.
@@ -69,7 +102,14 @@ Como usuario curioso, quiero poder hacer una pregunta de seguimiento sobre la ex
 - [x] No quedan marcadores `[NECESITA CLARIFICACIÓN]` — resueltos; los marcados `[SUPUESTO]` son asunciones razonables abiertas a ajuste
 - [x] Los requisitos son verificables y sin ambigüedad
 - [x] Los criterios de éxito son medibles
-- [x] No hay detalles de implementación (stack, APIs, esquemas)
+- [x] Los requisitos funcionales usan sintaxis EARS, con el patrón anotado en cada uno
+- [x] Existe una sección **Fuera de alcance** explícita, no solo menciones dispersas
+- [x] Existe una **Definition of Done** que enlaza la del equipo y añade los criterios del feature
+- [x] Hay requisitos no funcionales (rendimiento, coste, disponibilidad)
+- [x] No hay detalles de implementación en historias, escenarios ni casos límite — el stack concreto
+      vive en `plan.md`, `data-model.md` y `contracts/` (verificado, no asumido: la auditoría SDD
+      encontró fugas de proveedor y de infraestructura que este checklist daba por inexistentes)
+- [x] Cada requisito está cubierto por al menos una tarea, verificado por `npm run audit:sdd`
 - [x] Cada historia de usuario es probable de forma independiente
 - [x] No hay features especulativas o "por si acaso"
 - [x] Alcance delimitado con claridad — depende de que exista una predicción (001), no genera predicciones por sí misma

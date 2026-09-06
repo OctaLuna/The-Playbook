@@ -33,8 +33,8 @@ Como analista amateur, quiero ver el xG calculado por el modelo para cada equipo
 **Prueba independiente:** Se puede probar mostrando el xG de ambos equipos para un partido, sin depender de las historias 1 o 2.
 
 **Escenarios de aceptación:**
-1. **Dado** un partido con predicción generada, **Cuando** el usuario ve la ficha del partido, **Entonces** ve el xG esperado de cada equipo (calculado por el modelo propio, no el xG histórico de Understat, según sección 6.2).
-2. **Dado** que existe una fuente de referencia externa (Understat) para validar el xG del modelo, **Cuando** el usuario ve el xG, **Entonces** no ve ninguna nota al respecto — **[SUPUESTO]** esa validación es un proceso interno del equipo (control de calidad del modelo), no una funcionalidad expuesta en la UI; se prioriza simplicidad de interfaz (Artículo VII) sobre exponer un detalle que no añade acción para el usuario.
+1. **Dado** un partido con predicción generada, **Cuando** el usuario ve la ficha del partido, **Entonces** ve el xG esperado de cada equipo, calculado por el modelo propio y no tomado de un proveedor externo de xG histórico.
+2. **Dado** que el equipo contrasta internamente el xG del modelo contra una referencia externa, **Cuando** el usuario ve el xG, **Entonces** no ve ninguna nota al respecto — **[SUPUESTO]** esa validación es control de calidad interno, no una funcionalidad expuesta en la UI; se prioriza simplicidad de interfaz (Artículo VII) sobre exponer un detalle que no añade acción para el usuario.
 
 ### Historia 4 — Ver nivel de confianza calibrado de la predicción (Prioridad: P1)
 Como aficionado, quiero ver un badge (Alta/Media/Baja) que indique qué tan confiable es la predicción, para saber cuánto peso darle antes de usarla.
@@ -52,14 +52,57 @@ Como aficionado, quiero ver un badge (Alta/Media/Baja) que indique qué tan conf
 - ¿Qué pasa si el usuario consulta un partido ya jugado? → Resuelto: se sigue mostrando la predicción original tal como fue generada (consistente con la Historia 2 de 003-track-record-publico, que exige poder comparar predicción original vs. resultado real partido a partido).
 
 ## Requisitos funcionales
-- **RF-001:** El sistema DEBE calcular y mostrar la probabilidad de victoria local, empate y victoria visitante (1X2) para cada partido próximo cubierto.
-- **RF-002:** El sistema DEBE calcular y mostrar la probabilidad de Over/Under 2.5 goles totales para cada partido próximo cubierto.
-- **RF-003:** El sistema DEBE calcular y mostrar la probabilidad de que ambos equipos anoten (BTTS) para cada partido próximo cubierto.
-- **RF-004:** El sistema DEBE calcular y mostrar el xG esperado (generado por el modelo, no histórico) de cada equipo para cada partido próximo cubierto.
-- **RF-005:** El sistema DEBE mostrar un nivel de confianza (Alta/Media/Baja) por predicción, derivado de la precisión histórica calibrada del modelo para ese rango de probabilidad — nunca de la distancia a un reparto uniforme.
-- **RF-006:** Los usuarios DEBEN poder consultar estas cuatro señales (1X2, O/U, BTTS, xG) para un mismo partido en una sola vista.
-- **RF-007:** El sistema DEBE tener la predicción de un partido disponible al menos 24 horas antes de su kickoff.
-- **RF-008:** El MVP DEBE cubrir las cinco grandes ligas como alcance funcional visible al usuario: Premier League, LaLiga, Serie A, Bundesliga y Ligue 1.
+
+> Escritos en sintaxis **EARS**. El patrón de cada requisito está anotado entre paréntesis
+> al final. Ver `CLAUDE.md` § Convenciones de documentación.
+
+- **RF-001:** El sistema DEBE calcular y mostrar la probabilidad de victoria local, empate y victoria visitante (1X2) para cada partido próximo cubierto, sumando las tres 1.0. *(ubiquitous)*
+- **RF-002:** El sistema DEBE calcular y mostrar la probabilidad de Over/Under 2.5 goles totales para cada partido próximo cubierto. *(ubiquitous)*
+- **RF-003:** El sistema DEBE calcular y mostrar la probabilidad de que ambos equipos anoten (BTTS) para cada partido próximo cubierto. *(ubiquitous)*
+- **RF-004:** El sistema DEBE calcular y mostrar el xG esperado (generado por el modelo, no histórico) de cada equipo para cada partido próximo cubierto. *(ubiquitous)*
+- **RF-005:** DONDE existe calibración empírica suficiente para el rango de probabilidad de una predicción, el sistema DEBE mostrar un nivel de confianza (Alta/Media/Baja) derivado de esa calibración — nunca de la distancia a un reparto uniforme. *(optional feature)*
+- **RF-005b:** SI el rango de probabilidad de una predicción no tiene observaciones de backtesting suficientes, ENTONCES el sistema DEBE asignarle el nivel de confianza Baja. *(unwanted behaviour)*
+- **RF-006:** Los usuarios DEBEN poder consultar las cuatro señales (1X2, O/U 2.5, BTTS, xG) de un mismo partido en una sola vista. *(ubiquitous)*
+- **RF-007:** CUANDO un partido programado entra en la ventana de 24 horas previas a su kickoff, el sistema DEBE tener su predicción ya generada y persistida. *(event-driven)*
+- **RF-008:** El MVP DEBE cubrir las cinco grandes ligas como alcance funcional visible al usuario: Premier League, LaLiga, Serie A, Bundesliga y Ligue 1. *(ubiquitous)*
+- **RF-009:** SI un partido con predicción ya generada cambia a estado pospuesto, cancelado o jugado, ENTONCES el sistema DEBE conservar visible la predicción original tal como fue generada, marcando el nuevo estado. *(unwanted behaviour)*
+- **RF-010:** MIENTRAS un equipo del partido no tenga historial suficiente —o no exista head-to-head previo entre ambos—, el sistema DEBE generar la predicción igualmente y acompañarla de un aviso visible de esa carencia, distinto del badge de confianza de RF-005. *(state-driven)*
+
+### Requisitos no funcionales
+
+- **RNF-001:** El sistema DEBE responder las consultas de lectura de predicción (`GET` de partido y de predicción) en menos de 500 ms en el percentil 95, medido en el entorno de despliegue.
+- **RNF-002:** SI la generación de predicciones de la ventana de 24 h falla, ENTONCES el sistema DEBE seguir sirviendo las predicciones ya persistidas sin degradar los endpoints de lectura.
+- **RNF-003:** El cálculo de predicciones NO DEBE ejecutarse nunca de forma síncrona dentro de un request HTTP (Artículo VI).
+
+## Fuera de alcance
+
+Lo que esta feature **explícitamente no cubre**. Añadir cualquiera de estos puntos exige
+modificar este spec primero:
+
+| Fuera de alcance | Dónde vive |
+|---|---|
+| Líneas de Over/Under distintas de 2.5 (1.5, 3.5) | Iteración posterior. No hay tarea ni endpoint para ellas |
+| Ligas fuera de las cinco grandes | Iteración posterior (RF-008 delimita el alcance) |
+| Explicación en lenguaje natural de la predicción | `002-explicacion-lenguaje-natural` |
+| Track record, métricas agregadas y baseline de mercado | `003-track-record-publico` |
+| Exponer `top_shap_features` en la API pública | Campo interno; lo consume 002 |
+| Validación del xG contra Understat visible en la UI | Control de calidad interno del equipo |
+| Predicción de tarjetas/córners, LSTM, sentimiento | Stretch goals — `docs/project_spec.md` §2.3 |
+| Comparador de casas de apuestas | Descartado — `docs/project_spec.md` §2.4 y Artículo V |
+
+## Definition of Done
+
+Aplica la [DoD del equipo](../../docs/team-charter.md#6-definition-of-done-dod-inicial) —
+criterio de aceptación cumplido, evidencia en ClickUp, PR revisado por otro integrante, sin
+secretos, pruebas pasando— **más** estos criterios específicos del feature:
+
+- [ ] Todas las tareas de `tasks.md` cerradas, y cada RF de este spec cubierto por al menos una.
+- [ ] Las pruebas de contrato de los 4 endpoints se escribieron **antes** que los routers y se las vio fallar (Artículo III).
+- [ ] El test de `backend/ml/features/` que bloquea columnas de odds sigue pasando y **no fue reescrito** (Artículo V).
+- [ ] El entrenamiento usa split cronológico, verificado por el test de `backend/ml/evaluation/` (Artículo IV).
+- [ ] La generación de predicciones corre solo vía Celery; ningún endpoint ejecuta el pipeline de ML (Artículo VI).
+- [ ] Los escenarios de `quickstart.md` se ejecutaron manualmente y sus comandos están actualizados.
+- [ ] Los pesos del ensamble están registrados en MLflow (evidencia para la defensa académica).
 
 ## Entidades clave
 - **Partido:** equipos local/visitante, liga, fecha/hora de kickoff, estado (programado/jugado/pospuesto).
@@ -76,7 +119,14 @@ Como aficionado, quiero ver un badge (Alta/Media/Baja) que indique qué tan conf
 - [x] No quedan marcadores `[NECESITA CLARIFICACIÓN]` — resueltos; los marcados `[SUPUESTO]` son asunciones razonables abiertas a ajuste
 - [x] Los requisitos son verificables y sin ambigüedad
 - [x] Los criterios de éxito son medibles
-- [x] No hay detalles de implementación (stack, APIs, esquemas)
+- [x] Los requisitos funcionales usan sintaxis EARS, con el patrón anotado en cada uno
+- [x] Existe una sección **Fuera de alcance** explícita, no solo menciones dispersas
+- [x] Existe una **Definition of Done** que enlaza la del equipo y añade los criterios del feature
+- [x] Hay requisitos no funcionales (rendimiento, coste, disponibilidad)
+- [x] No hay detalles de implementación en historias, escenarios ni casos límite — el stack concreto
+      vive en `plan.md`, `data-model.md` y `contracts/` (verificado, no asumido: la auditoría SDD
+      encontró fugas de proveedor y de infraestructura que este checklist daba por inexistentes)
+- [x] Cada requisito está cubierto por al menos una tarea, verificado por `npm run audit:sdd`
 - [x] Cada historia de usuario es probable de forma independiente
 - [x] No hay features especulativas o "por si acaso"
 - [x] Alcance delimitado con claridad (qué SÍ y qué NO cubre esta feature) — excluye explicación NL (002) y track record (003)
