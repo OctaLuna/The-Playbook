@@ -44,6 +44,38 @@ Es una invariante del servicio, verificada por la prueba de integración `T001`.
 | partido_relacionado_id | FK → Partido (001), opcional | |
 | fuente | string | News API / RSS |
 
+### Fuente de ingestión y mapeo de campos
+
+`backend/workers/tasks/ingest_news.py` consulta el endpoint `/v2/everything` de News API por
+cada equipo cubierto (query: nombre del equipo + liga, para acotar ruido). Cada artículo de la
+respuesta trae este esquema JSON:
+
+```json
+{
+  "title": "...",
+  "url": "...",
+  "publishedAt": "2026-08-27T10:00:00Z",
+  "source": { "name": "..." },
+  "content": "..."
+}
+```
+
+| Campo de News API | Mapea a |
+|---|---|
+| `title` | `Evidencia.titulo` |
+| `url` | `Evidencia.url` (clave de deduplicación) |
+| `publishedAt` | `Evidencia.fecha_publicacion` — ya viene en ISO 8601 UTC, sin conversión |
+| `source.name` | `Evidencia.fuente` |
+| `content` | Entrada de `backend/rag/ingestion/sanitizer.py`, cuya salida es `Evidencia.texto_sanitizado` — **nunca** se persiste el `content` crudo, siempre pasa primero por el sanitizador (Artículo VI) |
+
+Si un artículo no trae `publishedAt` (algunos artículos de agregadores lo omiten), se descarta
+en la ingestión — un `NULL` ahí sería invisible al filtro temporal en vez de excluido por él, la
+misma razón por la que `fecha_publicacion` es `NOT NULL` en la tabla.
+
+El RSS de respaldo (cuando News API agota su cuota) sigue el mismo mapeo con los campos
+equivalentes del formato RSS 2.0: `<title>` → `titulo`, `<link>` → `url`, `<pubDate>` →
+`fecha_publicacion` (convertir de RFC 822 a UTC), `<description>` → entrada del sanitizador.
+
 ## PreguntaSeguimiento
 N:1 con `Explicación` (Historia 4).
 

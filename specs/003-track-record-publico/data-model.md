@@ -58,6 +58,37 @@ operativa se solapan. Para el baseline se usa una y solo una, con esta precedenc
 usaron para entrenar y validar, y mezclar proveedores dentro de una misma ventana haría el
 baseline incomparable consigo mismo.
 
+### Fuente de las cuotas y fórmula de normalización
+
+Football-Data.co.uk trae las columnas de cuotas de Bet365 al cierre: `B365H`, `B365D`, `B365A`
+(local, empate, visitante). Son las **únicas** columnas de ese CSV con las que trabaja esta
+tabla — `specs/001-prediccion-partido/ml-design.md` §1 documenta el resto del mapeo del mismo
+CSV, y ahí se marca explícitamente que estas tres columnas nunca llegan al feature set de
+entrenamiento (Artículo V).
+
+**Normalización de cuota a probabilidad implícita**, con descuento del margen de la casa
+(*overround*):
+
+```
+p_local_bruta    = 1 / B365H
+p_empate_bruta   = 1 / B365D
+p_visitante_bruta = 1 / B365A
+
+margen = p_local_bruta + p_empate_bruta + p_visitante_bruta   # > 1.0, es el margen de la casa
+
+prob_implicita_local     = p_local_bruta / margen
+prob_implicita_empate    = p_empate_bruta / margen
+prob_implicita_visitante = p_visitante_bruta / margen
+```
+
+Sin este descuento las tres probabilidades sumarían más de 1.0 (esa es la fuente del margen de
+la casa) y no serían comparables por log-loss contra las probabilidades del modelo, que sí
+suman 1.0 por construcción (CHECK de `Predicción` en `specs/001-prediccion-partido/data-model.md`).
+
+Cuando `fuente = operativa`, la cuota viene de API-Football en vez del CSV; el campo que expone
+esa fuente para 1X2 tiene el mismo significado (cuota decimal) y se normaliza con la misma
+fórmula.
+
 ## Relaciones
 ```
 Predicción (001) (1) ── (1) EvaluaciónPredicción (solo si Partido.estado = jugado)

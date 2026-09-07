@@ -11,6 +11,7 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 - [ ] T004 Confirmar que T001-T003 fallan (fase Red) antes de continuar — [Art. III]
 
 ## Grupo 2 — Modelo de datos
+- [ ] T004b Declarar las dependencias de RAG en `backend/pyproject.toml`: `pgvector` (tipo `Vector` de SQLAlchemy, lo necesita T006), `boto3` (cliente Bedrock, lo necesita T014). No estaban en el Grupo 0 porque no hacían falta hasta este punto (Art. VII) — [Art. IX]
 - [ ] T005 [P] Crear modelo SQLAlchemy `Explicación` en `backend/app/models/explicacion.py` (incluye `es_fallback_sin_evidencia`, `shap_features_usadas`) — [RF-001, RF-003]
 - [ ] T006 [P] Crear modelo SQLAlchemy `Evidencia` en `backend/app/models/evidencia.py`: `embedding` como `Vector(1024)` (Titan V2), `fecha_publicacion` NOT NULL, y `url` único + `titulo` — [RF-001, RF-002]
 - [ ] T006b [P] Crear la tabla puente `ExplicacionEvidencia` en `backend/app/models/explicacion_evidencia.py` con PK compuesta `(explicacion_id, evidencia_id)` y columna `orden` — sustituye al array de identificadores, que no permitiría integridad referencial — [RF-001]

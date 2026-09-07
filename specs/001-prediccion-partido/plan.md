@@ -7,6 +7,10 @@
 
 Esta feature calcula y expone, para cada partido próximo de las cinco grandes ligas, cuatro señales (1X2, Over/Under 2.5, BTTS, xG por equipo) más un nivel de confianza calibrado. El cálculo lo hacen dos modelos — Dixon-Coles como prior estadístico y XGBoost sobre features adicionales — combinados por promedio ponderado (sección 6.4 de project_spec.md), siempre respetando el split cronológico obligatorio (Artículo IV de la constitución). El resultado, junto con los top-N valores SHAP del modelo XGBoost, se persiste en PostgreSQL como una `Predicción` asociada a un `Partido`.
 
+La fórmula exacta de Dixon-Coles, la lista de features de XGBoost, el algoritmo de ensamble y el
+de calibración —con sus hiperparámetros y el default de cada uno— viven en
+[`ml-design.md`](ml-design.md), no aquí: este documento fija arquitectura, ese fija algoritmo.
+
 Todo el cálculo corre como tarea de Celery (nunca síncrono dentro de un request HTTP, Artículo VI): un job periódico genera predicciones para los partidos que entran en la ventana de 24 horas antes de kickoff (RF-007 del spec). El backend FastAPI solo lee predicciones ya calculadas — los endpoints de `backend/app/api/matches` son delgados y no ejecutan ML directamente, delegando a `backend/app/services/predictions_service.py`, que a su vez llama a `backend/ml/ensemble/predict.py`.
 
 El nivel de confianza (Alta/Media/Baja) se deriva de una tabla de calibración empírica (`Calibración histórica`) generada por el backtesting cronológico (sección 6.5); si un rango de probabilidad aún no tiene suficientes observaciones de backtesting, se asigna Baja por defecto (decisión ya resuelta en el spec).
@@ -44,6 +48,12 @@ El nivel de confianza (Alta/Media/Baja) se deriva de una tabla de calibración e
 ## Modelo de datos (resumen — detalle en data-model.md)
 Cuatro entidades: `Partido` (con estado programado/jugado/pospuesto/cancelado), `Equipo`, `Predicción` (1:1 con Partido, contiene las cuatro señales + confianza + SHAP interno + versión de modelo) y `Calibración histórica` (tabla de lookup independiente, no asociada a un partido específico). El detalle completo, con tipos y relaciones, está en `data-model.md`.
 
+## Diseño de ML (resumen — detalle en ml-design.md)
+Mapeo de las columnas de Football-Data.co.uk a `Partido`/`Equipo`, la formulación de Dixon-Coles,
+la lista cerrada de features de XGBoost, el algoritmo de ensamble (grid search de `w`, peso
+mínimo `0.85` de Dixon-Coles) y el de calibración (buckets de ancho 0.1, `n_observaciones = 30`
+por defecto). Detalle completo en `ml-design.md`.
+
 ## Contratos (resumen — detalle en contracts/)
 Cuatro endpoints de solo lectura: listar ligas cubiertas, listar próximos partidos (filtrable por liga), detalle de un partido, y la predicción de un partido. El detalle completo de request/response está en `contracts/matches-api.md`.
 
@@ -61,7 +71,7 @@ Cuatro endpoints de solo lectura: listar ligas cubiertas, listar próximos parti
    - Prueba de integración: generación de predicción vía Celery task y su persistencia (`backend/tests/integration/test_generate_predictions.py`)
    - Reutilizar el test existente en `backend/ml/features/` que verifica que ninguna columna de odds llega al feature set
    - Pruebas unitarias de la capa de ensamble y de la asignación de badge de confianza (`backend/tests/unit/`)
-3. Código fuente, en este orden: modelos SQLAlchemy → schemas Pydantic → `backend/ml/ensemble/predict.py` → `backend/app/services/predictions_service.py` → `backend/workers/tasks/generate_predictions.py` → routers de `backend/app/api/matches`.
+3. Código fuente, en este orden: modelos SQLAlchemy → schemas Pydantic → `backend/ml/models/dixon_coles/`, `backend/ml/models/xgboost/` y `backend/ml/ensemble/predict.py` siguiendo `ml-design.md` → `backend/app/services/predictions_service.py` → `backend/workers/tasks/generate_predictions.py` → routers de `backend/app/api/matches`.
 
 ## Registro de complejidad
 Ningún gate de la Fase -1 falló — no aplica registro de complejidad.

@@ -1,6 +1,6 @@
 # Tareas: Predicción de Partido (1X2, Over/Under, BTTS, xG y Confianza)
 
-**Fuente:** `plan.md` (+ `data-model.md`, `contracts/matches-api.md`, `quickstart.md`)
+**Fuente:** `plan.md` (+ `data-model.md`, `ml-design.md`, `contracts/matches-api.md`, `quickstart.md`)
 **Convención:** `[P]` = se puede ejecutar en paralelo con otras tareas `[P]`
 del mismo grupo (no comparten archivos ni dependen entre sí).
 
@@ -37,8 +37,13 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 - [ ] T011 [P] Crear schemas Pydantic (`MatchOut`, `PredictionOut`, `LeagueOut`) en `backend/app/schemas/matches.py`, siguiendo exactamente los contratos de `contracts/matches-api.md` (sin incluir `top_shap_features`, que es interno) — [RF-006, RF-008]
 
 ## Grupo 3 — Implementación (hace pasar las pruebas del Grupo 1)
-- [ ] T012 Implementar `backend/ml/ensemble/predict.py`: combina Dixon-Coles + XGBoost por promedio ponderado, pesos leídos desde MLflow (sección 6.4 de project_spec.md) — [RF-001, RF-002, RF-003, RF-004]
-- [ ] T013 Implementar `backend/ml/evaluation/calibration.py`: lookup de `CalibraciónHistórica` por (mercado, rango de probabilidad) → nivel de confianza; default "baja" si `n_observaciones` está bajo el umbral — [RF-005, RF-005b]
+- [ ] T012a Declarar las dependencias de ML en `backend/pyproject.toml` — `statsmodels`, `scipy`, `xgboost`, `scikit-learn`, `shap`, `mlflow`, `pandas`, `numpy` — listadas en `ml-design.md` §8. No estaban en el Grupo 0 porque no hacían falta hasta este punto (Art. VII) — [Art. IX]
+- [ ] T012b Implementar `backend/ml/data/`: carga de Football-Data.co.uk, tabla de alias de equipo, y el mapeo de columnas de `ml-design.md` §1 (falla explícito ante un nombre de equipo sin alias, nunca crea un `Equipo` duplicado) — [RF-008]
+- [ ] T012c Implementar `backend/ml/features/`: el feature set cerrado de `ml-design.md` §4 (forma, descanso, head-to-head, fuerza relativa de Dixon-Coles) — [RF-001, RF-002, RF-003]
+- [ ] T012d Implementar `backend/ml/models/dixon_coles/train.py`, `predict.py` y `evaluate.py`: la formulación exacta (α/β/γ/ρ/ξ) y el default `ξ = 0.0018` de `ml-design.md` §3 — [RF-001, RF-002, RF-003, RF-004]
+- [ ] T012e Implementar `backend/ml/models/xgboost/train.py`, `predict.py` y `evaluate.py` sobre el feature set de T012c — [RF-001, RF-002, RF-003]
+- [ ] T012 Implementar `backend/ml/ensemble/predict.py`: combina Dixon-Coles + XGBoost por promedio ponderado, con el algoritmo de grid search de `w` y el peso mínimo `0.85` de `ml-design.md` §5 (sección 6.4 de project_spec.md) — [RF-001, RF-002, RF-003, RF-004]
+- [ ] T013 Implementar `backend/ml/evaluation/calibration.py`: buckets, fórmula de `precision_empirica` y el default `n_observaciones = 30` de `ml-design.md` §6; lookup de `CalibraciónHistórica` por (mercado, rango de probabilidad) → nivel de confianza; "baja" si está bajo el umbral — [RF-005, RF-005b]
 - [ ] T014 Implementar `backend/app/services/predictions_service.py`: orquesta lectura de `Partido`/`Equipo`/`Predicción`, arma `low_data_warning` (a partir de `tiene_historial_suficiente`) y `head_to_head_available` — [RF-006]
 - [ ] T015 Implementar routers de `backend/app/api/matches.py` para los 4 endpoints — delgados, delegan a `predictions_service` — debe hacer pasar T001-T004 — [RF-006, RF-008]
 - [ ] T016 Implementar `backend/workers/tasks/generate_predictions.py`: tarea Celery que genera predicciones para partidos dentro de la ventana de 24h antes del kickoff (RF-007), persiste `Predicción` incl. `top_shap_features` y `version_modelo`
@@ -54,7 +59,7 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 ## Grupo 5 — Pulido
 - [ ] T023 [P] Manejo de errores 404 documentado (partido inexistente, predicción aún no generada) en las respuestas de `backend/app/api/matches.py` — [RF-006]
 - [ ] T024 [P] Actualizar `quickstart.md` reemplazando los comandos de ejemplo por los definitivos una vez implementado — [Art. IX]
-- [ ] T025 [P] Registrar en MLflow los pesos finales del ensamble (sección 6.4) como evidencia para la defensa académica — [Art. II]
+- [ ] T025 [P] Registrar en MLflow los pesos finales del ensamble siguiendo la convención de `ml-design.md` §7 (experimento por mercado, run nombrado por fecha+commit, params/métricas/artefactos) como evidencia para la defensa académica — [Art. II]
 
 ---
 **Regla:** cada tarea debe ser lo bastante concreta para completarla sin

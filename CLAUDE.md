@@ -20,7 +20,7 @@ Léelo antes de escribir nada. Si dos documentos se contradicen, **gana el de ar
 | # | Fuente | Qué manda | Regla |
 |---|---|---|---|
 | 1 | `memory/constitution.md` | Los 9 artículos no negociables | Es ley. Si algo la contradice, la contradicción es el bug |
-| 2 | `specs/00X-*/` | **CANÓNICO** para `spec`, `plan`, `data-model`, `contracts`, `quickstart`, `tasks` | Aquí se marcan los `[x]` |
+| 2 | `specs/00X-*/` | **CANÓNICO** para `spec`, `plan`, `data-model`, `contracts`, `quickstart`, `tasks`, y `ml-design` donde aplica | Aquí se marcan los `[x]` |
 | 3 | `docs/project_spec.md` | Decisiones de producto y stack | Cambiarlo exige fila en §12 + ADR si es arquitectónico |
 | 4 | `docs/adr/` | Decisiones que se apartan de lo anterior | Un ADR aceptado no se edita: se supersede |
 | 5 | `openspec/changes/00X/` | **Solo** `proposal.md` y `design.md` | Su `tasks.md` es un stub. **No lo edites** |
@@ -178,8 +178,10 @@ la fase Red del Artículo III y no debe "arreglarse" borrando o saltando los tes
 arregla implementándolos. CI usa `-m "not pendiente_implementacion"` para gatear sobre los
 guardianes estáticos, que sí están en verde.
 
-El siguiente paso real es `specs/001-prediccion-partido/tasks.md` T001-T005: escribir las
-cuatro pruebas de contrato y **verlas fallar**.
+El siguiente paso real es `specs/001-prediccion-partido/tasks.md` Grupo 0 (`B01`-`B09`): levantar
+el stack. Después, T001-T005: escribir las cuatro pruebas de contrato y **verlas fallar**.
+El algoritmo de ML (Dixon-Coles, XGBoost, ensamble, calibración) está fijado en
+`specs/001-prediccion-partido/ml-design.md` — léelo antes de tocar `backend/ml/`.
 
 Antes de proponer una implementación, lee en este orden:
 `memory/constitution.md` → `specs/00X/spec.md` → `specs/00X/plan.md` → `specs/00X/tasks.md`.

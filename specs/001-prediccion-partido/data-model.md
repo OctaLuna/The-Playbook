@@ -46,7 +46,7 @@ Tabla de lookup independiente, recalculada por el job de backtesting (sección 6
 | mercado | enum (1x2, over_under_2_5, btts) | |
 | rango_probabilidad_min / max | float | Bucket de probabilidad, ej. [0.50, 0.60) |
 | precision_empirica | float | % de aciertos observado en backtesting para ese bucket |
-| n_observaciones | int | Si es menor a un umbral mínimo (a fijar junto al criterio de reentrenamiento, sección 6.5), el badge cae a "baja" por defecto |
+| n_observaciones | int | Si es menor al umbral mínimo, el badge cae a "baja" por defecto. Algoritmo del bucket, fórmula de `precision_empirica` y el default del umbral (`30`) están en `ml-design.md` §6 — aquí solo el campo |
 | version_modelo | string | |
 
 ## Campos derivados (no se persisten)

@@ -72,6 +72,7 @@ Estas carpetas contienen la documentación técnica y funcional de cada feature 
 |---|---|---|
 | [specs/001-prediccion-partido/spec.md](../specs/001-prediccion-partido/spec.md) | Especificación funcional completa. | Define historias de usuario, requisitos, casos límite y criterios de éxito del sistema de predicción. |
 | [specs/001-prediccion-partido/data-model.md](../specs/001-prediccion-partido/data-model.md) | Modelo de datos. | Describe las entidades Partido, Equipo, Predicción y Calibración histórica con sus campos y relaciones. |
+| [specs/001-prediccion-partido/ml-design.md](../specs/001-prediccion-partido/ml-design.md) | Diseño de ML. | Fija el algoritmo que `plan.md` y `data-model.md` no fijan: mapeo de Football-Data.co.uk, fórmula de Dixon-Coles, features de XGBoost, ensamble y calibración, con sus hiperparámetros y defaults. Es lo que hace falta leer antes de escribir cualquier `train.py`. |
 | [specs/001-prediccion-partido/contracts/matches-api.md](../specs/001-prediccion-partido/contracts/matches-api.md) | Contrato API. | Define los endpoints y respuestas esperadas para partidos y predicciones. |
 | [specs/001-prediccion-partido/quickstart.md](../specs/001-prediccion-partido/quickstart.md) | Guía de validación manual. | Explica cómo probar funcionalmente la feature con escenarios reales. |
 | [specs/001-prediccion-partido/plan.md](../specs/001-prediccion-partido/plan.md) | Plan técnico. | Detalla la estrategia de implementación y cómo se encajan los componentes del sistema. |
