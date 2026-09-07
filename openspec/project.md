@@ -32,7 +32,8 @@ Detalle completo y justificación de cada elección: `docs/project_spec.md`, sec
 - `backend/`, `frontend/`, `infra/`, `docs/` — según la sección 10 de `docs/project_spec.md`.
 
 ## Cómo usar este proyecto con OpenSpec
-- Los tres changes actuales (`001-prediccion-partido`, `002-explicacion-lenguaje-natural`, `003-track-record-publico`) están en estado de **propuesta**, no implementados — por eso `openspec/specs/` todavía está vacío. Al completar e implementar cada uno, se archiva (`openspec archive <id>`) y sus specs delta se fusionan a `openspec/specs/<capability>/spec.md`.
+- Los cuatro changes actuales (`001-prediccion-partido`, `002-explicacion-lenguaje-natural`, `003-track-record-publico`, `004-interfaz-web`) están en estado de **propuesta**, no implementados — por eso `openspec/specs/` todavía está vacío. Al completar e implementar cada uno, se archiva (`openspec archive <id>`) y sus specs delta se fusionan a `openspec/specs/<capability>/spec.md`.
+- Cada `### Requirement:` de un spec delta declara qué requisitos del árbol canónico cubre, con `<!-- rf: RF-00X, RF-00Y -->` bajo el encabezado. `npm run audit:sdd` verifica que esos RF existan y que ninguno del spec canónico quede sin cubrir, de modo que los dos árboles no puedan volver a desincronizarse en silencio.
 - El detalle de modelo de datos y contratos de API de cada change vive en `specs/00X-.../data-model.md` y `specs/00X-.../contracts/` (spec-kit) — el `design.md` de cada change de OpenSpec apunta ahí en vez de repetirlo.
 - **Las tareas se marcan `[x]` solo en `specs/00X-.../tasks.md`.** El archivo homónimo bajo `changes/` es un stub.
 - `002-explicacion-lenguaje-natural` depende de `001-prediccion-partido` (usa `Predicción.top_shap_features`); `003-track-record-publico` depende de `001` (usa `Predicción.version_modelo` y `Partido.resultado_real`).

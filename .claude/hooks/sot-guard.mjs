@@ -27,6 +27,16 @@ if (!ruta) process.exit(0);
 const stub = /openspec\/changes\/([^/]+)\/tasks\.md$/.exec(ruta);
 if (stub) {
   const id = stub[1];
+
+  // Crear el stub de un change nuevo es legítimo; lo que no lo es es poner tareas
+  // reales ahí. Se permite la escritura solo si el contenido se declara stub, de modo
+  // que el hook no bloquee el andamiaje de una feature nueva pero siga impidiendo la
+  // duplicación que motivó su existencia.
+  const contenido = evento?.tool_input?.content ?? "";
+  const esStub =
+    /ver fuente única/i.test(contenido) && /no edites este archivo/i.test(contenido);
+  const tieneTareas = /^-\s+\[[ xX]\]/m.test(contenido);
+  if (contenido && esStub && !tieneTareas) process.exit(0);
   console.error(
     `BLOQUEADO: openspec/changes/${id}/tasks.md es un stub, no la fuente de verdad.\n\n` +
     `Las tareas de este change viven en specs/${id}/tasks.md, y ahí es donde se marcan\n` +

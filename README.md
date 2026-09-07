@@ -31,6 +31,11 @@ contrato de `001-prediccion-partido` y verlas fallar.
 | [001 — Predicción de partido](specs/001-prediccion-partido/spec.md) | Especificado |
 | [002 — Explicación en lenguaje natural](specs/002-explicacion-lenguaje-natural/spec.md) | Especificado |
 | [003 — Track record público](specs/003-track-record-publico/spec.md) | Especificado |
+| [004 — Interfaz web](specs/004-interfaz-web/spec.md) | Especificado |
+
+El primer trabajo es el **Grupo 0** de [`001/tasks.md`](specs/001-prediccion-partido/tasks.md):
+levantar el stack (docker-compose, app FastAPI, Alembic, fixtures) para que las pruebas de
+contrato se puedan escribir.
 
 ## Cómo está organizado
 

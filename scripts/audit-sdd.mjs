@@ -235,6 +235,72 @@ function revisarEARS(rfs) {
   }
 }
 
+/**
+ * Comprueba que los spec delta de OpenSpec sigan cubriendo los requisitos del árbol
+ * canónico. La auditoría SDD encontró los dos árboles desincronizados —y, peor, dos
+ * requisitos que solo existían en el delta, con la capa de propuesta por delante de la
+ * fuente de verdad—. Cada `### Requirement:` declara qué RF cubre con
+ * `<!-- rf: RF-00X, RF-00Y -->`, y aquí se verifica que esos RF existan y que ninguno
+ * quede sin cubrir.
+ */
+function revisarDeltasOpenSpec(rfs) {
+  const raizChanges = join(ROOT, "openspec", "changes");
+  if (!existsSync(raizChanges)) return;
+
+  for (const f of walk(raizChanges)) {
+    const r = rel(f);
+    const m = /^openspec\/changes\/([^/]+)\/specs\/[^/]+\/spec\.md$/.exec(r);
+    if (!m) continue;
+
+    const feature = m[1];
+    const canonico = rfs.get(feature);
+    if (!canonico) {
+      err(r, 0, `El delta de ${feature} no tiene spec canónico en specs/${feature}/`,
+          "spec-kit es canónico: todo change debe respaldarse en un spec de specs/");
+      continue;
+    }
+
+    const cubiertos = new Set();
+    let ultimoRequisito = null;
+    let ultimaLinea = 0;
+
+    lines(f).forEach((l, i) => {
+      const req = /^###\s+Requirement:\s*(.+)$/.exec(l);
+      if (req) {
+        if (ultimoRequisito) {
+          err(r, ultimaLinea, `El requisito "${ultimoRequisito}" no declara qué RF cubre`,
+              "Añade `<!-- rf: RF-00X -->` justo debajo del encabezado");
+        }
+        ultimoRequisito = req[1].trim();
+        ultimaLinea = i + 1;
+        return;
+      }
+      const anot = /<!--\s*rf:\s*([^>]+?)\s*-->/.exec(l);
+      if (!anot) return;
+      ultimoRequisito = null;
+      for (const id of anot[1].split(",").map((x) => x.trim()).filter(Boolean)) {
+        if (!canonico.rfs.has(id)) {
+          err(r, i + 1, `El delta cita ${id}, que no existe en ${canonico.file}`,
+              `Requisitos canónicos: ${[...canonico.rfs.keys()].join(", ")}`);
+        } else {
+          cubiertos.add(id);
+        }
+      }
+    });
+
+    if (ultimoRequisito) {
+      err(r, ultimaLinea, `El requisito "${ultimoRequisito}" no declara qué RF cubre`,
+          "Añade `<!-- rf: RF-00X -->` justo debajo del encabezado");
+    }
+
+    const sinCubrir = [...canonico.rfs.keys()].filter((id) => !cubiertos.has(id));
+    if (sinCubrir.length) {
+      err(r, 0, `El delta no cubre ${sinCubrir.join(", ")} del spec canónico`,
+          `Añade el requisito que falta, o anótalo en uno existente. Ver ${canonico.file}`);
+    }
+  }
+}
+
 /* --------------------------------------------------------------------- main */
 
 const secciones = seccionesDelSpecTecnico();
@@ -244,6 +310,7 @@ const rfs = requisitosFuncionales();
 const ts = tareas();
 revisarTrazabilidad(rfs, ts);
 revisarEARS(rfs);
+revisarDeltasOpenSpec(rfs);
 
 /* ------------------------------------------------------------------ salida */
 

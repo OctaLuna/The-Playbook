@@ -54,6 +54,14 @@ Estas carpetas representan features propuestas antes de implementarlas.
 | [openspec/changes/003-track-record-publico/tasks.md](../openspec/changes/003-track-record-publico/tasks.md) | Plan de trabajo. | Establece la secuencia operativa para implementar la feature. |
 | [openspec/changes/003-track-record-publico/specs/track-record-publico/spec.md](../openspec/changes/003-track-record-publico/specs/track-record-publico/spec.md) | Especificación delta del track record. | Define los requisitos del panel público y las métricas a exponer. |
 
+### 4.4 Change 004 — Interfaz web
+
+| Archivo | Descripción | Para qué sirve |
+|---|---|---|
+| [openspec/changes/004-interfaz-web/proposal.md](../openspec/changes/004-interfaz-web/proposal.md) | Propuesta de la interfaz. | Explica por qué el MVP necesita las tres vistas: 001-003 entregan API, y el product goal promete una plataforma web accesible. |
+| [openspec/changes/004-interfaz-web/design.md](../openspec/changes/004-interfaz-web/design.md) | Diseño de la interfaz. | Resume el enfoque (tipos derivados de los contratos, TanStack Query, sin lógica de negocio) y remite al plan de spec-kit. |
+| [openspec/changes/004-interfaz-web/specs/interfaz-web/spec.md](../openspec/changes/004-interfaz-web/specs/interfaz-web/spec.md) | Especificación delta. | Define las tres vistas, sus estados de carga/error/ausencia y los requisitos de accesibilidad. |
+
 ## 5. Especificaciones oficiales del MVP
 
 Estas carpetas contienen la documentación técnica y funcional de cada feature en formato spec-kit.
@@ -90,6 +98,17 @@ Estas carpetas contienen la documentación técnica y funcional de cada feature 
 | [specs/003-track-record-publico/quickstart.md](../specs/003-track-record-publico/quickstart.md) | Guía de validación manual. | Explora cómo probar el panel agregado, filtros y validación del baseline del mercado. |
 | [specs/003-track-record-publico/plan.md](../specs/003-track-record-publico/plan.md) | Plan técnico. | Explica cómo se calculan métricas y cómo se integra con ML y base de datos. |
 | [specs/003-track-record-publico/tasks.md](../specs/003-track-record-publico/tasks.md) | Tareas. | Guia la construcción del track record. |
+
+### 5.4 Feature 004 — Interfaz web
+
+| Archivo | Descripción | Para qué sirve |
+|---|---|---|
+| [specs/004-interfaz-web/spec.md](../specs/004-interfaz-web/spec.md) | Especificación funcional. | Define las tres vistas del MVP, sus estados de carga, error y ausencia, y los requisitos de accesibilidad. |
+| [specs/004-interfaz-web/data-model.md](../specs/004-interfaz-web/data-model.md) | Tipos y estado del cliente. | No persiste datos: documenta los tipos derivados de los contratos y las claves de caché de TanStack Query. |
+| [specs/004-interfaz-web/contracts/README.md](../specs/004-interfaz-web/contracts/README.md) | Contratos consumidos. | Enlaza los tres contratos de backend en vez de copiarlos; esta feature no define contratos propios. |
+| [specs/004-interfaz-web/quickstart.md](../specs/004-interfaz-web/quickstart.md) | Guía de validación manual. | Recorrido completo, caída de la API, partido sin explicación y comprobación de accesibilidad. |
+| [specs/004-interfaz-web/plan.md](../specs/004-interfaz-web/plan.md) | Plan técnico. | Next.js 15, TanStack Query y las decisiones de estado, con sus alternativas. |
+| [specs/004-interfaz-web/tasks.md](../specs/004-interfaz-web/tasks.md) | Tareas. | 34 tareas, desde el andamiaje del proyecto hasta accesibilidad. |
 
 ## 6. Documentos de resumen del proyecto
 

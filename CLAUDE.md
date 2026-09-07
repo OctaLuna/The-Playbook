@@ -29,15 +29,19 @@ Léelo antes de escribir nada. Si dos documentos se contradicen, **gana el de ar
 `tasks.md` estaban duplicados byte a byte entre ambos árboles; ahora hay uno solo y el
 hook `.claude/hooks/sot-guard.mjs` bloquea las escrituras al stub.
 
-### Los tres features del MVP
+### Los cuatro features del MVP
 
 | ID | Capability | Depende de |
 |---|---|---|
 | `001-prediccion-partido` | 1X2, O/U 2.5, BTTS, xG, badge de confianza calibrado | — |
 | `002-explicacion-lenguaje-natural` | Explicación RAG + SHAP, preguntas de seguimiento | `001` (`Predicción.top_shap_features`) |
-| `003-track-record-publico` | Panel público de desempeño vs. baseline de mercado | `001` (`version_modelo`, `resultado_real`) |
+| `003-track-record-publico` | Panel de desempeño de los 3 mercados vs. baseline de mercado | `001` (`version_modelo`, `resultado_real`) |
+| `004-interfaz-web` | Las tres vistas: lista, ficha de partido y panel público | `001` (bloqueante); `002` y `003` son degradables |
 
 Ninguno está implementado. `openspec/specs/` está vacío por eso, no por error.
+
+**El primer trabajo es el Grupo 0 de `001/tasks.md`** (tareas `B01`-`B09`): sin app FastAPI,
+docker-compose, Alembic ni fixtures, la primera prueba de contrato no se puede escribir.
 
 ---
 
@@ -134,7 +138,12 @@ Violarlas rompe el proyecto o su defensa académica. En orden de gravedad:
   *ubiquitous* (`El sistema DEBE…`), *event-driven* (`CUANDO <disparador>, el sistema
   DEBE…`), *state-driven* (`MIENTRAS <estado>, …`), *unwanted behaviour* (`SI <condición>,
   ENTONCES el sistema DEBE…`) y *optional* (`DONDE <feature presente>, …`).
-- **Toda tarea de `tasks.md` cita el RF que cubre**: sufijo `— [RF-00X]`.
+- **Toda tarea de `tasks.md` cita el RF que cubre**: sufijo `— [RF-00X]`. Las de proceso o
+  infraestructura citan el artículo: `— [Art. III]`. Los IDs son `TXXX` por feature, y `BXX`
+  para el Grupo 0 de arranque.
+- **Todo `### Requirement:` de un delta de OpenSpec declara qué RF canónicos cubre**, con
+  `<!-- rf: RF-00X, RF-00Y -->` bajo el encabezado. El validador comprueba que existan y que
+  ningún RF quede sin cubrir.
 - `spec.md` describe **qué** y **por qué**, nunca **cómo**. Nada de stack, endpoints ni
   esquemas: eso vive en `plan.md`, `data-model.md` y `contracts/`.
 - Las referencias a `docs/project_spec.md` se escriben como `sección N.M` y deben resolver
