@@ -21,6 +21,8 @@
 | Carol Zevallos | Ingeniería | Dom 18:00–20:00, Mar 18:00–20:00, Mié 18:00–20:00 | Clases 9:00–16:00 todos los días hábiles | No declara carga laboral paralela por ahora. |
 
 **Notas:**
+- El desglose técnico de quién lleva qué feature, sprint a sprint, vive en
+  [`docs/scrum/`](./scrum/README.md) — no se repite aquí.
 - Total de disponibilidad grupal confirmada: **6 horas semanales** (Dom/Mar/Mié, 2h cada día). Cualquier entrega que requiera más tiempo debe planificarse con al menos una semana de anticipación.
 - Si algún integrante tiene horarios individuales distintos a los del grupo, debe actualizar su fila en este documento vía PR.
 - **Riesgo personal declarado**: cada integrante debe completar este campo con factores que puedan afectar su disponibilidad o desempeño (ej. carga de otras materias, viajes programados, problemas de conectividad, trabajo paralelo). Esto no es opcional — un equipo que no declara riesgos reales no puede planificar con datos reales.

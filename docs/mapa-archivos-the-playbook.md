@@ -126,6 +126,15 @@ Estas carpetas contienen la documentación técnica y funcional de cada feature 
 | [docs/adr/README.md](./adr/README.md) | Índice de ADRs y cuándo escribir uno. | Exigido por la §10 de `docs/project_spec.md`: toda decisión que se aparte de ese documento se registra aquí. |
 | [docs/adr/0001-badge-confianza-calibrado.md](./adr/0001-badge-confianza-calibrado.md) | El nivel de confianza se deriva de calibración empírica. | Resuelve la contradicción entre §2.1 del spec técnico y el `RF-005` de los tres specs de feature. |
 
+## 6.2 Planificación Scrum
+
+| Archivo | Descripción | Para qué sirve |
+|---|---|---|
+| [docs/scrum/README.md](./scrum/README.md) | Metodología, cadencia y ceremonias. | Explica cómo se organizan los 8 sprints y cómo leer el resto de la carpeta. |
+| [docs/scrum/equipo-y-tracks.md](./scrum/equipo-y-tracks.md) | Quién lleva qué track y por qué. | Fija los límites de archivo por persona y las zonas donde hay que coordinar antes de tocar. |
+| [docs/scrum/product-backlog.md](./scrum/product-backlog.md) | Las 126 tareas agrupadas por persona. | Referencia IDs de `specs/00X-*/tasks.md`, no los duplica — es un índice, no una segunda fuente. |
+| [docs/scrum/sprint-01.md](./scrum/sprint-01.md) … [sprint-08.md](./scrum/sprint-08.md) | Un archivo por sprint. | Objetivo, tareas por persona, riesgos y Definition of Sprint Done de cada quincena. |
+
 ## 7. Regla mental para entender todo el repo
 
 Precedencia entre fuentes: **si dos documentos se contradicen, gana el de arriba.**

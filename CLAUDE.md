@@ -24,6 +24,7 @@ Léelo antes de escribir nada. Si dos documentos se contradicen, **gana el de ar
 | 3 | `docs/project_spec.md` | Decisiones de producto y stack | Cambiarlo exige fila en §12 + ADR si es arquitectónico |
 | 4 | `docs/adr/` | Decisiones que se apartan de lo anterior | Un ADR aceptado no se edita: se supersede |
 | 5 | `openspec/changes/00X/` | **Solo** `proposal.md` y `design.md` | Su `tasks.md` es un stub. **No lo edites** |
+| 6 | `docs/scrum/` | Quién hace cada tarea y en qué sprint — **nunca** qué es la tarea | Referencia IDs de `specs/00X-*/tasks.md`, no los duplica |
 
 **spec-kit es canónico. OpenSpec es la capa de propuesta.** Hasta la auditoría SDD los
 `tasks.md` estaban duplicados byte a byte entre ambos árboles; ahora hay uno solo y el
