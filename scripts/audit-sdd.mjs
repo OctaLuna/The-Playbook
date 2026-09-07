@@ -95,7 +95,9 @@ function tareas() {
     const feature = rel(f).split("/")[1];
     const ts = [];
     lines(f).forEach((l, i) => {
-      const m = /^-\s+\[([ xX])\]\s+(T\d+[a-z]?)/.exec(l);
+      // TXXX = tarea de feature. BXX = tarea de arranque del stack (Grupo 0 de 001),
+      // que traza a un artículo de la constitución y no a un requisito de producto.
+      const m = /^-\s+\[([ xX])\]\s+([TB]\d+[a-z]?)/.exec(l);
       if (!m) return;
       ts.push({
         id: m[2],

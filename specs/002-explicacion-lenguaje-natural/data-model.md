@@ -10,19 +10,36 @@ Relación 1:1 con `Predicción` (entidad de 001-prediccion-partido).
 | id | UUID | PK |
 | prediccion_id | FK → Predicción (001) | único |
 | texto | text | Explicación en lenguaje natural, español |
-| evidencia_citada_ids | array de FK → Evidencia | Solo evidencia con `fecha_publicacion < fecha_kickoff` del partido |
 | es_fallback_sin_evidencia | boolean | true si se usó el mensaje de ausencia de datos (Historia 2) |
 | shap_features_usadas | JSON | Copia de `top_shap_features` de la Predicción, congelada al momento de generación (trazabilidad) |
 | generado_en | datetime | |
-| actualizado_en | datetime | Se actualiza solo si se regenera por cambio de evidencia (sección 7.5) |
+| actualizado_en | datetime | Se actualiza solo si se regenera por cambio de evidencia (RF-006) |
+
+## ExplicacionEvidencia (tabla puente)
+Qué evidencia citó cada explicación. Es una tabla y no un array de identificadores dentro de
+`Explicación`: PostgreSQL no aplica integridad referencial sobre los elementos de un array, así
+que una evidencia borrada dejaría identificadores colgando sin que la base de datos lo impidiera.
+El Artículo VIII pide además usar el framework directo, y esta es la relación N:M que SQLAlchemy
+modela de forma nativa.
+
+| Campo | Tipo | Notas |
+|---|---|---|
+| explicacion_id | FK → Explicación | PK compuesta |
+| evidencia_id | FK → Evidencia | PK compuesta |
+| orden | int | Posición de la cita en el texto, para renderizarlas en el mismo orden |
+
+Toda fila aquí debe cumplir `Evidencia.fecha_publicacion < Partido.fecha_kickoff` (Artículo IV).
+Es una invariante del servicio, verificada por la prueba de integración `T001`.
 
 ## Evidencia (noticia indexada)
 | Campo | Tipo | Notas |
 |---|---|---|
 | id | UUID | PK |
+| url | string | **Único.** Clave de deduplicación: `reindex_rag` corre periódicamente y sin esto reingestaría la misma noticia en cada pasada. Se expone en la API para que la evidencia sea verificable (pilar 2) |
+| titulo | string | Titular del artículo. Se expone junto a la `url`: una cita sin titular ni enlace no es verificable por el usuario |
 | texto_sanitizado | text | Ya pasó por `backend/rag/ingestion/` (Artículo VI de la constitución) |
-| fecha_publicacion | datetime | Verificada contra `fecha_kickoff` del partido en cada query de retrieval (7.3) |
-| embedding | vector (Titan V2) | Índice HNSW en pgvector |
+| fecha_publicacion | datetime | NOT NULL. Verificada contra `fecha_kickoff` del partido en cada query de retrieval (sección 7.3) |
+| embedding | **vector(1024)** | Amazon Titan Text Embeddings V2, dimensión por defecto. pgvector exige la dimensión en el DDL, así que fijarla aquí es requisito para poder escribir la migración `T008`. Índice HNSW |
 | equipo_relacionado_id | FK → Equipo (001), opcional | |
 | partido_relacionado_id | FK → Partido (001), opcional | |
 | fuente | string | News API / RSS |
@@ -42,5 +59,19 @@ N:1 con `Explicación` (Historia 4).
 ```
 Predicción (001) (1) ── (1) Explicación
 Explicación (1) ──< PreguntaSeguimiento (N)
-Explicación (N) ──> Evidencia (N, vía evidencia_citada_ids)
+Explicación (N) >──< Evidencia (N, vía ExplicacionEvidencia)
+Evidencia (N) ──> Equipo (001)   (opcional)
+Evidencia (N) ──> Partido (001)  (opcional)
 ```
+
+## Índices y restricciones
+
+| Tabla | Restricción | Por qué |
+|---|---|---|
+| `Explicación` | `unique(prediccion_id)` | La relación es 1:1; sin esto nada impide dos explicaciones para la misma predicción |
+| `Evidencia` | `unique(url)` | Deduplicación del reindexado periódico (`T018`) |
+| `Evidencia` | `fecha_publicacion NOT NULL` | Sin fecha no se puede aplicar el filtro temporal del Artículo IV, y una fila sin ella sería invisible al filtro en vez de excluida |
+| `Evidencia` | índice HNSW sobre `embedding` | Búsqueda vectorial (`T008`) |
+| `Evidencia` | índice sobre `fecha_publicacion` | Toda query de retrieval filtra por este campo (sección 7.3) |
+| `ExplicacionEvidencia` | PK compuesta `(explicacion_id, evidencia_id)` | Impide citar dos veces la misma evidencia en una explicación |
+| `PreguntaSeguimiento` | índice sobre `explicacion_id` | Listado de preguntas por explicación |

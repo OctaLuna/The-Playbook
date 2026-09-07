@@ -4,6 +4,23 @@
 **Convención:** `[P]` = se puede ejecutar en paralelo con otras tareas `[P]`
 del mismo grupo (no comparten archivos ni dependen entre sí).
 
+## Grupo 0 — Arranque del stack
+
+> Es el primer trabajo del proyecto. Sin él, `T001` no se puede escribir: no hay app FastAPI
+> que importar, ni base de datos contra la que correr, ni dependencias declaradas. Las tareas
+> `B0X` trazan a artículos de la constitución en vez de a un `RF-00X` porque son
+> infraestructura, no capacidades de producto. Bloquean también a 002, 003 y 004.
+
+- [ ] B01 Declarar las dependencias reales en `backend/pyproject.toml` (hoy `dependencies = []`): `fastapi`, `uvicorn[standard]`, `sqlalchemy[asyncio]`, `asyncpg`, `alembic`, `pydantic-settings`, `celery`, `redis`, y `httpx` en el extra `dev` — [Art. IX]
+- [ ] B02 `infra/docker-compose.yml`: PostgreSQL 16 con extensión **pgvector**, Redis, y healthchecks en ambos. Es el servicio real que exige el Artículo IX y el `docker-compose up` con el que empiezan los tres `quickstart.md` — [Art. IX]
+- [ ] B03 [P] `.env.example` con placeholders (nunca valores reales) y `backend/app/core/config.py` con Pydantic Settings leyendo `DATABASE_URL`, `REDIS_URL` y las credenciales IAM/Bedrock — [Art. VI]
+- [ ] B04 `backend/app/db/session.py`: engine async, `async_sessionmaker`, y la dependencia `get_session` que consumirán los routers — [Art. VIII]
+- [ ] B05 Fixtures en `backend/tests/conftest.py`: cliente async vía `httpx.ASGITransport` y sesión de BD contra el **Postgres real** del compose, con rollback por test. Sin mocks (Art. IX) — [Art. IX]
+- [ ] B06 Prueba de contrato `GET /health` en `backend/tests/contract/test_health.py` y **confirmar que falla** — [Art. III]
+- [ ] B07 `backend/app/main.py`: app FastAPI mínima con `/health`, que hace pasar B06. Sin lógica de negocio — [Art. I]
+- [ ] B08 `backend/alembic.ini` y `backend/alembic/env.py` apuntando al metadata declarativo, con una revisión inicial vacía que habilite `CREATE EXTENSION vector` — [Art. IX]
+- [ ] B09 Verificar el arranque completo: `docker compose -f infra/docker-compose.yml up -d` levanta, `pytest` corre, `GET /health` responde 200, y `alembic upgrade head` aplica sin error — [Art. IX]
+
 ## Grupo 1 — Contratos y pruebas (test-first)
 - [ ] T001 [P] Prueba de contrato GET `/api/leagues` en `backend/tests/contract/test_leagues.py` — [RF-008]
 - [ ] T002 [P] Prueba de contrato GET `/api/matches/upcoming` (con filtro `league` y paginación) en `backend/tests/contract/test_matches_upcoming.py` — [RF-008]
@@ -12,11 +29,11 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 - [ ] T005 Confirmar que T001-T004 fallan (fase Red) antes de continuar — [Art. III]
 
 ## Grupo 2 — Modelo de datos
-- [ ] T006 [P] Crear modelo SQLAlchemy `Partido` en `backend/app/models/partido.py` (enum `liga` con las 5 ligas, enum `estado`: programado/jugado/pospuesto/cancelado) — [RF-008]
+- [ ] T006 [P] Crear modelo SQLAlchemy `Partido` en `backend/app/models/partido.py` (enum `liga` con las 5 ligas, enum `estado`: programado/jugado/pospuesto/cancelado, `resultado_real` nullable) — [RF-008, RF-009]
 - [ ] T007 [P] Crear modelo SQLAlchemy `Equipo` en `backend/app/models/equipo.py` (incluye `tiene_historial_suficiente`) — [RF-001, RF-010]
-- [ ] T008 [P] Crear modelo SQLAlchemy `Predicción` en `backend/app/models/prediccion.py` (incluye `top_shap_features` como campo interno JSON, `version_modelo`) — [RF-001, RF-002, RF-003, RF-004]
+- [ ] T008 [P] Crear modelo SQLAlchemy `Predicción` en `backend/app/models/prediccion.py`: `top_shap_features` como campo interno JSON, `version_modelo`, y **solo** `prob_over_2_5` y `prob_btts_si` — los complementos se derivan en el schema, no se persisten — [RF-001, RF-002, RF-003, RF-004]
 - [ ] T009 [P] Crear modelo SQLAlchemy `CalibraciónHistórica` en `backend/app/models/calibracion_historica.py` — [RF-005, RF-005b]
-- [ ] T010 Migración Alembic inicial para las 4 tablas (depende de T006-T009) — [RF-001, RF-005, RF-008]
+- [ ] T010 Migración Alembic inicial: las 4 tablas más los índices y restricciones de `data-model.md` — índice compuesto `(fecha_kickoff, estado)`, `unique(partido_id)` en `Predicción`, y los CHECK de que las probabilidades sumen 1.0 y estén en `[0,1]` (depende de T006-T009) — [RF-001, RF-005, RF-008]
 - [ ] T011 [P] Crear schemas Pydantic (`MatchOut`, `PredictionOut`, `LeagueOut`) en `backend/app/schemas/matches.py`, siguiendo exactamente los contratos de `contracts/matches-api.md` (sin incluir `top_shap_features`, que es interno) — [RF-006, RF-008]
 
 ## Grupo 3 — Implementación (hace pasar las pruebas del Grupo 1)

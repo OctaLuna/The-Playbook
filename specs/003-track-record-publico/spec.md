@@ -45,15 +45,17 @@ Como analista amateur, quiero saber si el modelo predice mejor o peor que las cu
 > Escritos en sintaxis **EARS**. El patrón de cada requisito está anotado entre paréntesis
 > al final. Ver `CLAUDE.md` § Convenciones de documentación.
 
-- **RF-001:** El sistema DEBE mostrar públicamente el porcentaje de aciertos del modelo sobre los últimos N partidos predichos. *(ubiquitous)*
-- **RF-002:** El sistema DEBE mostrar públicamente el Brier score y/o log-loss del modelo sobre el mismo período que el porcentaje de aciertos, de forma consistente con la métrica usada internamente para validar el modelo (sección 9). *(ubiquitous)*
-- **RF-003:** El sistema DEBE permitir a cualquier usuario auditar partido a partido la predicción original contra el resultado real. *(ubiquitous)*
+- **RF-001:** El sistema DEBE mostrar públicamente el porcentaje de aciertos del modelo sobre los últimos N partidos predichos, **por separado para cada uno de los tres mercados probabilísticos**: 1X2, Over/Under 2.5 y BTTS. *(ubiquitous)*
+- **RF-002:** El sistema DEBE mostrar públicamente el Brier score y el log-loss de cada mercado sobre el mismo período que el porcentaje de aciertos, de forma consistente con la métrica usada internamente para validar el modelo (sección 9). *(ubiquitous)*
+- **RF-003:** El sistema DEBE permitir a cualquier usuario auditar partido a partido las tres predicciones originales (1X2, O/U 2.5, BTTS) contra el resultado real. *(ubiquitous)*
 - **RF-004:** DONDE un partido de la ventana tiene cuota de mercado registrada, el sistema DEBE incluirlo en la comparación del log-loss del modelo contra el log-loss implícito del baseline de mercado. *(optional feature)*
 - **RF-005:** SI una respuesta del track record fuera a incluir cuotas individuales por casa de apuestas, ENTONCES el sistema DEBE omitirlas: solo se expone el agregado del baseline, nunca un comparador de casas de apuestas. *(unwanted behaviour)*
 - **RF-006:** La ventana principal del track record público DEBE cubrir los últimos 50 partidos predichos. *(ubiquitous)*
 - **RF-007:** El track record público DEBE poder filtrarse por liga; no está limitado a un único agregado global. *(ubiquitous)*
 - **RF-008:** CUANDO un partido predicho pasa a estado jugado, el sistema DEBE incorporarlo al agregado del track record en la siguiente ejecución del job diario. *(event-driven)*
 - **RF-009:** MIENTRAS haya menos de 50 partidos jugados disponibles, el sistema DEBE mostrar el agregado sobre los partidos existentes indicando explícitamente el tamaño real de la muestra. *(state-driven)*
+- **RF-010:** MIENTRAS la ventana del track record abarque predicciones de más de una versión del modelo, el sistema DEBE indicarlo explícitamente y conservar la versión que generó cada predicción en el detalle partido a partido, en vez de presentar la serie como continua. *(state-driven)*
+- **RF-011:** SI un partido predicho está en estado pospuesto o cancelado, ENTONCES el sistema DEBE excluirlo de todas las métricas del track record hasta que pase a jugado. *(unwanted behaviour)*
 
 ### Requisitos no funcionales
 
@@ -69,6 +71,8 @@ Como analista amateur, quiero saber si el modelo predice mejor o peor que las cu
 | Comparador de casas de apuestas como funcionalidad visible | Descartado — `docs/project_spec.md` §2.4 y Artículo V |
 | Cuotas individuales por bookmaker en cualquier respuesta pública | Prohibido por RF-005; solo el agregado del baseline |
 | Actualización en tiempo real del panel | Job diario (RNF-002). Tiempo real no aporta al pilar de transparencia |
+| Auditoría del xG contra los goles reales | Iteración posterior. El xG no es una probabilidad: necesita su propia métrica de error (MAE o similar) y su propia columna de panel, y no encaja en el agregado de aciertos/Brier/log-loss que comparten los tres mercados probabilísticos |
+| Baseline de mercado para O/U 2.5 y BTTS | Las fuentes históricas (sección 6.2) solo dan cuota implícita de 1X2. Se compara donde hay con qué comparar |
 | Ventanas configurables por el usuario (10, 100, 500 partidos) | Iteración posterior. El MVP fija 50 (RF-006) |
 | Detección automática de drift a partir del track record | Stretch goal — `docs/project_spec.md` §2.3 |
 

@@ -48,6 +48,13 @@ Cuatro entidades: `Partido` (con estado programado/jugado/pospuesto/cancelado), 
 Cuatro endpoints de solo lectura: listar ligas cubiertas, listar próximos partidos (filtrable por liga), detalle de un partido, y la predicción de un partido. El detalle completo de request/response está en `contracts/matches-api.md`.
 
 ## Orden de creación de archivos (test-first, obligatorio)
+
+0. **Arranque del stack (Grupo 0 de `tasks.md`, tareas B01-B09).** Nada de lo que sigue es
+   escribible sin esto: las pruebas de contrato necesitan una app FastAPI que importar y un
+   Postgres real contra el que correr (Artículo IX). En orden: dependencias en
+   `backend/pyproject.toml` → `infra/docker-compose.yml` → `backend/app/core/config.py` →
+   `backend/app/db/session.py` → fixtures de `backend/tests/conftest.py` → prueba de `/health`
+   **en rojo** → `backend/app/main.py` → Alembic.
 1. `contracts/matches-api.md` — ya definido en este plan.
 2. Tests, en este orden:
    - Pruebas de contrato de los 4 endpoints (`backend/tests/contract/test_matches_api.py`)

@@ -12,9 +12,10 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 
 ## Grupo 2 — Modelo de datos
 - [ ] T005 [P] Crear modelo SQLAlchemy `Explicación` en `backend/app/models/explicacion.py` (incluye `es_fallback_sin_evidencia`, `shap_features_usadas`) — [RF-001, RF-003]
-- [ ] T006 [P] Crear modelo SQLAlchemy `Evidencia` en `backend/app/models/evidencia.py` (columna `embedding` vector, `fecha_publicacion` NOT NULL) — [RF-002]
+- [ ] T006 [P] Crear modelo SQLAlchemy `Evidencia` en `backend/app/models/evidencia.py`: `embedding` como `Vector(1024)` (Titan V2), `fecha_publicacion` NOT NULL, y `url` único + `titulo` — [RF-001, RF-002]
+- [ ] T006b [P] Crear la tabla puente `ExplicacionEvidencia` en `backend/app/models/explicacion_evidencia.py` con PK compuesta `(explicacion_id, evidencia_id)` y columna `orden` — sustituye al array de identificadores, que no permitiría integridad referencial — [RF-001]
 - [ ] T007 [P] Crear modelo SQLAlchemy `PreguntaSeguimiento` en `backend/app/models/pregunta_seguimiento.py` — [RF-005]
-- [ ] T008 Migración Alembic: habilitar extensión `pgvector`, índice HNSW sobre `Evidencia.embedding`, y las 3 tablas nuevas (depende de T005-T007) — [RF-002]
+- [ ] T008 Migración Alembic: habilitar la extensión `vector`, crear las 4 tablas nuevas, el índice HNSW sobre `Evidencia.embedding`, el índice sobre `Evidencia.fecha_publicacion` y el `unique` sobre `Evidencia.url` (depende de T005-T007) — [RF-002]
 - [ ] T009 [P] Crear schemas Pydantic (`ExplanationOut`, `FollowUpRequest`, `FollowUpOut`) en `backend/app/schemas/explanations.py`, siguiendo `contracts/explanations-api.md` — [RF-001, RF-005]
 
 ## Grupo 3 — Implementación (hace pasar las pruebas del Grupo 1)
