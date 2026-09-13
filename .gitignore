@@ -47,3 +47,5 @@ desktop.ini
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+CLAUDE.local.md
