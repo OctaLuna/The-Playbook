@@ -107,4 +107,6 @@ Modificar esta constitución requiere:
 
 | Fecha | Artículo modificado | Razón |
 |---|---|---|
-| | | |
+<!-- audit-sdd:ignore-start — esta fila cita a propósito las rutas antiguas, ya corregidas -->
+| 2026-09-06 | I, II, IV, V, VI, IX | Normalización de rutas al prefijo canónico `backend/` (antes `ml/`, `rag/`, `app/`, ambiguas frente a la estructura real del monorepo) y precisión del alcance del Artículo II: el ensamble en `backend/ml/ensemble/` no está sujeto al contrato `train/predict/evaluate`, porque no se entrena. Parte de la Fase 0 de la auditoría SDD que cerró el grafo de referencias roto del repositorio (commit `2f8df88`). |
+<!-- audit-sdd:ignore-end -->
