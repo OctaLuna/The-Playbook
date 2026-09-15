@@ -27,6 +27,18 @@
             "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/secrets-guard.mjs\"",
             "timeout": 10,
             "statusMessage": "Buscando secretos..."
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/isolation-guard.mjs\"",
+            "timeout": 10,
+            "statusMessage": "Verificando aislamiento del Artículo I..."
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/red-phase-guard.mjs\"",
+            "timeout": 10,
+            "statusMessage": "Verificando fase Red del Artículo III..."
           }
         ]
       }
@@ -43,9 +55,21 @@
           },
           {
             "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/mypy-check.mjs\"",
+            "timeout": 30,
+            "statusMessage": "Comprobando tipos con mypy..."
+          },
+          {
+            "type": "command",
             "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/spec-lint.mjs\"",
             "timeout": 40,
             "statusMessage": "Validando consistencia SDD..."
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/test-echo.mjs\"",
+            "timeout": 35,
+            "statusMessage": "Corriendo el test recién escrito..."
           }
         ]
       }

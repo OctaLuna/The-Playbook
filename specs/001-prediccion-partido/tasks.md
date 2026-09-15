@@ -11,15 +11,15 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 > `B0X` trazan a artículos de la constitución en vez de a un `RF-00X` porque son
 > infraestructura, no capacidades de producto. Bloquean también a 002, 003 y 004.
 
-- [ ] B01 Declarar las dependencias reales en `backend/pyproject.toml` (hoy `dependencies = []`): `fastapi`, `uvicorn[standard]`, `sqlalchemy[asyncio]`, `asyncpg`, `alembic`, `pydantic-settings`, `celery`, `redis`, y `httpx` en el extra `dev` — [Art. IX]
-- [ ] B02 `infra/docker-compose.yml`: PostgreSQL 16 con extensión **pgvector**, Redis, y healthchecks en ambos. Es el servicio real que exige el Artículo IX y el `docker-compose up` con el que empiezan los tres `quickstart.md` — [Art. IX]
-- [ ] B03 [P] `.env.example` con placeholders (nunca valores reales) y `backend/app/core/config.py` con Pydantic Settings leyendo `DATABASE_URL`, `REDIS_URL` y las credenciales IAM/Bedrock — [Art. VI]
-- [ ] B04 `backend/app/db/session.py`: engine async, `async_sessionmaker`, y la dependencia `get_session` que consumirán los routers — [Art. VIII]
-- [ ] B05 Fixtures en `backend/tests/conftest.py`: cliente async vía `httpx.ASGITransport` y sesión de BD contra el **Postgres real** del compose, con rollback por test. Sin mocks (Art. IX) — [Art. IX]
-- [ ] B06 Prueba de contrato `GET /health` en `backend/tests/contract/test_health.py` y **confirmar que falla** — [Art. III]
-- [ ] B07 `backend/app/main.py`: app FastAPI mínima con `/health`, que hace pasar B06. Sin lógica de negocio — [Art. I]
-- [ ] B08 `backend/alembic.ini` y `backend/alembic/env.py` apuntando al metadata declarativo, con una revisión inicial vacía que habilite `CREATE EXTENSION vector` — [Art. IX]
-- [ ] B09 Verificar el arranque completo: `docker compose -f infra/docker-compose.yml up -d` levanta, `pytest` corre, `GET /health` responde 200, y `alembic upgrade head` aplica sin error — [Art. IX]
+- [x] B01 Declarar las dependencias reales en `backend/pyproject.toml` (hoy `dependencies = []`): `fastapi`, `uvicorn[standard]`, `sqlalchemy[asyncio]`, `asyncpg`, `alembic`, `pydantic-settings`, `celery`, `redis`, y `httpx` en el extra `dev` — [Art. IX]
+- [x] B02 `infra/docker-compose.yml`: PostgreSQL 16 con extensión **pgvector**, Redis, y healthchecks en ambos. Es el servicio real que exige el Artículo IX y el `docker-compose up` con el que empiezan los tres `quickstart.md` — [Art. IX]
+- [x] B03 [P] `.env.example` con placeholders (nunca valores reales) y `backend/app/core/config.py` con Pydantic Settings leyendo `DATABASE_URL`, `REDIS_URL` y las credenciales IAM/Bedrock — [Art. VI]
+- [x] B04 `backend/app/db/session.py`: engine async, `async_sessionmaker`, y la dependencia `get_session` que consumirán los routers — [Art. VIII]
+- [x] B05 Fixtures en `backend/tests/conftest.py`: cliente async vía `httpx.ASGITransport` y sesión de BD contra el **Postgres real** del compose, con rollback por test. Sin mocks (Art. IX) — [Art. IX]
+- [x] B06 Prueba de contrato `GET /health` en `backend/tests/contract/test_health.py` y **confirmar que falla** — [Art. III]
+- [x] B07 `backend/app/main.py`: app FastAPI mínima con `/health`, que hace pasar B06. Sin lógica de negocio — [Art. I]
+- [x] B08 `backend/alembic.ini` y `backend/alembic/env.py` apuntando al metadata declarativo, con una revisión inicial vacía que habilite `CREATE EXTENSION vector` — [Art. IX]
+- [x] B09 Verificar el arranque completo: `docker compose -f infra/docker-compose.yml up -d` levanta, `pytest` corre, `GET /health` responde 200, y `alembic upgrade head` aplica sin error — [Art. IX]
 
 ## Grupo 1 — Contratos y pruebas (test-first)
 - [ ] T001 [P] Prueba de contrato GET `/api/leagues` en `backend/tests/contract/test_leagues.py` — [RF-008]

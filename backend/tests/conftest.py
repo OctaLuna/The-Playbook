@@ -1,19 +1,37 @@
-"""Configuración compartida de pytest.
+from collections.abc import AsyncIterator
 
-Vacío a propósito por ahora. Existe para que `pytest` corra desde el día 1 y la fase
-Red del Artículo III sea posible: no se puede "ver fallar una prueba" si la suite no
-arranca.
+import pytest_asyncio
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession
 
-Las fixtures llegan con las tareas que las necesitan. En particular, la fixture de base
-de datos debe apuntar a un **Postgres real** vía docker-compose, no a un mock
-(Artículo IX, Integration-First).
-"""
+from app.db.session import engine, get_session
+from app.main import app
 
-from __future__ import annotations
 
-import sys
-from pathlib import Path
+@pytest_asyncio.fixture
+async def db_session() -> AsyncIterator[AsyncSession]:
+    """Sesión ligada a una única conexión con una transacción externa que nunca se
+    comitea. Un `commit()` del código de la app usa un SAVEPOINT interno
+    (`join_transaction_mode="create_savepoint"`), así que el rollback final deshace todo
+    lo que pasó en el test, incluidos esos commits — Art. IX: Postgres real, sin mocks,
+    aislado por test."""
+    async with engine.connect() as connection:
+        await connection.begin()
+        session = AsyncSession(bind=connection, join_transaction_mode="create_savepoint")
+        try:
+            yield session
+        finally:
+            await session.close()
+            await connection.rollback()
 
-# `backend/` en el path para que `app`, `ml`, `rag` y `workers` se importen como
-# paquetes de primer nivel, igual que en producción.
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+@pytest_asyncio.fixture
+async def client(db_session: AsyncSession) -> AsyncIterator[AsyncClient]:
+    async def override_get_session() -> AsyncIterator[AsyncSession]:
+        yield db_session
+
+    app.dependency_overrides[get_session] = override_get_session
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        yield ac
+    app.dependency_overrides.clear()
