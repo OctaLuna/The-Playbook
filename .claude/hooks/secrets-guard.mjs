@@ -30,7 +30,9 @@ if (!contenido) process.exit(0);
 
 const PATRONES = [
   [/\bAKIA[0-9A-Z]{16}\b/, "AWS Access Key ID"],
+  [/\bASIA[0-9A-Z]{16}\b/, "AWS Access Key ID temporal (STS)"],
   [/\baws_secret_access_key\s*=\s*['"]?[A-Za-z0-9/+=]{40}/i, "AWS Secret Access Key"],
+  [/\baws_session_token\s*=\s*['"]?[A-Za-z0-9/+=]{100,}/i, "AWS Session Token"],
   [/\b(?:postgres|postgresql|redis|mysql):\/\/[^\s:/@]+:[^\s@]{4,}@/, "cadena de conexión con contraseña"],
   [/\b(RAPIDAPI_KEY|API_FOOTBALL_KEY|NEWS_API_KEY|OPENAI_API_KEY|ANTHROPIC_API_KEY)\s*=\s*['"]?(?!(?:your|xxx|<|\$\{|changeme|placeholder|tu_))\S{12,}/i, "API key real en una asignación"],
   [/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/, "clave privada"],

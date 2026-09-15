@@ -15,8 +15,10 @@ import { existsSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { extname, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { venvBin } from "./_venv.mjs";
 
 const RAIZ = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
+const RUFF = venvBin("ruff");
 
 let evento;
 try {
@@ -30,8 +32,8 @@ if (!ruta || !existsSync(ruta)) process.exit(0);
 
 /** Comandos por extensión. `npx -y` resuelve binarios locales o los descarga. */
 const POR_EXTENSION = {
-  ".py": [["ruff", ["check", "--fix", "--quiet", ruta]], ["ruff", ["format", "--quiet", ruta]]],
-  ".pyi": [["ruff", ["format", "--quiet", ruta]]],
+  ".py": [[RUFF, ["check", "--fix", "--quiet", ruta]], [RUFF, ["format", "--quiet", ruta]]],
+  ".pyi": [[RUFF, ["format", "--quiet", ruta]]],
   ".ts": [["prettier", ["--write", ruta]], ["eslint", ["--fix", ruta]]],
   ".tsx": [["prettier", ["--write", ruta]], ["eslint", ["--fix", ruta]]],
   ".js": [["prettier", ["--write", ruta]]],
