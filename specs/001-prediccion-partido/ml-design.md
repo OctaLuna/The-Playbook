@@ -30,10 +30,12 @@ temporada/liga, sin autenticación. Columnas relevantes del CSV y su mapeo:
 
 **Tabla de alias de equipo.** Football-Data.co.uk, la API operativa (API-Football) y Kaggle no
 escriben el mismo nombre igual (`"Man United"` vs. `"Manchester United"`). `backend/ml/data/`
-mantiene un CSV propio `equipo_alias.csv` (`alias`, `equipo_id`) cargado antes que cualquier
-otro loader; un nombre sin alias conocido **falla la carga con un error explícito**, nunca crea
-un `Equipo` duplicado en silencio — es lo que protege el `unique(nombre, liga)` de
-`data-model.md`.
+mantiene un CSV propio `equipo_alias.csv` (`alias`, `equipo_id`, `liga`) cargado antes que
+cualquier otro loader — `liga` es necesaria porque `unique(nombre, liga)` de `data-model.md`
+permite que el mismo nombre exista como dos `Equipo` distintos en dos ligas distintas, así que la
+resolución de alias también se hace por `(nombre, liga)`, no solo por nombre; un nombre sin alias
+conocido para esa liga **falla la carga con un error explícito**, nunca crea un `Equipo`
+duplicado en silencio — es lo que protege esa misma restricción.
 
 **Kaggle European Soccer Database** aporta features de evento (posesión, tiros, córners) para
 enriquecer XGBoost, pero **no** resultado ni cuota — esas ya vienen de Football-Data.co.uk y
