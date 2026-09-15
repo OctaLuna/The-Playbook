@@ -172,6 +172,34 @@ badge cae a Baja sin mirar `precision_empirica` — la regla que ya fija RF-005b
 
 Registrado por `backend/ml/evaluation/` al final de cada backtesting (sección 6.4).
 
+### Fórmulas de log-loss y Brier score
+
+`backend/ml/evaluation/metrics.py` calcula ambas métricas por partido — las mismas funciones las
+reutiliza `003-track-record-publico` (T009 de su `tasks.md`) para `EvaluaciónPredicción`, así que
+quedan fijadas acá, no reimplementadas en dos lugares (Artículo VIII).
+
+**Mercados binarios (Over/Under 2.5, BTTS)** — `o ∈ {0, 1}` es el resultado real, `p` la
+probabilidad predicha del lado positivo (`over`, `btts_sí`):
+```
+brier = (p - o)²
+log_loss = -[o·log(p) + (1-o)·log(1-p)]
+```
+
+**1X2 (3 clases)** — `o` es one-hot sobre `{local, empate, visitante}` (1 en el resultado real, 0
+en los otros dos), `p` la probabilidad predicha de cada clase:
+```
+brier_1x2 = Σ_k (p_k - o_k)²      para k en {local, empate, visitante}
+```
+Es la definición clásica del Brier score multi-categoría (Brier, 1950), la misma que usa la
+literatura de pronóstico de resultados deportivos: **rango `[0, 2]`**, no `[0, 1]` como los
+mercados binarios (0 = predicción perfecta, 2 = certeza total en el resultado equivocado). No es
+comparable en escala directa con el Brier de O/U o BTTS — no hace falta que lo sea, porque
+`contracts/track-record-api.md` ya expone cada mercado en su propia entrada de `markets`.
+
+`log_loss` (binario y 1X2) se calcula con `sklearn.metrics.log_loss`, no con una fórmula propia
+(Artículo VIII: usar el framework directo) — evita reimplementar el clipping numérico cerca de
+`p=0`/`p=1` que la librería ya resuelve.
+
 | Elemento | Convención |
 |---|---|
 | Experimento | `the-playbook/{mercado}` — un experimento por mercado (`1x2`, `over_under_2_5`, `btts`), para poder comparar runs del mismo mercado entre sí sin filtrar |
