@@ -21,6 +21,16 @@ dependencies = [
   "pgvector>=0.3",
   "boto3>=1.35",
   "langchain>=0.3",
+  # T012a (ml-design.md §8): pipeline de ML de 001 — Dixon-Coles, XGBoost, ensamble,
+  # calibración y su tracking en MLflow.
+  "statsmodels>=0.14",
+  "scipy>=1.14",
+  "xgboost>=2.1",
+  "scikit-learn>=1.5",
+  "shap>=0.46",
+  "mlflow>=2.17",
+  "pandas>=2.2",
+  "numpy>=2.0",
 ]
 
 [tool.setuptools]
