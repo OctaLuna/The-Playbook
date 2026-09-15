@@ -170,19 +170,30 @@ arregla la referencia — no la silencies.
 
 ## 8. Estado actual
 
-**No hay código de implementación.** El repositorio es documentación SDD, el andamiaje de
-carpetas, y los dos guardianes constitucionales.
+**Grupo 0 de `specs/001-prediccion-partido/tasks.md` (`B01`-`B09`) está completo**, en la
+rama `feature/grupo-0-arranque-stack` (pendiente de PR/merge a `develop`). El stack
+levanta de punta a punta: `infra/docker-compose.yml` (Postgres 16 + pgvector, Redis),
+`backend/app/core/config.py` (Pydantic Settings), `backend/app/db/session.py` (engine
+async + `get_session`), `backend/app/main.py` (FastAPI mínima con `/health`), y
+`backend/alembic/` (template async, revisión inicial que habilita `CREATE EXTENSION
+vector`). Verificado reconstruyendo el entorno desde cero (`docker compose down -v`, venv
+y `.env` recreados) — ver el commit `feat(backend): completar Grupo 0 del arranque del
+stack (B01-B09)`.
 
-`cd backend && pytest` está **en rojo a propósito**: los contratos de comportamiento de
-`ml.evaluation.split` y `ml.features.build` fallan porque esos módulos aún no existen. Es
-la fase Red del Artículo III y no debe "arreglarse" borrando o saltando los tests — se
-arregla implementándolos. CI usa `-m "not pendiente_implementacion"` para gatear sobre los
-guardianes estáticos, que sí están en verde.
+`cd backend && pytest` está **en rojo a propósito solo en dos tests**: los contratos de
+comportamiento de `ml.evaluation.split` y `ml.features.build` fallan porque esos módulos
+aún no existen. Es la fase Red del Artículo III y no debe "arreglarse" borrando o
+saltando los tests — se arregla implementándolos en Grupo 3 de `tasks.md` (`T012c`/
+`T012d`). El resto de la suite (incluida la prueba de contrato de `/health`) está en
+verde. CI usa `-m "not pendiente_implementacion"` para gatear sobre los guardianes
+estáticos, que también están en verde.
 
-El siguiente paso real es `specs/001-prediccion-partido/tasks.md` Grupo 0 (`B01`-`B09`): levantar
-el stack. Después, T001-T005: escribir las cuatro pruebas de contrato y **verlas fallar**.
-El algoritmo de ML (Dixon-Coles, XGBoost, ensamble, calibración) está fijado en
-`specs/001-prediccion-partido/ml-design.md` — léelo antes de tocar `backend/ml/`.
+El siguiente paso real es Grupo 1 de `specs/001-prediccion-partido/tasks.md` (`T001`-
+`T005`): escribir las cuatro pruebas de contrato de los endpoints de `matches`/`leagues`
+y **verlas fallar**, priorizando `T006`/`T007` (Grupo 2) apenas estén en rojo, porque
+desbloquean el track de ML. El algoritmo de ML (Dixon-Coles, XGBoost, ensamble,
+calibración) está fijado en `specs/001-prediccion-partido/ml-design.md` — léelo antes de
+tocar `backend/ml/`.
 
 Antes de proponer una implementación, lee en este orden:
 `memory/constitution.md` → `specs/00X/spec.md` → `specs/00X/plan.md` → `specs/00X/tasks.md`.
