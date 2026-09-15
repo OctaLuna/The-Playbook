@@ -5,10 +5,10 @@
 del mismo grupo (no comparten archivos ni dependen entre sí).
 
 ## Grupo 1 — Contratos y pruebas (test-first)
-- [ ] T001 [P] Prueba de contrato GET `/api/track-record` (con y sin filtro `league`; verifica que `markets` trae las tres entradas) en `backend/tests/contract/test_track_record_api.py` — [RF-001, RF-002, RF-006, RF-007]
-- [ ] T002 [P] Prueba de contrato GET `/api/track-record/matches` (paginado, filtro `league`) en `backend/tests/contract/test_track_record_api.py` — [RF-003, RF-007]
-- [ ] T002b [P] Prueba de contrato negativa: RF-005 — verificar que ninguna respuesta de `/api/track-record` ni `/api/track-record/matches` incluye cuotas individuales por casa de apuestas (ej. un campo `bookmaker_odds` o similar); solo debe existir el agregado `avg_market_log_loss` (hallazgo #5 de Analyze)
-- [ ] T003 Confirmar que T001-T002 fallan (fase Red) antes de continuar — [Art. III]
+- [x] T001 [P] Prueba de contrato GET `/api/track-record` (con y sin filtro `league`; verifica que `markets` trae las tres entradas) en `backend/tests/contract/test_track_record_api.py` — [RF-001, RF-002, RF-006, RF-007]
+- [x] T002 [P] Prueba de contrato GET `/api/track-record/matches` (paginado, filtro `league`) en `backend/tests/contract/test_track_record_api.py` — [RF-003, RF-007]
+- [x] T002b [P] Prueba de contrato negativa: RF-005 — verificar que ninguna respuesta de `/api/track-record` ni `/api/track-record/matches` incluye cuotas individuales por casa de apuestas (ej. un campo `bookmaker_odds` o similar); solo debe existir el agregado `avg_market_log_loss` (hallazgo #5 de Analyze)
+- [x] T003 Confirmar que T001-T002 fallan (fase Red) antes de continuar — [Art. III]
 
 ## Grupo 2 — Modelo de datos
 - [ ] T004 [P] Crear modelo SQLAlchemy `EvaluaciónPredicción` en `backend/app/models/evaluacion_prediccion.py`: acierto, Brier y log-loss **por cada uno de los tres mercados**, más `version_modelo` y `tiene_cuota_mercado` — [RF-001, RF-002, RF-003, RF-010]
