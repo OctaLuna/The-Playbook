@@ -6,9 +6,9 @@ Cumple con la sección 7.1 del spec y la tarea T010:
 - Si excede ~500 tokens, aplica solapamiento de 15-20% entre sub-chunks.
 """
 
-from typing import Any, Dict, List, Optional
 import math
 import re
+from typing import Any
 
 
 def estimate_tokens(text: str) -> int:
@@ -27,10 +27,10 @@ def estimate_tokens(text: str) -> int:
 
 def chunk_article(
     text: str,
-    title: Optional[str] = None,
+    title: str | None = None,
     max_tokens: int = 500,
     overlap_ratio: float = 0.15,
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     """
     Divide un artículo de noticias en chunks respetando la restricción de tokens y solapamiento.
 
@@ -82,8 +82,8 @@ def chunk_article(
     content_max_tokens = max_tokens - estimate_tokens(title_prefix)
     overlap_tokens = math.ceil(content_max_tokens * overlap_ratio)
 
-    chunks: List[str] = []
-    current_chunk_paragraphs: List[str] = []
+    chunks: list[str] = []
+    current_chunk_paragraphs: list[str] = []
     current_tokens = 0
 
     for paragraph in paragraphs:
@@ -136,9 +136,9 @@ def chunk_article(
     return result
 
 
-def _get_overlap_paragraphs(paragraphs: List[str], overlap_tokens: int) -> List[str]:
+def _get_overlap_paragraphs(paragraphs: list[str], overlap_tokens: int) -> list[str]:
     """Retorna los últimos párrafos que acumulan hasta overlap_tokens para mantener contexto."""
-    overlap: List[str] = []
+    overlap: list[str] = []
     accumulated = 0
     for p in reversed(paragraphs):
         p_tokens = estimate_tokens(p)

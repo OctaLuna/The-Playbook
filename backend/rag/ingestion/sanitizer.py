@@ -7,9 +7,8 @@ Cumple con el Artículo VI de la Constitución de The Playbook y la tarea T011:
 - Remoción de patrones de instrucción directa y etiquetas XML no permitidas.
 """
 
-from dataclasses import dataclass
 import re
-
+from dataclasses import dataclass
 
 # Patrones comunes de prompt injection a neutralizar (en español e inglés)
 PROMPT_INJECTION_PATTERNS = [
@@ -37,12 +36,15 @@ RESERVED_XML_TAGS = [
 ]
 
 # Expresión regular para eliminar scripts y tags HTML indeseados de scraping
-HTML_TAG_RE = re.compile(r"<script[^>]*>.*?</script>|<style[^>]*>.*?</style>|<[^>]+>", re.IGNORECASE | re.DOTALL)
+HTML_TAG_RE = re.compile(
+    r"<script[^>]*>.*?</script>|<style[^>]*>.*?</style>|<[^>]+>", re.IGNORECASE | re.DOTALL
+)
 
 
 @dataclass
 class SanitizationResult:
     """Resultado de la sanitización de un texto."""
+
     sanitized_text: str
     original_length: int
     sanitized_length: int

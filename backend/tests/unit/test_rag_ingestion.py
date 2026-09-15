@@ -5,12 +5,12 @@ Pruebas unitarias para el pipeline de ingesta RAG:
 """
 
 import unittest
-from backend.rag.ingestion.chunking import chunk_article, estimate_tokens
-from backend.rag.ingestion.sanitizer import sanitize_text
+
+from rag.ingestion.chunking import chunk_article, estimate_tokens
+from rag.ingestion.sanitizer import sanitize_text
 
 
 class TestRagIngestion(unittest.TestCase):
-
     def test_estimate_tokens(self):
         text = "El Real Madrid se enfrenta al Barcelona en el Clásico este domingo."
         tokens = estimate_tokens(text)
@@ -18,7 +18,7 @@ class TestRagIngestion(unittest.TestCase):
         self.assertLess(tokens, 30)
 
     def test_chunk_article_short_text(self):
-        """Un artículo corto (<= 500 tokens) debe conservarse completo en un solo chunk (sección 7.1)."""
+        """Artículo corto (<= 500 tokens) debe conservarse completo (sección 7.1)."""
         text = "Noticia corta de prueba sobre la alineación del Manchester City ante el Arsenal."
         title = "Alineaciones confirmadas"
         chunks = chunk_article(text, title=title, max_tokens=500)
@@ -33,13 +33,15 @@ class TestRagIngestion(unittest.TestCase):
         """Un artículo largo debe dividirse en múltiples chunks respetando max_tokens y overlap."""
         paragraph = (
             "El delantero estrella sufrió una lesión muscular durante el entrenamiento del jueves "
-            "y ha sido descartado para el partido de este fin de semana. El cuerpo médico del club "
-            "confirmó que estará fuera de las canchas por al menos tres semanas. Esta baja representa "
-            "un duro golpe para las aspiraciones del equipo en la lucha por el título de la liga. "
+            "y ha sido descartado para el partido de este fin de semana. El cuerpo médico "
+            "confirmó que estará fuera de las canchas por al menos tres semanas. Esta baja "
+            "un duro golpe para las aspiraciones del equipo en la lucha por el título. "
         )
         long_text = "\n\n".join([f"Párrafo {i}: {paragraph}" for i in range(15)])
 
-        chunks = chunk_article(long_text, title="Baja importante", max_tokens=200, overlap_ratio=0.20)
+        chunks = chunk_article(
+            long_text, title="Baja importante", max_tokens=200, overlap_ratio=0.20
+        )
 
         self.assertGreater(len(chunks), 1)
         for chunk in chunks:
@@ -53,7 +55,9 @@ class TestRagIngestion(unittest.TestCase):
 
     def test_sanitize_text_clean_news(self):
         """Noticia deportiva estándar sin contenido malicioso debe mantenerse limpia."""
-        raw_text = "<h3>El entrenador habló en conferencia de prensa</h3><p>Afirmó que saldrán a ganar.</p>"
+        raw_text = (
+            "<h3>El entrenador habló en conferencia de prensa</h3><p>Afirmó saldrán a ganar.</p>"
+        )
         result = sanitize_text(raw_text)
 
         self.assertIn("conferencia de prensa", result.sanitized_text)

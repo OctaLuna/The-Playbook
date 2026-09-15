@@ -92,9 +92,7 @@ def test_el_feature_set_construido_no_contiene_columnas_de_cuotas() -> None:
 
     columnas = construir_feature_set(partidos=[])
 
-    contaminadas = [
-        c for c in columnas if any(p.search(str(c)) for p in PATRONES_DE_CUOTAS)
-    ]
+    contaminadas = [c for c in columnas if any(p.search(str(c)) for p in PATRONES_DE_CUOTAS)]
     assert not contaminadas, (
         f"El feature set incluye columnas derivadas de cuotas: {contaminadas}. "
         "El modelo aprendería a imitar al mercado en vez de predecir de forma independiente."

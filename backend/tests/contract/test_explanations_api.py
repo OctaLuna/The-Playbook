@@ -1,7 +1,8 @@
 """
 Contrato de la API de Explicaciones en Lenguaje Natural (002-explicacion-lenguaje-natural).
 
-Grupo 1 de `specs/002-explicacion-lenguaje-natural/tasks.md` (T002, T003) — fase Red del Artículo III:
+Grupo 1 de `specs/002-explicacion-lenguaje-natural/tasks.md` (T002, T003)
+— fase Red del Artículo III:
 Verifica el cumplimiento del contrato definido en `contracts/explanations-api.md`.
 """
 
