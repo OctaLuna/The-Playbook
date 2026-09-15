@@ -1,0 +1,15 @@
+{
+  // Reglas de Markdown para la documentación SDD.
+  // Deliberadamente permisivo: el valor de este repo está en el contenido de las specs,
+  // no en su tipografía. Lo que sí se vigila —referencias y trazabilidad— lo comprueba
+  // scripts/audit-sdd.mjs, que es donde estaban los fallos reales.
+  "config": {
+    "MD013": false, // Longitud de línea: las tablas de specs y contratos son anchas por diseño
+    "MD024": false, // Headings duplicados: "Escenarios de aceptación" se repite por historia
+    "MD033": false, // HTML embebido: necesario para los marcadores <!-- audit-sdd:ignore -->
+    "MD041": false, // Primera línea heading: los stubs y specs delta empiezan con "## ADDED"
+    "MD029": { "style": "ordered" }
+  },
+  "globs": ["**/*.md"],
+  "ignores": ["node_modules/**", ".venv/**", "**/.next/**"]
+}

@@ -1,4 +1,4 @@
-# Priorización de Casos — Equipo Sqleadores
+# Priorización de Casos — Equipo The-Playbook
 
 **Materia:** Taller de Sistemas Inteligentes
 **Proyecto elegido:** **The Playbook** — Plataforma de analítica predictiva de fútbol (predicción 1X2, Over/Under, BTTS, xG, explicación en lenguaje natural vía RAG, track record público de aciertos)
@@ -80,7 +80,7 @@ Escala: **1 (muy deficiente) a 5 (excelente)** en cada criterio.
 
 ## 4. Justificación de la Decisión
 
-El equipo **Sqleadores** seleccionó **The Playbook** por dos vías complementarias: una evaluación técnica objetiva (matriz de la sección 2) y una **votación interna del equipo** realizada tras presentar las cuatro opciones con sus respectivos análisis de viabilidad.
+El equipo seleccionó el caso **The Playbook** por dos vías complementarias: una evaluación técnica objetiva (matriz de la sección 2) y una **votación interna del equipo** realizada tras presentar las cuatro opciones con sus respectivos análisis de viabilidad.
 
 **Desde la evidencia de la matriz:**
 
@@ -103,4 +103,4 @@ La votación fue mayoritaria a favor de The Playbook sobre BugPredictor (la opci
 
 ---
 
-*Documento parte del proceso de discovery del proyecto, referenciado desde `docs/project_spec.md` (v2.0) del repositorio del equipo Sqleadores.*
+*Documento parte del proceso de discovery del proyecto, referenciado desde `docs/project_spec.md` (v2.0) del repositorio del equipo The-Playbook.*

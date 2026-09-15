@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# La documentación es la mitad del producto en este repo, así que se valida como código.
+jobs:
+  sdd:
+    name: Consistencia SDD
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Guarda contra los tres fallos de la auditoría: enlaces rotos, referencias a
+      # secciones inexistentes, y requisitos sin tarea que los cubra.
+      - name: Validar referencias y trazabilidad RF↔tarea
+        run: node scripts/audit-sdd.mjs --strict
+
+  backend:
+    name: Backend (lint, tipos, guardianes)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias de desarrollo
+        run: pip install -e ".[dev]"
+
+      - name: Ruff (lint)
+        run: ruff check .
+
+      - name: Ruff (formato)
+        run: ruff format --check .
+
+      - name: mypy
+        run: mypy || true # informativo hasta que exista código tipado
+
+      # Los tests marcados `pendiente_implementacion` son la fase Red del Artículo III:
+      # deben fallar en local hasta que exista su implementación. Aquí se deseleccionan
+      # para que el build gatee sobre los guardianes constitucionales sin quedar rojo de
+      # forma permanente — un CI siempre rojo deja de leerse.
+      - name: Guardianes constitucionales (Artículos IV y V)
+        run: pytest -m "not pendiente_implementacion"
+
+      - name: Fase Red pendiente (informativo)
+        if: always()
+        run: |
+          echo "Tests en fase Red esperando implementación:"
+          pytest -m "pendiente_implementacion" --collect-only -q || true
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    # Se activa cuando exista package.json en frontend/ (aún no hay código).
+    if: false
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit

@@ -1,4 +1,4 @@
-# Team Charter — Sqleadores
+# Team Charter — The-Playbook
 
 **Proyecto:** The Playbook — Sistema de predicción de resultados de fútbol con ML/DL/RAG
 **Materia:** Taller de Sistemas Inteligentes
@@ -21,6 +21,8 @@
 | Carol Zevallos | Ingeniería | Dom 18:00–20:00, Mar 18:00–20:00, Mié 18:00–20:00 | Clases 9:00–16:00 todos los días hábiles | No declara carga laboral paralela por ahora. |
 
 **Notas:**
+- El desglose técnico de quién lleva qué feature, sprint a sprint, vive en
+  [`docs/scrum/`](./scrum/README.md) — no se repite aquí.
 - Total de disponibilidad grupal confirmada: **6 horas semanales** (Dom/Mar/Mié, 2h cada día). Cualquier entrega que requiera más tiempo debe planificarse con al menos una semana de anticipación.
 - Si algún integrante tiene horarios individuales distintos a los del grupo, debe actualizar su fila en este documento vía PR.
 - **Riesgo personal declarado**: cada integrante debe completar este campo con factores que puedan afectar su disponibilidad o desempeño (ej. carga de otras materias, viajes programados, problemas de conectividad, trabajo paralelo). Esto no es opcional — un equipo que no declara riesgos reales no puede planificar con datos reales.
@@ -78,7 +80,7 @@ No se aprueba ni fusiona ningún PR que:
 - Contenga **secretos, API keys, credenciales o roles/ARNs de IAM** (incluye credenciales de AWS Bedrock — ver `docs/project_spec.md` sección 5.1).
 - Contenga **datos personales o sensibles** sin anonimizar.
 - Tenga **pruebas fallidas** en CI/CD o pruebas manuales documentadas como no exitosas.
-- Toque `ml/` o `rag/` sin que el split de entrenamiento sea cronológico (ver DoD, sección 6) o sin respetar el filtro temporal obligatorio del retrieval RAG.
+- Toque `backend/ml/` o `backend/rag/` sin que el split de entrenamiento sea cronológico (ver DoD, sección 6) o sin respetar el filtro temporal obligatorio del retrieval RAG.
 
 ---
 
@@ -143,7 +145,7 @@ Una tarea se considera **terminada** únicamente cuando cumple **todos** los sig
 - [ ] **Pruebas ejecutadas y pasando**, cuando la tarea lo amerite (pruebas unitarias para lógica de backend/modelos, pruebas manuales documentadas para UI).
 - [ ] **Revisión de al menos 1 integrante** distinto al autor, con aprobación explícita en el PR.
 
-**Criterios adicionales para tareas de `ml/` o `rag/` (introducidos por project_spec v2.0):**
+**Criterios adicionales para tareas de `backend/ml/` o `backend/rag/` (introducidos por project_spec v2.0):**
 - [ ] Si la tarea entrena o valida un modelo, el split es **cronológico**, no aleatorio, y pasa el test automatizado que lo verifica.
 - [ ] Si la tarea toca el retrieval del RAG, respeta el filtro temporal obligatorio (`fecha_publicacion_noticia < fecha_kickoff`).
 - [ ] Ningún job de entrenamiento o reindexado corre de forma síncrona dentro del proceso API — pasa por Celery.
