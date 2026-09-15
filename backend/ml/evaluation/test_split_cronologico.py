@@ -90,14 +90,37 @@ def test_el_split_cronologico_no_deja_pasar_partidos_futuros_al_entrenamiento() 
     Al implementarla debe cumplir que *toda* fecha de entrenamiento sea estrictamente
     anterior a *toda* fecha de validación.
     """
-    from datetime import date
+    from datetime import date, timedelta
 
     from ml.evaluation.split import split_cronologico  # type: ignore[import-not-found]
 
-    partidos = [{"fecha": date(2024, 1, i + 1), "id": i} for i in range(100)]
+    partidos = [{"fecha": date(2024, 1, 1) + timedelta(days=i), "id": i} for i in range(100)]
     entrenamiento, validacion = split_cronologico(partidos, fecha_corte=date(2024, 2, 20))
 
     assert entrenamiento and validacion, "Ambos conjuntos deben tener partidos"
     assert max(p["fecha"] for p in entrenamiento) < min(p["fecha"] for p in validacion), (
         "Fuga temporal: hay partidos de entrenamiento posteriores a partidos de validación"
     )
+
+
+@pytest.mark.constitucional
+@pytest.mark.pendiente_implementacion
+def test_un_partido_justo_en_fecha_corte_cae_en_validacion_no_en_entrenamiento() -> None:
+    """`fecha_corte` es inclusiva del lado de validación.
+
+    Postura conservadora del Artículo IV: un partido exactamente en la fecha de
+    corte nunca se filtra a entrenamiento, ni siquiera por un empate de fecha.
+    """
+    from datetime import date
+
+    from ml.evaluation.split import split_cronologico  # type: ignore[import-not-found]
+
+    partidos = [
+        {"fecha": date(2024, 2, 19), "id": "antes"},
+        {"fecha": date(2024, 2, 20), "id": "en_el_corte"},
+        {"fecha": date(2024, 2, 21), "id": "despues"},
+    ]
+    entrenamiento, validacion = split_cronologico(partidos, fecha_corte=date(2024, 2, 20))
+
+    assert [p["id"] for p in entrenamiento] == ["antes"]
+    assert [p["id"] for p in validacion] == ["en_el_corte", "despues"]
