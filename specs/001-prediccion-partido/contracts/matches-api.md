@@ -42,6 +42,8 @@ Query params: `league` (opcional), `from`, `to` (opcional, default: próximos 7 
 }
 ```
 
+`status` (valores completos, decidido por Rodrigo al implementar T011 — el enum interno `Partido.estado` está en español): `scheduled` (programado), `finished` (jugado), `postponed` (pospuesto, ver `T020`), `canceled` (cancelado).
+
 ## GET /api/matches/{match_id}
 **Response 200**
 ```json
