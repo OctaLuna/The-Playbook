@@ -22,11 +22,11 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 - [x] B09 Verificar el arranque completo: `docker compose -f infra/docker-compose.yml up -d` levanta, `pytest` corre, `GET /health` responde 200, y `alembic upgrade head` aplica sin error — [Art. IX]
 
 ## Grupo 1 — Contratos y pruebas (test-first)
-- [ ] T001 [P] Prueba de contrato GET `/api/leagues` en `backend/tests/contract/test_leagues.py` — [RF-008]
-- [ ] T002 [P] Prueba de contrato GET `/api/matches/upcoming` (con filtro `league` y paginación) en `backend/tests/contract/test_matches_upcoming.py` — [RF-008]
-- [ ] T003 [P] Prueba de contrato GET `/api/matches/{match_id}` (incluye caso 404) en `backend/tests/contract/test_match_detail.py` — [RF-006]
-- [ ] T004 [P] Prueba de contrato GET `/api/matches/{match_id}/prediction` (incluye caso 404 sin predicción generada) en `backend/tests/contract/test_match_prediction.py` — [RF-001, RF-002, RF-003, RF-004, RF-005]
-- [ ] T005 Confirmar que T001-T004 fallan (fase Red) antes de continuar — [Art. III]
+- [x] T001 [P] Prueba de contrato GET `/api/leagues` en `backend/tests/contract/test_leagues.py` — [RF-008]
+- [x] T002 [P] Prueba de contrato GET `/api/matches/upcoming` (con filtro `league` y paginación) en `backend/tests/contract/test_matches_upcoming.py` — [RF-008]
+- [x] T003 [P] Prueba de contrato GET `/api/matches/{match_id}` (200 sembrable; el caso 404 se difiere a Grupo 4 — ver docstring del archivo) en `backend/tests/contract/test_match_detail.py` — [RF-006]
+- [x] T004 [P] Prueba de contrato GET `/api/matches/{match_id}/prediction` (200 sembrable; el caso 404 se difiere a Grupo 4 — ver docstring del archivo) en `backend/tests/contract/test_match_prediction.py` — [RF-001, RF-002, RF-003, RF-004, RF-005]
+- [x] T005 Confirmar que T001-T004 fallan (fase Red) antes de continuar — [Art. III]
 
 ## Grupo 2 — Modelo de datos
 - [ ] T006 [P] Crear modelo SQLAlchemy `Partido` en `backend/app/models/partido.py` (enum `liga` con las 5 ligas, enum `estado`: programado/jugado/pospuesto/cancelado, `resultado_real` nullable) — [RF-008, RF-009]
