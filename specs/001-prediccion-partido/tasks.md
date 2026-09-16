@@ -31,10 +31,10 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 ## Grupo 2 — Modelo de datos
 - [x] T006 [P] Crear modelo SQLAlchemy `Partido` en `backend/app/models/partido.py` (enum `liga` con las 5 ligas, enum `estado`: programado/jugado/pospuesto/cancelado, `resultado_real` nullable) — [RF-008, RF-009]
 - [x] T007 [P] Crear modelo SQLAlchemy `Equipo` en `backend/app/models/equipo.py` (incluye `tiene_historial_suficiente`) — [RF-001, RF-010]
-- [ ] T008 [P] Crear modelo SQLAlchemy `Predicción` en `backend/app/models/prediccion.py`: `top_shap_features` como campo interno JSON, `version_modelo`, y **solo** `prob_over_2_5` y `prob_btts_si` — los complementos se derivan en el schema, no se persisten — [RF-001, RF-002, RF-003, RF-004]
-- [ ] T009 [P] Crear modelo SQLAlchemy `CalibraciónHistórica` en `backend/app/models/calibracion_historica.py` — [RF-005, RF-005b]
-- [ ] T010 Migración Alembic inicial: las 4 tablas más los índices y restricciones de `data-model.md` — índice compuesto `(fecha_kickoff, estado)`, `unique(partido_id)` en `Predicción`, y los CHECK de que las probabilidades sumen 1.0 y estén en `[0,1]` (depende de T006-T009) — [RF-001, RF-005, RF-008]
-- [ ] T011 [P] Crear schemas Pydantic (`MatchOut`, `PredictionOut`, `LeagueOut`) en `backend/app/schemas/matches.py`, siguiendo exactamente los contratos de `contracts/matches-api.md` (sin incluir `top_shap_features`, que es interno) — [RF-006, RF-008]
+- [x] T008 [P] Crear modelo SQLAlchemy `Predicción` en `backend/app/models/prediccion.py`: `top_shap_features` como campo interno JSON, `version_modelo`, y **solo** `prob_over_2_5` y `prob_btts_si` — los complementos se derivan en el schema, no se persisten — [RF-001, RF-002, RF-003, RF-004]
+- [x] T009 [P] Crear modelo SQLAlchemy `CalibraciónHistórica` en `backend/app/models/calibracion_historica.py` — [RF-005, RF-005b]
+- [x] T010 Migración Alembic inicial: las 4 tablas más los índices y restricciones de `data-model.md` — índice compuesto `(fecha_kickoff, estado)`, `unique(partido_id)` en `Predicción`, y los CHECK de que las probabilidades sumen 1.0 y estén en `[0,1]` (depende de T006-T009) — [RF-001, RF-005, RF-008]
+- [x] T011 [P] Crear schemas Pydantic (`MatchOut`, `PredictionOut`, `LeagueOut`) en `backend/app/schemas/matches.py`, siguiendo exactamente los contratos de `contracts/matches-api.md` (sin incluir `top_shap_features`, que es interno) — [RF-006, RF-008]
 
 ## Grupo 3 — Implementación (hace pasar las pruebas del Grupo 1)
 - [ ] T012a Declarar las dependencias de ML en `backend/pyproject.toml` — `statsmodels`, `scipy`, `xgboost`, `scikit-learn`, `shap`, `mlflow`, `pandas`, `numpy` — listadas en `ml-design.md` §8. No estaban en el Grupo 0 porque no hacían falta hasta este punto (Art. VII) — [Art. IX]
