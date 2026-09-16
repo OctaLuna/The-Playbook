@@ -29,8 +29,8 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 - [x] T005 Confirmar que T001-T004 fallan (fase Red) antes de continuar — [Art. III]
 
 ## Grupo 2 — Modelo de datos
-- [ ] T006 [P] Crear modelo SQLAlchemy `Partido` en `backend/app/models/partido.py` (enum `liga` con las 5 ligas, enum `estado`: programado/jugado/pospuesto/cancelado, `resultado_real` nullable) — [RF-008, RF-009]
-- [ ] T007 [P] Crear modelo SQLAlchemy `Equipo` en `backend/app/models/equipo.py` (incluye `tiene_historial_suficiente`) — [RF-001, RF-010]
+- [x] T006 [P] Crear modelo SQLAlchemy `Partido` en `backend/app/models/partido.py` (enum `liga` con las 5 ligas, enum `estado`: programado/jugado/pospuesto/cancelado, `resultado_real` nullable) — [RF-008, RF-009]
+- [x] T007 [P] Crear modelo SQLAlchemy `Equipo` en `backend/app/models/equipo.py` (incluye `tiene_historial_suficiente`) — [RF-001, RF-010]
 - [ ] T008 [P] Crear modelo SQLAlchemy `Predicción` en `backend/app/models/prediccion.py`: `top_shap_features` como campo interno JSON, `version_modelo`, y **solo** `prob_over_2_5` y `prob_btts_si` — los complementos se derivan en el schema, no se persisten — [RF-001, RF-002, RF-003, RF-004]
 - [ ] T009 [P] Crear modelo SQLAlchemy `CalibraciónHistórica` en `backend/app/models/calibracion_historica.py` — [RF-005, RF-005b]
 - [ ] T010 Migración Alembic inicial: las 4 tablas más los índices y restricciones de `data-model.md` — índice compuesto `(fecha_kickoff, estado)`, `unique(partido_id)` en `Predicción`, y los CHECK de que las probabilidades sumen 1.0 y estén en `[0,1]` (depende de T006-T009) — [RF-001, RF-005, RF-008]
