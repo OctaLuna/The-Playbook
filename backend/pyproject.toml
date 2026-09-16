@@ -103,6 +103,13 @@ disallow_untyped_defs = false
 [tool.pytest.ini_options]
 testpaths = ["tests", "ml"]
 asyncio_mode = "auto"
+# El engine async de app/db/session.py es un único objeto de proceso con su propio
+# pool de conexiones asyncpg; un event loop por test (el default de pytest-asyncio)
+# hace que un test reutilice, bajo un loop distinto, una conexión creada en el loop
+# de otro — asyncpg la rechaza ("another operation is in progress"). Con un solo
+# loop para toda la sesión de pytest, el pool y el loop coinciden siempre.
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
 # Artículo III (Test-First): estos marcadores permiten correr por fase.
 markers = [
   "contract: pruebas de contrato de API — obligatorias antes de implementar un endpoint",
