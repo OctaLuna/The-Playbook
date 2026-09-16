@@ -18,6 +18,9 @@ dependencies = [
   "pydantic-settings>=2.6",
   "celery>=5.4",
   "redis>=5.2",
+  "pgvector>=0.3",
+  "boto3>=1.35",
+  "langchain>=0.3",
 ]
 
 [tool.setuptools]
