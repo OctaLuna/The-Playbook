@@ -39,7 +39,7 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 ## Grupo 3 — Implementación (hace pasar las pruebas del Grupo 1)
 - [x] T012a Declarar las dependencias de ML en `backend/pyproject.toml` — `statsmodels`, `scipy`, `xgboost`, `scikit-learn`, `shap`, `mlflow`, `pandas`, `numpy` — listadas en `ml-design.md` §8. No estaban en el Grupo 0 porque no hacían falta hasta este punto (Art. VII) — [Art. IX]
 - [x] T012b (parte 1: `resolver_alias`/`cargar_tabla_alias`, sin persistencia) Implementar `backend/ml/data/`: carga de Football-Data.co.uk, tabla de alias de equipo, y el mapeo de columnas de `ml-design.md` §1 (falla explícito ante un nombre de equipo sin alias, nunca crea un `Equipo` duplicado) — [RF-008]
-- [ ] T012c Implementar `backend/ml/features/`: el feature set cerrado de `ml-design.md` §4 (forma, descanso, head-to-head, fuerza relativa de Dixon-Coles) — [RF-001, RF-002, RF-003]
+- [x] T012c Implementar `backend/ml/features/`: el feature set cerrado de `ml-design.md` §4 (forma, descanso, head-to-head, fuerza relativa de Dixon-Coles) — [RF-001, RF-002, RF-003]
 - [ ] T012d Implementar `backend/ml/models/dixon_coles/train.py`, `predict.py` y `evaluate.py`: la formulación exacta (α/β/γ/ρ/ξ) y el default `ξ = 0.0018` de `ml-design.md` §3 — [RF-001, RF-002, RF-003, RF-004]
 - [ ] T012e Implementar `backend/ml/models/xgboost/train.py`, `predict.py` y `evaluate.py` sobre el feature set de T012c — [RF-001, RF-002, RF-003]
 - [ ] T012 Implementar `backend/ml/ensemble/predict.py`: combina Dixon-Coles + XGBoost por promedio ponderado, con el algoritmo de grid search de `w` y el peso mínimo `0.85` de `ml-design.md` §5 (sección 6.4 de project_spec.md) — [RF-001, RF-002, RF-003, RF-004]
