@@ -111,12 +111,13 @@ Estas carpetas contienen la documentación técnica y funcional de cada feature 
 | [specs/004-interfaz-web/plan.md](../specs/004-interfaz-web/plan.md) | Plan técnico. | Next.js 15, TanStack Query y las decisiones de estado, con sus alternativas. |
 | [specs/004-interfaz-web/tasks.md](../specs/004-interfaz-web/tasks.md) | Tareas. | 34 tareas, desde el andamiaje del proyecto hasta accesibilidad. |
 
-## 6. Documentos de resumen del proyecto
+## 6. Documentos de resumen y arquitectura del proyecto
 
 | Archivo | Descripción | Para qué sirve |
 |---|---|---|
 | [docs/resumen-proyecto-the-playbook.md](./resumen-proyecto-the-playbook.md) | Resumen ejecutivo del proyecto. | Sirve para entender el producto en una sola lectura. |
 | [docs/mapa-archivos-the-playbook.md](./mapa-archivos-the-playbook.md) | Mapa de archivos Markdown. | Sirve para saber qué hace cada documento del repositorio y cómo relacionarse con él. |
+| [docs/c4-diagrams.md](./c4-diagrams.md) | Especificación y Diagramas C4 del sistema. | Muestra la arquitectura en 4 niveles (Contexto, Contenedores, Componentes, Despliegue y Secuencia Temporal) en formato Mermaid. |
 | [docs/skills-y-hooks.md](./skills-y-hooks.md) | Automatizaciones del repositorio. | Explica qué corre solo (hooks de validación y formato, skills de proyecto), por qué existe cada uno y cómo desactivarlo. |
 
 ## 6.1 Decisiones arquitectónicas
