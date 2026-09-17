@@ -11,11 +11,11 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 - [x] T003 Confirmar que T001-T002 fallan (fase Red) antes de continuar — [Art. III]
 
 ## Grupo 2 — Modelo de datos
-- [ ] T004 [P] Crear modelo SQLAlchemy `EvaluaciónPredicción` en `backend/app/models/evaluacion_prediccion.py`: acierto, Brier y log-loss **por cada uno de los tres mercados**, más `version_modelo` y `tiene_cuota_mercado` — [RF-001, RF-002, RF-003, RF-010]
-- [ ] T005 [P] Crear modelo SQLAlchemy `TrackRecordAgregado` en `backend/app/models/track_record_agregado.py`: una fila por `(liga, mercado)`, con `liga = null` para el agregado global y `versiones_modelo` como array — [RF-001, RF-002, RF-007, RF-010]
-- [ ] T006 [P] Crear modelo SQLAlchemy `CuotaMercado` en `backend/app/models/cuota_mercado.py` (guarda probabilidades implícitas, nunca la cuota cruda) — [RF-004]
-- [ ] T007 Migración Alembic para las 3 tablas más sus restricciones: `unique(prediccion_id)`, `unique(liga, mercado, ventana_n)` y `unique(partido_id, fuente)` (depende de T004-T006) — [RF-001, RF-003, RF-004]
-- [ ] T008 [P] Crear schemas Pydantic (`TrackRecordSummaryOut` con el array `markets`, `TrackRecordMatchOut`) en `backend/app/schemas/track_record.py`, siguiendo `contracts/track-record-api.md` — [RF-001, RF-003]
+- [x] T004 [P] Crear modelo SQLAlchemy `EvaluaciónPredicción` en `backend/app/models/evaluacion_prediccion.py`: acierto, Brier y log-loss **por cada uno de los tres mercados**, más `version_modelo` y `tiene_cuota_mercado` — [RF-001, RF-002, RF-003, RF-010]
+- [x] T005 [P] Crear modelo SQLAlchemy `TrackRecordAgregado` en `backend/app/models/track_record_agregado.py`: una fila por `(liga, mercado)`, con `liga = null` para el agregado global y `versiones_modelo` como array — [RF-001, RF-002, RF-007, RF-010]
+- [x] T006 [P] Crear modelo SQLAlchemy `CuotaMercado` en `backend/app/models/cuota_mercado.py` (guarda probabilidades implícitas, nunca la cuota cruda) — [RF-004]
+- [x] T007 Migración Alembic para las 3 tablas más sus restricciones: `unique(prediccion_id)`, `unique(liga, mercado, ventana_n)` y `unique(partido_id, fuente)` (depende de T004-T006) — [RF-001, RF-003, RF-004]
+- [x] T008 [P] Crear schemas Pydantic (`TrackRecordSummaryOut` con el array `markets`, `TrackRecordMatchOut`) en `backend/app/schemas/track_record.py`, siguiendo `contracts/track-record-api.md` — [RF-001, RF-003]
 
 ## Grupo 3 — Implementación (hace pasar las pruebas del Grupo 1)
 - [ ] T009 Implementar `backend/app/services/track_record_service.py`: evalúa los tres mercados reutilizando `backend/ml/evaluation/` (log-loss, Brier) ya existente para 001 — no reimplementar las métricas — [RF-001, RF-002]
