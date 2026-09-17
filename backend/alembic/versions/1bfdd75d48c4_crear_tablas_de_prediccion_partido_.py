@@ -1,9 +1,15 @@
-"""crear tablas de prediccion partido: partidos equipos predicciones calibraciones
+"""crear tablas predicciones y calibraciones_historicas (T008, T009)
 
 Revision ID: 1bfdd75d48c4
-Revises: a221acbb7556
+Revises: 52cb67a25dcc
 Create Date: 2026-09-16 16:15:35.459295
 
+Encadenada sobre 52cb67a25dcc (T006/T007, "equipos"/"partidos"), no sobre
+a221acbb7556 directamente. Originalmente esta revisión también recreaba
+"equipos"/"partidos" — cuando ambas migraciones llegaron a `develop` en
+paralelo, eso produjo 2 heads de Alembic y una segunda CREATE TABLE sobre las
+mismas tablas. Fix: se le sacó esa parte, ahora solo agrega lo que 52cb67a25dcc
+no tenía.
 """
 
 from collections.abc import Sequence
@@ -15,27 +21,10 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "1bfdd75d48c4"
-down_revision: str | Sequence[str] | None = "a221acbb7556"
+down_revision: str | Sequence[str] | None = "52cb67a25dcc"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
-LIGA_ENUM = postgresql.ENUM(
-    "premier_league",
-    "laliga",
-    "serie_a",
-    "bundesliga",
-    "ligue_1",
-    name="liga_enum",
-    create_type=False,
-)
-ESTADO_PARTIDO_ENUM = postgresql.ENUM(
-    "programado",
-    "jugado",
-    "pospuesto",
-    "cancelado",
-    name="estado_partido_enum",
-    create_type=False,
-)
 NIVEL_CONFIANZA_ENUM = postgresql.ENUM(
     "alta", "media", "baja", name="nivel_confianza_enum", create_type=False
 )
@@ -47,55 +36,8 @@ MERCADO_ENUM = postgresql.ENUM(
 def upgrade() -> None:
     """Upgrade schema."""
     bind = op.get_bind()
-    LIGA_ENUM.create(bind, checkfirst=True)
-    ESTADO_PARTIDO_ENUM.create(bind, checkfirst=True)
     NIVEL_CONFIANZA_ENUM.create(bind, checkfirst=True)
     MERCADO_ENUM.create(bind, checkfirst=True)
-
-    op.create_table(
-        "equipos",
-        sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("nombre", sa.String(255), nullable=False),
-        sa.Column("liga", LIGA_ENUM, nullable=False),
-        sa.Column(
-            "tiene_historial_suficiente",
-            sa.Boolean(),
-            nullable=False,
-            server_default=sa.false(),
-        ),
-        sa.UniqueConstraint("nombre", "liga", name="uq_equipos_nombre_liga"),
-    )
-
-    op.create_table(
-        "partidos",
-        sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("liga", LIGA_ENUM, nullable=False),
-        sa.Column(
-            "equipo_local_id",
-            postgresql.UUID(as_uuid=True),
-            sa.ForeignKey("equipos.id"),
-            nullable=False,
-        ),
-        sa.Column(
-            "equipo_visitante_id",
-            postgresql.UUID(as_uuid=True),
-            sa.ForeignKey("equipos.id"),
-            nullable=False,
-        ),
-        sa.Column("fecha_kickoff", sa.DateTime(timezone=True), nullable=False),
-        sa.Column(
-            "estado",
-            ESTADO_PARTIDO_ENUM,
-            nullable=False,
-            server_default="programado",
-        ),
-        sa.Column("goles_local", sa.Integer(), nullable=True),
-        sa.Column("goles_visitante", sa.Integer(), nullable=True),
-    )
-    op.create_index("ix_partidos_liga", "partidos", ["liga"])
-    # data-model.md: "la" query del job de Celery (RF-007) — ventana de
-    # kickoff + estado programado.
-    op.create_index("ix_partidos_fecha_kickoff_estado", "partidos", ["fecha_kickoff", "estado"])
 
     op.create_table(
         "predicciones",
@@ -160,13 +102,7 @@ def downgrade() -> None:
     """Downgrade schema."""
     op.drop_table("calibraciones_historicas")
     op.drop_table("predicciones")
-    op.drop_index("ix_partidos_fecha_kickoff_estado", table_name="partidos")
-    op.drop_index("ix_partidos_liga", table_name="partidos")
-    op.drop_table("partidos")
-    op.drop_table("equipos")
 
     bind = op.get_bind()
     MERCADO_ENUM.drop(bind, checkfirst=True)
     NIVEL_CONFIANZA_ENUM.drop(bind, checkfirst=True)
-    ESTADO_PARTIDO_ENUM.drop(bind, checkfirst=True)
-    LIGA_ENUM.drop(bind, checkfirst=True)

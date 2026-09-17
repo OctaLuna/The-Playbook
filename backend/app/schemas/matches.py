@@ -18,7 +18,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 from app.models.partido import EstadoPartido, Liga
 from app.models.prediccion import Predicción
@@ -107,8 +107,6 @@ class PredictionOut(BaseModel):
     `top_shap_features` NO es un campo acá a propósito (nota del contrato):
     es interno, nunca se expone en este endpoint público.
     """
-
-    model_config = ConfigDict(populate_by_name=True)
 
     match_id: uuid.UUID
     probabilities_1x2: Probabilities1X2Out
