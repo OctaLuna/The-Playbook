@@ -2,56 +2,47 @@ import Link from "next/link";
 
 export function SiteHeader() {
   return (
-    <>
-      <header className="border-b border-white/10 bg-[#17352b] text-[#f4f0e6]">
-        <div className="mx-auto flex min-h-20 max-w-7xl items-center justify-between px-6 py-4">
+    <header className="border-b border-border bg-background text-foreground">
+      <div className="mx-auto flex h-[76px] max-w-6xl items-center justify-between px-6">
+        <Link
+          href="/"
+          className="flex items-center gap-2.5"
+          aria-label="The Playbook - inicio"
+        >
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--accent)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M3 12h4l2 8 4-16 2 8h6" />
+          </svg>
+          <span className="font-display text-xl tracking-wide">
+            THE PLAYBOOK
+          </span>
+        </Link>
+
+        <nav aria-label="Navegación principal" className="flex items-center gap-9">
           <Link
             href="/"
-            className="group flex items-center gap-3"
-            aria-label="The Playbook - inicio"
+            className="text-sm font-semibold uppercase tracking-wide text-foreground transition-colors hover:text-primary"
           >
-            <span className="flex h-10 w-10 items-center justify-center border border-[#b49a62]/60 bg-[#101c18] font-serif text-lg text-[#b49a62]">
-              P
-            </span>
-
-            <div>
-              <div className="font-serif text-lg tracking-[0.18em]">
-                THE PLAYBOOK
-              </div>
-              <div className="text-[10px] uppercase tracking-[0.28em] text-[#aeb6b0]">
-                Football intelligence
-              </div>
-            </div>
+            Partidos
           </Link>
 
-          <nav
-            aria-label="Navegación principal"
-            className="flex items-center gap-6 text-sm"
+          <Link
+            href="/track-record"
+            className="text-sm font-semibold uppercase tracking-wide text-muted-foreground transition-colors hover:text-foreground"
           >
-            <Link
-              href="/"
-              className="text-[#d8ddd8] transition-colors hover:text-[#b49a62]"
-            >
-              Partidos
-            </Link>
-
-            <Link
-              href="/track-record"
-              className="text-[#d8ddd8] transition-colors hover:text-[#b49a62]"
-            >
-              Track Record
-            </Link>
-          </nav>
-        </div>
-      </header>
-
-           {/* Football transition */}
-      <div
-        className="football-track pointer-events-none"
-        aria-hidden="true"
-      >
-        <span className="football-ball">⚽</span>
-      </div> 
-    </>
+            Track Record
+          </Link>
+        </nav>
+      </div>
+    </header>
   );
 }
