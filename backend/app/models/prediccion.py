@@ -73,7 +73,15 @@ class Predicción(Base):
     xg_visitante: Mapped[float] = mapped_column(Float, nullable=False)
 
     nivel_confianza: Mapped[NivelConfianza] = mapped_column(
-        Enum(NivelConfianza, name="nivel_confianza_enum"), nullable=False
+        # Sin values_callable, SQLAlchemy persiste el .name del enum
+        # ("ALTA") en vez del .value ("alta") que crea la migración —
+        # mismo caso que CalibraciónHistórica.mercado en el otro modelo.
+        Enum(
+            NivelConfianza,
+            name="nivel_confianza_enum",
+            values_callable=lambda enum_cls: [e.value for e in enum_cls],
+        ),
+        nullable=False,
     )
     head_to_head_disponible: Mapped[bool] = mapped_column(nullable=False, default=False)
 
