@@ -24,6 +24,11 @@ jobs:
   backend:
     name: Backend (lint, tipos, guardianes)
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: "postgresql+asyncpg://playbook:playbook@localhost:5432/playbook"
+      REDIS_URL: "redis://localhost:6379/0"
+      AWS_REGION: "us-east-1"
+      BEDROCK_MODEL_ID: "anthropic.claude-3-5-sonnet-20241022-v2:0"
     defaults:
       run:
         working-directory: backend
