@@ -59,7 +59,7 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 ## Grupo 5 — Pulido
 - [ ] T023 [P] Manejo de errores 404 documentado (partido inexistente, predicción aún no generada) en las respuestas de `backend/app/api/matches.py` — [RF-006]
 - [ ] T024 [P] Actualizar `quickstart.md` reemplazando los comandos de ejemplo por los definitivos una vez implementado — [Art. IX]
-- [ ] T025 [P] Registrar en MLflow los pesos finales del ensamble siguiendo la convención de `ml-design.md` §7 (experimento por mercado, run nombrado por fecha+commit, params/métricas/artefactos) como evidencia para la defensa académica — [Art. II]
+- [x] T025 [P] Registrar en MLflow los pesos finales del ensamble siguiendo la convención de `ml-design.md` §7 (experimento por mercado, run nombrado por fecha+commit, params/métricas/artefactos) como evidencia para la defensa académica — [Art. II]
 
 ---
 **Regla:** cada tarea debe ser lo bastante concreta para completarla sin
