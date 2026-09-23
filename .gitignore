@@ -17,6 +17,7 @@ htmlcov/
 # --- ML ---
 mlruns/
 mlartifacts/
+mlflow.db
 *.pkl
 *.joblib
 backend/ml/data/raw/

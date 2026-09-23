@@ -77,6 +77,12 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 # Los tests pueden usar asserts, credenciales de prueba y prints de diagnóstico.
 "tests/**" = ["S105", "S106", "T20"]
+# ml.data.eda es un script de reporte para correr en vivo (demostración de EDA en la
+# defensa), no un servicio — su salida es la consola, así que print() es el punto.
+"ml/data/eda.py" = ["T20"]
+# Mismo caso: ml.evaluation.baseline_demo orquesta un entrenamiento de punta a punta
+# para mostrar en vivo, su salida es la tabla comparativa por consola.
+"ml/evaluation/baseline_demo.py" = ["T20"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["app", "ml", "rag", "workers"]

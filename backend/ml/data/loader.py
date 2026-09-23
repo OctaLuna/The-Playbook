@@ -81,6 +81,10 @@ def parsear_fila(fila: dict[str, str], liga: Liga) -> RegistroPartido:
         )
     except KeyError as error:
         raise FilaPartidoInvalidaError(f"Falta la columna {error} en la fila") from error
+    except ValueError as error:
+        # Partidos pospuestos/incompletos de Football-Data.co.uk traen FTHG/FTAG
+        # vacíos o no numéricos — es un dato de carga explícito, no un bug interno.
+        raise FilaPartidoInvalidaError(f"Gol no numérico o vacío en la fila: {error}") from error
 
 
 def cargar_partidos_csv(ruta_csv: PathLike[str] | str, liga: Liga) -> list[RegistroPartido]:
