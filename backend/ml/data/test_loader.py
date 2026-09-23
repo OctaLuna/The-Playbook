@@ -90,6 +90,18 @@ def test_columna_faltante_falla_explicito_en_vez_de_kilometrar_con_none() -> Non
         parsear_fila(fila_incompleta, Liga.PREMIER_LEAGUE)
 
 
+def test_gol_vacio_o_no_numerico_falla_explicito_en_vez_de_valueerror_crudo() -> None:
+    """Football-Data.co.uk trae filas de partidos pospuestos/incompletos con
+    FTHG/FTAG vacíos — deben fallar como FilaPartidoInvalidaError (dato del
+    equipo de carga), no propagar el ValueError interno de `int("")`."""
+    from ml.data.loader import FilaPartidoInvalidaError, parsear_fila
+
+    fila_gol_vacio = {**_FILA_BASE, "FTHG": ""}
+
+    with pytest.raises(FilaPartidoInvalidaError):
+        parsear_fila(fila_gol_vacio, Liga.PREMIER_LEAGUE)
+
+
 def test_cargar_partidos_csv_lee_todas_las_filas_del_archivo(tmp_path) -> None:
     from ml.data.loader import cargar_partidos_csv
 
