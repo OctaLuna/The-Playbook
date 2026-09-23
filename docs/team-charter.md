@@ -117,6 +117,8 @@ El autor del bloqueo avisa inmediatamente en WhatsApp (protocolo de la sección 
 - **Claude Code**
 - **Claude (web)**
 - **Gemini**
+- **Antigravity**
+- **Chatgpt (web)**
 
 ### Restricciones de datos
 Está **prohibido** subir a cualquier asistente de IA:
