@@ -199,6 +199,49 @@ también es evidencia válida.
   Si no alcanza el tiempo, la rúbrica permite explícitamente llevar solo "la justificación
   técnica de cómo se establecerá" — pero eso es un piso más bajo, mejor evitarlo si se puede.
 
+### Cómo correr la línea base (Paso 2 → Paso 3 → MLflow)
+
+El pipeline ya corre de punta a punta con el dataset sintético de
+`docs/scrum/Auditorias/notebooks/`: `backend/ml/data/cargar.py` (Paso 2) carga los partidos en
+Postgres y `backend/ml/evaluation/baseline_demo.py` (Paso 3) entrena, compara y registra en
+MLflow. Con datos sintéticos el resultado solo demuestra el pipeline, no el modelo.
+
+**Una sola vez por máquina** (PowerShell, desde la raíz del repo):
+
+```powershell
+cd backend
+python -m venv .venv
+.venv\Scripts\activate
+pip install -e ".[dev]"
+Copy-Item .env.example .env   # completar DATABASE_URL y REDIS_URL según infra/docker-compose.yml
+
+# equipo_alias_demo.csv no trae "Manchester Utd" a propósito (es la inconsistencia que muestra
+# el EDA); sin este alias la carga aborta. La copia corregida no se commitea.
+Copy-Item ..\docs\scrum\Auditorias\notebooks\equipo_alias_demo.csv alias_demo_corregido.csv
+Add-Content alias_demo_corregido.csv "Manchester Utd,manchester-united,premier_league"
+```
+
+**Cada vez**, con Docker Desktop abierto:
+
+```powershell
+cd C:\ruta\al\repo\The-Playbook
+docker compose -f infra/docker-compose.yml up -d
+cd backend
+.venv\Scripts\activate
+alembic upgrade head
+python -m ml.data.cargar ..\docs\scrum\Auditorias\notebooks\partidos_demo.csv premier_league alias_demo_corregido.csv
+python -W ignore -m ml.evaluation.baseline_demo premier_league
+mlflow ui --backend-store-uri sqlite:///mlflow.db --port 5000
+```
+
+- La carga es idempotente: si los partidos ya estaban, reporta `0 partidos nuevos, 84 ya
+  estaban` y no duplica nada. Las 6 filas omitidas (goles vacíos, `sin-fecha`) son esperadas.
+- `-W ignore` oculta los avisos `y_prob values do not sum to one` de sklearn — pendiente de
+  investigar antes de presentar los números.
+- En http://localhost:5000, dentro de cada experimento `the-playbook/{1x2, over_under_2_5,
+  btts}`, los resultados están en la pestaña **Runs**, no en *Traces* (esa siempre sale vacía).
+  `mlflow ui` debe correrse desde `backend/`, donde está `mlflow.db`.
+
 ## 7. Gestión y Cierre
 
 **Pide la rúbrica:** backlog, bloqueos, viabilidad, próximos pasos.
