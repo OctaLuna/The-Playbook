@@ -28,6 +28,9 @@ dependencies = [
   "mlflow>=2.17",
   "pandas>=2.2",
   "numpy>=2.0",
+  # T004b: dependencias de RAG (pgvector para tipo Vector, boto3 para Bedrock Converse API)
+  "pgvector>=0.3",
+  "boto3>=1.35",
 ]
 
 [tool.setuptools]
