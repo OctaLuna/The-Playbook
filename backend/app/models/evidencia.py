@@ -23,7 +23,7 @@ class Evidencia(Base):
     fecha_publicacion: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, index=True
     )
-    embedding: Mapped[list[float]] = mapped_column(Vector(1024), nullable=True)
+    embedding: Mapped[list[float] | None] = mapped_column(Vector(1024), nullable=True)
     fuente: Mapped[str] = mapped_column(String(128), nullable=False, default="News API")
 
     equipo_relacionado_id: Mapped[uuid.UUID | None] = mapped_column(

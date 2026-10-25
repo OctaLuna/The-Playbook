@@ -76,7 +76,9 @@ def matriz_probabilidad_marcador(
     matriz = np.outer(poisson.pmf(goles, lam), poisson.pmf(goles, mu))
     for x in (0, 1):
         for y in (0, 1):
-            matriz[x, y] *= tau_dixon_coles(x, y, lam, mu, rho)
+            # Match the positive lower bound used by the training likelihood:
+            # an unconstrained optimum can otherwise produce negative mass.
+            matriz[x, y] *= max(tau_dixon_coles(x, y, lam, mu, rho), 1e-10)
     return matriz / matriz.sum()
 
 
