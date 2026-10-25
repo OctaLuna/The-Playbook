@@ -18,6 +18,23 @@ python -m pip install -e ".[dev]"
 alembic upgrade head
 ```
 
+Configura `NEWS_API_KEY` o `NEWS_RSS_FEEDS` (URLs separadas por comas). La ingesta programada
+consulta News API cada seis horas y usa RSS si News API no estÃ¡ configurada o no responde. El
+reindexado corre cada 15 minutos y consulta las fuentes cuando hay partidos en las prÃ³ximas 24 horas.
+Arranca API, worker y scheduler en terminales separadas desde `backend/`:
+
+```powershell
+uvicorn app.main:app --reload
+celery -A workers.celery_app.celery_app worker --loglevel=info
+celery -A workers.celery_app.celery_app beat --loglevel=info
+```
+
+Solicita una ingesta y revisa cuÃ¡ntos artÃ­culos se insertaron o actualizaron:
+
+```powershell
+python -c "from workers.tasks.ingest_news import ingest_news; print(ingest_news.delay().get(timeout=120))"
+```
+
 Configura credenciales IAM de Bedrock para `AWS_REGION` y confirma acceso a `BEDROCK_MODEL_ID`.
 La API debe estar activa en `http://localhost:8000`; el partido debe tener una predicción de 001 y
 evidencias relacionadas, con embeddings Titan V2 de 1024 dimensiones, indexadas en Postgres. El GET
@@ -76,8 +93,12 @@ Para cada explicación de la muestra, completa esta revisión:
 | Fallback | Si no hay cobertura suficiente, el texto reconoce la ausencia y no inventa contexto. |
 
 Registra por comprobación `pasa` o `falla`, el fragmento revisado y el `evidence.id` que lo respalda.
-Reporta los fallos con el `match_id` y la versión del modelo; no inventes un umbral de groundedness
-que la especificación todavía no define.
+Reporta los fallos con el `match_id` y la versión del modelo. Opcionalmente configura
+`RAG_GROUNDEDNESS_ALERT_THRESHOLD` como tasa máxima aceptable entre `0` y `1`; la alerta se activa
+cuando `fallidas / revisadas` supera ese valor. Si la variable no está configurada, las alertas
+permanecen desactivadas. El equipo aún debe elegir su umbral. El helper
+`rag.groundedness.groundedness_alert_triggered(fallidas, revisadas, threshold)` aplica esa regla;
+una muestra vacía no genera alerta.
 
 La revisión T022 sigue siendo manual: guarda `match_id`, `model_version`, fecha, respuesta y el
 resultado de cada fila de la tabla anterior. La prueba simulada de automatización no reemplaza una

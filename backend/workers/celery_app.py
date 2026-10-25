@@ -13,11 +13,23 @@ celery_app.conf.update(
     result_serializer="json",
     timezone="UTC",
     enable_utc=True,
-    imports=("workers.tasks.generate_predictions",),
+    imports=(
+        "workers.tasks.generate_predictions",
+        "workers.tasks.ingest_news",
+        "workers.tasks.reindex_rag",
+    ),
     beat_schedule={
         "generate-predictions-every-hour": {
             "task": "workers.tasks.generate_predictions.generate_predictions",
             "schedule": crontab(minute=0),
-        }
+        },
+        "ingest-news-every-six-hours": {
+            "task": "workers.tasks.ingest_news.ingest_news",
+            "schedule": crontab(minute=15, hour="*/6"),
+        },
+        "reindex-rag-every-15-minutes": {
+            "task": "workers.tasks.reindex_rag.reindex_rag",
+            "schedule": crontab(minute="*/15"),
+        },
     },
 )
