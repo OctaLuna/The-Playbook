@@ -90,7 +90,7 @@ export default function MatchDetailPage() {
 
   if (matchQuery.isLoading || predictionQuery.isLoading) {
     return (
-      <main className="mx-auto min-h-[calc(100vh-76px)] max-w-6xl px-6 py-10">
+      <main className="match-detail-page min-h-[calc(100vh-76px)] px-6 py-10">
         <Cargando />
       </main>
     );
@@ -98,7 +98,7 @@ export default function MatchDetailPage() {
 
   if (matchQuery.isError) {
     return (
-      <main className="mx-auto min-h-[calc(100vh-76px)] max-w-6xl px-6 py-10">
+      <main className="match-detail-page min-h-[calc(100vh-76px)] px-6 py-10">
         <ErrorState error={matchQuery.error} onRetry={() => void matchQuery.refetch()} />
       </main>
     );
@@ -106,7 +106,7 @@ export default function MatchDetailPage() {
 
   if (!matchQuery.data) {
     return (
-      <main className="mx-auto min-h-[calc(100vh-76px)] max-w-6xl px-6 py-10">
+      <main className="match-detail-page min-h-[calc(100vh-76px)] px-6 py-10">
         <Vacio title="Partido no encontrado" message="No se encontró información para este partido." />
       </main>
     );
@@ -116,7 +116,7 @@ export default function MatchDetailPage() {
   const prediction = predictionQuery.data;
 
   return (
-    <main className="mx-auto min-h-[calc(100vh-76px)] max-w-6xl px-6 py-9 pb-14">
+    <main className="match-detail-page min-h-[calc(100vh-76px)] px-6 py-9 pb-14">
       <Link
         href="/"
         className="mb-6 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground transition hover:text-foreground"
@@ -132,9 +132,9 @@ export default function MatchDetailPage() {
       </div>
       <div className="mb-7 flex flex-wrap items-baseline gap-5">
         <h1 className="font-display text-5xl tracking-wide">
-          {match.home_team} <span className="text-muted-foreground">vs</span> {match.away_team}
+          {match.home_team} <span className="text-muted-foreground">contra</span> {match.away_team}
         </h1>
-        <span className="rounded-[3px] border border-[#3a423f] px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-[#c8cdca]">
+        <span className="rounded-[3px] border border-[#b49a62]/60 bg-[#17352b] px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-[#e8d6a7]">
           {statusLabel(match.status)}
         </span>
       </div>
@@ -204,22 +204,22 @@ export default function MatchDetailPage() {
                 <span className="text-muted-foreground">
                   Empate <b>{percentage(prediction.probabilities_1x2.draw)}</b>
                 </span>
-                <span>Visit. <b>{percentage(prediction.probabilities_1x2.away)}</b></span>
+                <span>Visitante <b>{percentage(prediction.probabilities_1x2.away)}</b></span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3.5">
               <div className="rounded-[3px] border border-border p-3.5">
                 <div className="mb-2 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-                  Goles O/U 2.5
+                  Más/menos de 2,5 goles
                 </div>
                 <div className="tabular flex justify-between">
                   <div>
-                    <div className="text-[10px] text-muted-foreground">OVER</div>
+                    <div className="text-[10px] text-muted-foreground">MÁS</div>
                     <div className="text-xl font-semibold">{percentage(prediction.over_under_2_5.over)}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-muted-foreground">UNDER</div>
+                    <div className="text-[10px] text-muted-foreground">MENOS</div>
                     <div className="text-xl font-semibold text-muted-foreground">{percentage(prediction.over_under_2_5.under)}</div>
                   </div>
                 </div>
@@ -252,7 +252,7 @@ export default function MatchDetailPage() {
           {/* Analisis + evidencia + seguimiento */}
           <div className="flex flex-col gap-5">
             <div className="rounded border border-border p-7">
-              <h2 className="font-display mb-3.5 text-xl tracking-wide">
+              <h2 className="font-display mb-3.5 text-xl tracking-wide text-[#e8d6a7]">
                 ANÁLISIS DEL MODELO
               </h2>
 
