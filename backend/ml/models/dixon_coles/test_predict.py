@@ -102,6 +102,14 @@ class TestMatrizProbabilidadMarcador:
 
         assert matriz.sum() == pytest.approx(1.0, abs=1e-6)
 
+    def test_rho_extremo_no_produce_probabilidades_negativas(self) -> None:
+        from ml.models.dixon_coles.predict import matriz_probabilidad_marcador
+
+        matriz = matriz_probabilidad_marcador(lam=1.4, mu=1.1, rho=100.0)
+
+        assert all(value >= 0 for value in matriz.flat)
+        assert matriz.sum() == pytest.approx(1.0, abs=1e-6)
+
     def test_una_celda_baja_incluye_la_correccion_tau(self) -> None:
         from ml.models.dixon_coles.predict import matriz_probabilidad_marcador, tau_dixon_coles
 

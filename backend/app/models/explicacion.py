@@ -5,7 +5,7 @@ Modelo SQLAlchemy para Explicación (1:1 con Predicción).
 import uuid
 from datetime import UTC, datetime
 
-from sqlalchemy import JSON, Boolean, DateTime, Text
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -17,7 +17,7 @@ class Explicacion(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     prediccion_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), unique=True, nullable=False, index=True
+        UUID(as_uuid=True), ForeignKey("predicciones.id"), unique=True, nullable=False, index=True
     )
     texto: Mapped[str] = mapped_column(Text, nullable=False)
     es_fallback_sin_evidencia: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)

@@ -120,7 +120,13 @@ class PredictionOut(BaseModel):
     generated_at: datetime
 
     @classmethod
-    def from_prediccion(cls, pred: Predicción, *, low_data_warning: bool) -> PredictionOut:
+    def from_prediccion(
+        cls,
+        pred: Predicción,
+        *,
+        low_data_warning: bool,
+        confidence: str | None = None,
+    ) -> PredictionOut:
         """Arma la respuesta pública desde la fila persistida.
 
         Deriva `over_under_2_5.under` y `btts.no` acá (data-model.md: "el
@@ -138,7 +144,7 @@ class PredictionOut(BaseModel):
             over_under_2_5=OverUnderOut(over=pred.prob_over_2_5, under=1 - pred.prob_over_2_5),
             btts=BttsOut(yes=pred.prob_btts_si, no=1 - pred.prob_btts_si),
             xg=XgOut(home=pred.xg_local, away=pred.xg_visitante),
-            confidence=pred.nivel_confianza.value,
+            confidence=confidence or pred.nivel_confianza.value,
             head_to_head_available=pred.head_to_head_disponible,
             low_data_warning=low_data_warning,
             model_version=pred.version_modelo,

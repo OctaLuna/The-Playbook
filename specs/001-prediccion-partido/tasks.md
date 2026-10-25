@@ -44,21 +44,21 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 - [x] T012e Implementar `backend/ml/models/xgboost/train.py`, `predict.py` y `evaluate.py` sobre el feature set de T012c — [RF-001, RF-002, RF-003]
 - [x] T012 Implementar `backend/ml/ensemble/predict.py`: combina Dixon-Coles + XGBoost por promedio ponderado, con el algoritmo de grid search de `w` y el peso mínimo `0.85` de `ml-design.md` §5 (sección 6.4 de project_spec.md) — [RF-001, RF-002, RF-003, RF-004]
 - [x] T013 Implementar `backend/ml/evaluation/calibration.py`: buckets, fórmula de `precision_empirica` y el default `n_observaciones = 30` de `ml-design.md` §6; lookup de `CalibraciónHistórica` por (mercado, rango de probabilidad) → nivel de confianza; "baja" si está bajo el umbral — [RF-005, RF-005b]
-- [ ] T014 Implementar `backend/app/services/predictions_service.py`: orquesta lectura de `Partido`/`Equipo`/`Predicción`, arma `low_data_warning` (a partir de `tiene_historial_suficiente`) y `head_to_head_available` — [RF-006]
-- [ ] T015 Implementar routers de `backend/app/api/matches.py` para los 4 endpoints — delgados, delegan a `predictions_service` — debe hacer pasar T001-T004 — [RF-006, RF-008]
-- [ ] T016 Implementar `backend/workers/tasks/generate_predictions.py`: tarea Celery que genera predicciones para partidos dentro de la ventana de 24h antes del kickoff (RF-007), persiste `Predicción` incl. `top_shap_features` y `version_modelo`
+- [x] T014 Implementar `backend/app/services/predictions_service.py`: orquesta lectura de `Partido`/`Equipo`/`Predicción`, arma `low_data_warning` (a partir de `tiene_historial_suficiente`) y `head_to_head_available` — [RF-006]
+- [x] T015 Implementar routers de `backend/app/api/matches.py` para los 4 endpoints — delgados, delegan a `predictions_service` — debe hacer pasar T001-T004 — [RF-006, RF-008]
+- [x] T016 Implementar `backend/workers/tasks/generate_predictions.py`: tarea Celery que genera predicciones para partidos dentro de la ventana de 24h antes del kickoff (RF-007), persiste `Predicción` incl. `top_shap_features` y `version_modelo`
 
 ## Grupo 4 — Integración
-- [ ] T017 Prueba de integración: Historia 1, escenario 1 — partido con datos suficientes devuelve 1X2 que suma 1.0 — [RF-001]
-- [ ] T018 Prueba de integración: Historia 1, escenario 2 — equipo con `tiene_historial_suficiente = false` devuelve `low_data_warning: true` — [RF-010]
-- [ ] T019 Prueba de integración: Historia 4, escenario 2 — rango de probabilidad sin calibración suficiente devuelve `confidence: "baja"` por defecto — [RF-005b]
-- [ ] T020 Prueba de integración: caso límite — partido marcado `pospuesto` conserva su predicción original y devuelve `status: "postponed"` — [RF-009]
-- [ ] T021 Prueba de integración: caso límite — partido sin head-to-head previo devuelve `head_to_head_available: false` — [RF-010]
-- [ ] T022 Verificar que el pipeline de esta feature efectivamente reutiliza (no reescribe) el test existente en `backend/ml/features/` que bloquea columnas de odds en el feature set (Artículo V)
+- [x] T017 Prueba de integración: Historia 1, escenario 1 — partido con datos suficientes devuelve 1X2 que suma 1.0 — [RF-001]
+- [x] T018 Prueba de integración: Historia 1, escenario 2 — equipo con `tiene_historial_suficiente = false` devuelve `low_data_warning: true` — [RF-010]
+- [x] T019 Prueba de integración: Historia 4, escenario 2 — rango de probabilidad sin calibración suficiente devuelve `confidence: "baja"` por defecto — [RF-005b]
+- [x] T020 Prueba de integración: caso límite — partido marcado `pospuesto` conserva su predicción original y devuelve `status: "postponed"` — [RF-009]
+- [x] T021 Prueba de integración: caso límite — partido sin head-to-head previo devuelve `head_to_head_available: false` — [RF-010]
+- [x] T022 Verificar que el pipeline de esta feature efectivamente reutiliza (no reescribe) el test existente en `backend/ml/features/` que bloquea columnas de odds en el feature set (Artículo V)
 
 ## Grupo 5 — Pulido
-- [ ] T023 [P] Manejo de errores 404 documentado (partido inexistente, predicción aún no generada) en las respuestas de `backend/app/api/matches.py` — [RF-006]
-- [ ] T024 [P] Actualizar `quickstart.md` reemplazando los comandos de ejemplo por los definitivos una vez implementado — [Art. IX]
+- [x] T023 [P] Manejo de errores 404 documentado (partido inexistente, predicción aún no generada) en las respuestas de `backend/app/api/matches.py` — [RF-006]
+- [x] T024 [P] Actualizar `quickstart.md` reemplazando los comandos de ejemplo por los definitivos una vez implementado — [Art. IX]
 - [x] T025 [P] Registrar en MLflow los pesos finales del ensamble siguiendo la convención de `ml-design.md` §7 (experimento por mercado, run nombrado por fecha+commit, params/métricas/artefactos) como evidencia para la defensa académica — [Art. II]
 
 ---

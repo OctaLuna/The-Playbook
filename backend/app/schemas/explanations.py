@@ -13,11 +13,11 @@ class EvidenceOut(BaseModel):
     """Esquema de cita de evidencia verificable (pilar 2 del product goal)."""
 
     id: UUID
-    title: str = Field(..., description="Titular de la noticia/evidencia")
-    url: str = Field(..., description="URL original verificable por el usuario")
-    source: str = Field(..., description="Fuente de la noticia (ej. News API)")
+    title: str = Field(description="Titular de la noticia/evidencia")
+    url: str = Field(description="URL original verificable por el usuario")
+    source: str = Field(description="Fuente de la noticia (ej. News API)")
     published_at: datetime = Field(
-        ..., description="Fecha de publicación UTC, siempre previa al kickoff"
+        description="Fecha de publicación UTC, siempre previa al kickoff"
     )
 
     model_config = ConfigDict(from_attributes=True)
@@ -45,7 +45,7 @@ class FollowUpRequest(BaseModel):
     """Cuerpo del request para POST /api/matches/{match_id}/explanation/follow-up"""
 
     question: str = Field(
-        ..., min_length=3, max_length=500, description="Pregunta de seguimiento del usuario"
+        min_length=3, max_length=500, description="Pregunta de seguimiento del usuario"
     )
 
 
