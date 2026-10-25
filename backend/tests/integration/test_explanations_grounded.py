@@ -152,9 +152,7 @@ async def test_follow_up_reuses_original_evidence_and_does_not_predict_again(
     db_session.add_all([evidence, explanation])
     await db_session.flush()
     db_session.add(
-        ExplicacionEvidencia(
-            explicacion_id=explanation.id, evidencia_id=evidence.id, orden=0
-        )
+        ExplicacionEvidencia(explicacion_id=explanation.id, evidencia_id=evidence.id, orden=0)
     )
     await db_session.flush()
 
@@ -201,11 +199,10 @@ async def test_follow_up_rejects_claim_that_contradicts_prediction(
     db_session.add_all([evidence, explanation])
     await db_session.flush()
     db_session.add(
-        ExplicacionEvidencia(
-            explicacion_id=explanation.id, evidencia_id=evidence.id, orden=0
-        )
+        ExplicacionEvidencia(explicacion_id=explanation.id, evidencia_id=evidence.id, orden=0)
     )
     await db_session.flush()
+
     async def fake_generation(_: str) -> str:
         return "La visita ganará seguro con una probabilidad del 90%."
 

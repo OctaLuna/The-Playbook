@@ -128,9 +128,7 @@ async def obtener_o_generar_explicacion(
     explanation = row.scalar_one_or_none()
     if explanation is None:
         teams_result = await session.execute(
-            select(Equipo).where(
-                Equipo.id.in_([match.equipo_local_id, match.equipo_visitante_id])
-            )
+            select(Equipo).where(Equipo.id.in_([match.equipo_local_id, match.equipo_visitante_id]))
         )
         teams = {team.id: team for team in teams_result.scalars()}
         local, away = teams[match.equipo_local_id], teams[match.equipo_visitante_id]
@@ -274,9 +272,7 @@ async def responder_seguimiento(
         answer = FALLBACK_NO_EVIDENCE
     else:
         teams_result = await session.execute(
-            select(Equipo).where(
-                Equipo.id.in_([match.equipo_local_id, match.equipo_visitante_id])
-            )
+            select(Equipo).where(Equipo.id.in_([match.equipo_local_id, match.equipo_visitante_id]))
         )
         teams = {team.id: team for team in teams_result.scalars()}
         context = _prediction_context(

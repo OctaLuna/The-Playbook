@@ -121,9 +121,7 @@ async def obtener_detalle_partido(session: AsyncSession, match_id: UUID) -> Matc
     )
 
 
-async def obtener_prediccion(
-    session: AsyncSession, match_id: UUID
-) -> PredictionOut | None:
+async def obtener_prediccion(session: AsyncSession, match_id: UUID) -> PredictionOut | None:
     fila = await session.execute(
         select(Partido, Predicción, EquipoLocal, EquipoVisitante)
         .join(Predicción, Predicción.partido_id == Partido.id)

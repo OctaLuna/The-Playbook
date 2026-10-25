@@ -92,13 +92,13 @@ async def generar_predicciones_para_ventana(
             resultado["version_modelo"],
         )
         if match.equipo_local_id in equipos:
-            equipos[match.equipo_local_id].tiene_historial_suficiente = conteos.get(
-                match.equipo_local_id, 0
-            ) >= 5
+            equipos[match.equipo_local_id].tiene_historial_suficiente = (
+                conteos.get(match.equipo_local_id, 0) >= 5
+            )
         if match.equipo_visitante_id in equipos:
-            equipos[match.equipo_visitante_id].tiene_historial_suficiente = conteos.get(
-                match.equipo_visitante_id, 0
-            ) >= 5
+            equipos[match.equipo_visitante_id].tiene_historial_suficiente = (
+                conteos.get(match.equipo_visitante_id, 0) >= 5
+            )
         session.add(
             Predicción(
                 partido_id=match.id,

@@ -20,9 +20,7 @@ logger = logging.getLogger(__name__)
 CACHE_TTL_SECONDS = 24 * 60 * 60
 
 
-def evidence_fingerprint(
-    evidence: list[Evidencia], shap_features: dict[str, float] | None
-) -> str:
+def evidence_fingerprint(evidence: list[Evidencia], shap_features: dict[str, float] | None) -> str:
     """Hash exactly the evidence and SHAP inputs that can affect generated text."""
     serialized = json.dumps(
         {
@@ -67,9 +65,7 @@ async def get_cached_explanation(prediction_id: UUID, fingerprint: str) -> str |
 async def cache_explanation(prediction_id: UUID, fingerprint: str, text: str) -> None:
     client = _redis_client()
     try:
-        await client.set(
-            _cache_key(prediction_id, fingerprint), text, ex=CACHE_TTL_SECONDS
-        )
+        await client.set(_cache_key(prediction_id, fingerprint), text, ex=CACHE_TTL_SECONDS)
     except RedisError:
         logger.warning("Redis unavailable while writing explanation cache", exc_info=True)
     finally:
