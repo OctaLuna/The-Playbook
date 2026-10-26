@@ -45,7 +45,9 @@ class ExplanationCache:
             key = self._make_key(match_id, evidence_hash)
             cached_data = await client.get(key)
             if cached_data:
-                return json.loads(cached_data)
+                parsed = json.loads(cached_data)
+                if isinstance(parsed, dict):
+                    return parsed
         except Exception as e:
             logger.warning("Fallo al leer caché de Redis (%s), sirviendo en vivo.", e)
         return None

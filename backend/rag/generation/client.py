@@ -9,8 +9,8 @@ Cumple con project_spec.md §5.1 / §7.2 y Artículos VI y VIII:
 import logging
 from typing import Any
 
-import boto3
-from botocore.exceptions import BotoCoreError, ClientError
+import boto3  # type: ignore[import-untyped]
+from botocore.exceptions import BotoCoreError, ClientError  # type: ignore[import-untyped]
 
 from app.core.config import get_settings
 
@@ -75,8 +75,8 @@ class BedrockClient:
             )
             output_message = response.get("output", {}).get("message", {})
             content = output_message.get("content", [])
-            if content and "text" in content[0]:
-                return content[0]["text"].strip()
+            if content and isinstance(content[0], dict) and "text" in content[0]:
+                return str(content[0]["text"]).strip()
             return ""
         except (BotoCoreError, ClientError) as e:
             logger.error("Error al invocar AWS Bedrock Converse API: %s", e)

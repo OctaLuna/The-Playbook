@@ -1,6 +1,6 @@
 """Instancia de Celery para tareas en background (Artículo VI)."""
 
-from celery import Celery
+from celery import Celery  # type: ignore[import-untyped]
 
 from app.core.config import get_settings
 
