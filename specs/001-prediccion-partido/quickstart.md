@@ -40,6 +40,30 @@ entrenamiento y equipos presentes en ese histórico. Si el entrenamiento falla o
 no crea una predicción ficticia; revisa el log del worker y la consulta devuelve 404 mientras no
 haya una predicción persistida.
 
+### Fixture local de demostración
+
+Si la base solo tiene históricos, crea un único partido local de demostración usando equipos que
+aparecen en el tramo de entrenamiento. El preflight valida la ventana cronológica, las tres clases
+1X2, ambos resultados para O/U y BTTS y cinco apariciones por equipo. No añade resultados al
+histórico. Desde `backend/`, primero revisa el plan sin escribir y luego persiste con `--apply`:
+
+```powershell
+python -m ml.data.demo_fixture
+python -m ml.data.demo_fixture --apply
+```
+
+El comando solo escribe cuando `DATABASE_URL` apunta a `localhost`, `127.0.0.1` o `::1`. El kickoff
+queda a 12 horas de la ejecución. Copia el UUID que muestra y, con el worker activo, solicita la
+predicción:
+
+```powershell
+python -c "from workers.tasks.generate_predictions import generate_predictions; print(generate_predictions.delay().get(timeout=900))"
+```
+
+El resultado debe ser `1`; verifica las cuatro señales con
+`Invoke-RestMethod "http://localhost:8000/api/matches/<UUID>/prediction"`. El ID del fixture es
+determinista para el par seleccionado, así que volver a ejecutar el comando no duplica el partido.
+
 ## Verificar los endpoints de lectura
 
 Con la API en `http://localhost:8000`, ejecuta desde PowerShell:
