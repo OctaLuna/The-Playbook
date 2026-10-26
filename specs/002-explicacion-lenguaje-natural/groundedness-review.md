@@ -1,7 +1,7 @@
 # Revisión manual de groundedness (T022)
 
 **Basado en:** `docs/project_spec.md` sección 7.6 y el `quickstart.md` de esta feature.
-**Requisito que cubre:** RF-001. **Estado:** protocolo listo; **muestra pendiente** (ver §4).
+**Requisito que cubre:** RF-001 — T022. **Estado:** protocolo listo; **muestra pendiente** (ver §4).
 
 ## 1. Qué se revisa
 
@@ -12,13 +12,17 @@ muestra por sprint.
 ## 2. Cómo se reproduce
 
 1. Con Postgres, Redis, la API y credenciales reales de Bedrock levantados (ver `quickstart.md`),
-   elegir al menos 5 partidos próximos que ya tengan predicción de 001.
+   elegir los partidos próximos de la muestra, que ya tengan predicción de 001. El tamaño de la
+   muestra lo fija el equipo en cada sprint.
 2. Pedir `GET /api/matches/{id}/explanation` y guardar la respuesta JSON completa junto con
    `match_id`, `model_version` y la fecha de revisión.
-3. Para cada explicación, completar la tabla de §3 con `pasa` o `falla`, el fragmento revisado y
+3. Leer `top_shap_features` de la predicción directamente de la base, porque la API pública no lo
+   expone (`specs/001-prediccion-partido/data-model.md`). Por ejemplo, desde `psql`:
+   `SELECT top_shap_features, version_modelo FROM predicciones WHERE partido_id = '<match_id>';`
+   y guardar el resultado junto a la respuesta del paso 2.
+4. Para cada explicación, completar la tabla de §3 con `pasa` o `falla`, el fragmento revisado y
    el `evidence.id` que lo respalda.
-4. Registrar los resultados en §4. Una persona distinta de quien generó la muestra revisa al menos
-   una de cada cinco filas.
+5. Registrar los resultados en §4.
 
 Los mocks de CI **no** sustituyen esta revisión: la prueba automática de groundedness verifica
 la regla, no la calidad del texto real.
@@ -41,6 +45,10 @@ verdad; no se completa con ejemplos ni estimaciones.
 | Fecha | `match_id` | `model_version` | Integridad temporal | Soporte factual | Relación con el modelo | No contradicción | Fallback | Revisó |
 |---|---|---|---|---|---|---|---|---|
 | — | — | — | — | — | — | — | — | — |
+
+Por cada fila, añadir debajo un bloque de notas con, para cada comprobación, el fragmento
+revisado del texto y el `evidence.id` que lo respalda (o `top_shap_features` en la comprobación
+de relación con el modelo). Los fallos se reportan con su `match_id` y su `model_version`.
 
 ## 5. Alerta
 
