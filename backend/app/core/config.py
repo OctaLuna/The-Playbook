@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     redis_url: str
     aws_region: str = "us-east-1"
     bedrock_model_id: str
+    # T025: Umbral configurable de groundedness/faithfulness que dispara alerta (project_spec §7.6)
+    rag_groundedness_threshold: float = 0.80
 
 
 @lru_cache
