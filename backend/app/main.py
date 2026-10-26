@@ -1,6 +1,10 @@
 from fastapi import FastAPI
 
+from app.api.explanations import router as explanations_router
+
 app = FastAPI(title="The Playbook")
+
+app.include_router(explanations_router)
 
 
 @app.get("/health")
