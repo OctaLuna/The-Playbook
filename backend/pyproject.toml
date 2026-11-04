@@ -83,6 +83,8 @@ ignore = [
 # Mismo caso: ml.evaluation.baseline_demo orquesta un entrenamiento de punta a punta
 # para mostrar en vivo, su salida es la tabla comparativa por consola.
 "ml/evaluation/baseline_demo.py" = ["T20"]
+# Paso 2 de la misma demo: ml.data.cargar reporta por consola qué cargó y qué omitió.
+"ml/data/cargar.py" = ["T20"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["app", "ml", "rag", "workers"]
