@@ -15,7 +15,7 @@ from __future__ import annotations
 import pytest
 from httpx import AsyncClient
 
-pytestmark = [pytest.mark.contract, pytest.mark.pendiente_implementacion]
+pytestmark = pytest.mark.contract
 
 MERCADOS_ESPERADOS = {"1x2", "over_under_2_5", "btts"}
 

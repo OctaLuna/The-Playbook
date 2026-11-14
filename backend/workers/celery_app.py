@@ -17,6 +17,7 @@ celery_app.conf.update(
         "workers.tasks.generate_predictions",
         "workers.tasks.ingest_news",
         "workers.tasks.reindex_rag",
+        "workers.tasks.update_track_record",
     ),
     beat_schedule={
         "generate-predictions-every-hour": {
@@ -30,6 +31,10 @@ celery_app.conf.update(
         "reindex-rag-every-15-minutes": {
             "task": "workers.tasks.reindex_rag.reindex_rag",
             "schedule": crontab(minute="*/15"),
+        },
+        "update-track-record-daily": {
+            "task": "workers.tasks.update_track_record.update_track_record",
+            "schedule": crontab(minute=0, hour=3),
         },
     },
 )
