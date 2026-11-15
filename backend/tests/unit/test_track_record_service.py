@@ -158,3 +158,51 @@ def test_evaluar_partido_con_y_sin_cuota() -> None:
     assert ev_con_cuota.tiene_cuota_mercado is True
     assert ev_con_cuota.log_loss_mercado_1x2 is not None
     assert ev_con_cuota.log_loss_mercado_1x2 > 0
+
+
+def test_t020_resumen_con_muestra_menor_a_50_partidos() -> None:
+    """T020 (RF-006, RF-009): cuando hay menos de 50 partidos jugados,
+
+    matches_included refleja la muestra real y window_size conserva 50.
+    """
+    from app.models.calibracion_historica import Mercado
+    from app.schemas.track_record import MarketSummaryOut, TrackRecordSummaryOut
+
+    summary = TrackRecordSummaryOut(
+        league=Liga.PREMIER_LEAGUE,
+        window_size=50,
+        matches_included=12,
+        model_versions=["xgb-ensemble-2026.08.1"],
+        markets=[
+            MarketSummaryOut(
+                market=Mercado.UNO_X_DOS,
+                hit_rate=0.5833,
+                avg_brier_score=0.21,
+                avg_log_loss=0.62,
+                avg_market_log_loss=0.59,
+                market_baseline_matches=10,
+            ),
+            MarketSummaryOut(
+                market=Mercado.OVER_UNDER_2_5,
+                hit_rate=0.6667,
+                avg_brier_score=0.19,
+                avg_log_loss=0.58,
+                avg_market_log_loss=None,
+                market_baseline_matches=0,
+            ),
+            MarketSummaryOut(
+                market=Mercado.BTTS,
+                hit_rate=0.5000,
+                avg_brier_score=0.25,
+                avg_log_loss=0.69,
+                avg_market_log_loss=None,
+                market_baseline_matches=0,
+            ),
+        ],
+        last_updated_at=datetime.now(UTC),
+    )
+
+    assert summary.window_size == 50
+    assert summary.matches_included == 12
+    assert summary.matches_included < summary.window_size
+    assert len(summary.markets) == 3

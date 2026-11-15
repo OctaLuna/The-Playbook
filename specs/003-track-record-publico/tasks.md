@@ -35,9 +35,9 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 - [x] T019 Verificar que esta feature reutiliza (no reintroduce) el test existente en `backend/ml/features/` que bloquea columnas de odds en el feature set de entrenamiento (Artículo V) — confirma que no se abre una vía nueva de fuga de cuotas hacia el modelo
 
 ## Grupo 5 — Pulido
-- [ ] T020 [P] Manejo del caso `matches_included < 50` (aún no hay suficientes partidos jugados para completar la ventana) en la respuesta de `GET /api/track-record` — [RF-006, RF-009]
-- [ ] T021 [P] Actualizar `quickstart.md` con comandos definitivos una vez implementado — [Art. IX]
-- [ ] T022 [P] Registrar en `docs/adr/` la decisión de excluir partidos sin cuota solo del baseline de mercado (trazabilidad para la defensa académica) — [RF-004]
+- [x] T020 [P] Manejo del caso `matches_included < 50` (aún no hay suficientes partidos jugados para completar la ventana) en la respuesta de `GET /api/track-record` — [RF-006, RF-009]
+- [x] T021 [P] Actualizar `quickstart.md` con comandos definitivos una vez implementado — [Art. IX]
+- [x] T022 [P] Registrar en `docs/adr/` la decisión de excluir partidos sin cuota solo del baseline de mercado (trazabilidad para la defensa académica) — [RF-004]
 
 ---
 **Regla:** cada tarea debe ser lo bastante concreta para completarla sin
