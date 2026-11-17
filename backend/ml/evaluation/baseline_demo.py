@@ -85,9 +85,18 @@ def formatear_tabla_comparativa(metricas_por_mercado: dict[str, MetricasMercado]
     return "\n".join(lineas)
 
 
+def _consulta_partidos_con_resultado(liga: Liga):  # type: ignore[no-untyped-def]
+    """Solo partidos con resultado: la línea base compara contra goles reales."""
+    return select(Partido).where(
+        Partido.liga == liga,
+        Partido.goles_local.is_not(None),
+        Partido.goles_visitante.is_not(None),
+    )
+
+
 async def _cargar_partidos(liga: Liga) -> list[Partido]:
     async with async_session_factory() as session:
-        resultado = await session.execute(select(Partido).where(Partido.liga == liga))
+        resultado = await session.execute(_consulta_partidos_con_resultado(liga))
         return list(resultado.scalars().all())
 
 
