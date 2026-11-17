@@ -9,7 +9,7 @@ Rama `develop`. Estamos en el **Sprint 6** (003 + panel de track record). Sprint
 | Feature | Dueño | `[x]` / pendientes | Situación |
 |---|---|---|---|
 | 001 predicción | Octavio + Leandro | 39 / 0 | Done |
-| 002 explicación | Einar | 27 / 1 | Done salvo T004 de la Red (abierta a propósito, justificada en tasks.md) |
+| 002 explicación | Einar | 26 / 2 | Abiertas: T004 (Red, a propósito) y T022 (muestra real de groundedness: la primera ejecución fue 1 partido, el texto fue la plantilla de seguridad y el revisor figura como "Claude Code"; falta ampliar la muestra y revisión humana) |
 | 003 track record | Leandro | 9 en `develop` / 25 de 25 en el PR #29 | **PR #29 abierto** (15-nov) con Grupos 3-5 (servicio, job Celery, router, tests, ADR 0002). CI Backend en rojo: T014 y T017 por `flush` faltante en `recalcular_track_record_agregado`. Diagnóstico y arreglo de 3 líneas comentados en el PR (verificado en local: 212 passed). Sin review aún. |
 | 004 web | Carol | 4 / 30 | `frontend/` ya tiene scaffold y rutas (`partidos`, `track-record`), pero los checkboxes no reflejan eso |
 
@@ -34,6 +34,7 @@ Rama `develop`. Estamos en el **Sprint 6** (003 + panel de track record). Sprint
 Leandro → Carol (Grupo 3 de 003 antes del panel) · Octavio → Carol (CI frontend) · Octavio → Leandro (revisión de PR) · todos → Carol (evidencia en ClickUp) · todos → tu demo.
 
 ## Problemas conocidos
+- `npm test` del frontend falla en 21/21 archivos con `TypeError: Cannot read properties of undefined (reading 'config')` al llamar a `describe` (vitest 5.0.0, vite 8.3.0, Node 24.14, sin config de vitest). Probado: `npm test`, un archivo suelto y `--pool=forks`: mismo error. Hipótesis: incompatibilidad vitest 5 / Node 24 o instalación dañada (probar `npm ci`); Octavio dijo que en su máquina pasaban 55 pruebas. Hasta resolverlo no se marcan T020-T023 de 004.
 - Ramas remotas sin PR/mergear: `Octa-dev` (guion Sprint 8, ahora con PR), `pupi` (alternativa de 002 ya superada; rescatar solo `test_chunking.py`, `test_sanitizer.py`, `test_explanations_service.py`), `feature/pupi-sprint-3` (`docs/c4-diagrams.md`). Ramas `feature/001-*`/`T012*` parecen obsoletas: borrar solo con confirmación.
 - Sprint 7: no hay PR de Carol para T029-T034 (accesibilidad AA, fecha dura). Sprint 8: falta muestra real de groundedness con Bedrock (T022 según Octavio; STATE decía solo T004: aclarar con Einar) y entorno Docker/Postgres reproducible.
 - PR #29 bloqueado por CI rojo hasta que Leandro aplique el `flush`; bloquea a Carol (T024-T028). Sin review de Octavio pasadas >24 h.
