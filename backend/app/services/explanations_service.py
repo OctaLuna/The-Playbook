@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 from datetime import UTC, datetime
 from pathlib import Path
@@ -30,6 +31,8 @@ from rag.retrieval.query import buscar_evidencias_relacionadas
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
+
+logger = logging.getLogger(__name__)
 
 MIN_EVIDENCIAS_PARA_EXPLICAR = 1
 FALLBACK_NO_EVIDENCE = (
@@ -159,7 +162,9 @@ async def obtener_o_generar_explicacion(
             )
             text = await generar_texto(prompt)
         if not is_fallback:
-            if _contains_prediction_contradiction(text, prediction):
+            motivo = _prediction_contradiction_reason(text, prediction)
+            if motivo is not None:
+                _registrar_reemplazo_de_guarda("explicación", match.id, motivo, text)
                 shap_feature = next(iter(prediction.top_shap_features), "forma reciente")
                 text = (
                     "La predicción no afirma un resultado. Las probabilidades registradas son "
@@ -206,7 +211,28 @@ async def obtener_o_generar_explicacion(
     return result
 
 
-def _contains_prediction_contradiction(text: str, prediction: Predicción) -> bool:
+def _registrar_reemplazo_de_guarda(tipo: str, match_id: UUID, motivo: str, texto: str) -> None:
+    """Deja rastro de cuándo la guarda descarta el texto del modelo.
+
+    Sin esto el texto original se pierde y no se puede medir con qué frecuencia la guarda
+    reemplaza el texto por la plantilla (necesario para la revisión T022 de groundedness).
+    """
+    logger.warning(
+        "Guarda de contradicción: %s reemplazada por la plantilla. partido=%s motivo=%s "
+        "texto_original=%r",
+        tipo,
+        match_id,
+        motivo,
+        texto[:2000],
+    )
+
+
+def _prediction_contradiction_reason(text: str, prediction: Predicción) -> str | None:
+    """Motivo por el que el texto se descarta, o None si pasa la guarda.
+
+    Mismo criterio que antes (devolvía un bool): cualquier frase de resultado o cualquier
+    porcentaje que no coincida (±0,5 pp) con una probabilidad de la predicción.
+    """
     normalized = text.casefold()
     outcome_phrases = {
         "local": (
@@ -240,8 +266,9 @@ def _contains_prediction_contradiction(text: str, prediction: Predicción) -> bo
         ),
     }
     for phrases in outcome_phrases.values():
-        if any(phrase in normalized for phrase in phrases):
-            return True
+        for phrase in phrases:
+            if phrase in normalized:
+                return f"frase de resultado: {phrase!r}"
     for raw_percent in re.findall(r"(?<!\d)(\d{1,3}(?:[.,]\d+)?)\s*%", normalized):
         percent = float(raw_percent.replace(",", ".")) / 100
         if not any(
@@ -256,8 +283,8 @@ def _contains_prediction_contradiction(text: str, prediction: Predicción) -> bo
                 1 - prediction.prob_btts_si,
             )
         ):
-            return True
-    return False
+            return f"porcentaje {raw_percent}% sin coincidencia con la predicción"
+    return None
 
 
 async def responder_seguimiento(
@@ -290,7 +317,9 @@ async def responder_seguimiento(
             f"ORIGINAL_EXPLANATION: {explanation.texto}\nEVIDENCE:\n{_evidence_text(evidence)}"
         )
         answer = await generar_texto(prompt)
-        if _contains_prediction_contradiction(answer, prediction):
+        motivo = _prediction_contradiction_reason(answer, prediction)
+        if motivo is not None:
+            _registrar_reemplazo_de_guarda("seguimiento", match.id, motivo, answer)
             answer = FOLLOW_UP_UNSUPPORTED
     generated_at = datetime.now(UTC)
     session.add(
