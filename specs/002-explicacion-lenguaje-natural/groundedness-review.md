@@ -1,7 +1,7 @@
 # Revisión manual de groundedness (T022)
 
 **Basado en:** `docs/project_spec.md` sección 7.6 y el `quickstart.md` de esta feature.
-**Requisito que cubre:** RF-001 — T022. **Estado:** protocolo listo; **muestra pendiente** (ver §4).
+**Requisito que cubre:** RF-001 — T022. **Estado:** primera ejecución real registrada el 26/10/2026 (ver §4); falta ampliar la muestra.
 
 ## 1. Qué se revisa
 
@@ -39,16 +39,35 @@ la regla, no la calidad del texto real.
 
 ## 4. Resultados
 
-Sin ejecuciones registradas todavía. Esta tabla se llena solo con explicaciones generadas de
-verdad; no se completa con ejemplos ni estimaciones.
+Solo se registran explicaciones generadas de verdad, con Bedrock real; no se completa con ejemplos ni
+estimaciones.
 
 | Fecha | `match_id` | `model_version` | Integridad temporal | Soporte factual | Relación con el modelo | No contradicción | Fallback | Revisó |
 |---|---|---|---|---|---|---|---|---|
-| — | — | — | — | — | — | — | — | — |
+| 2026-10-26 | `8c8f8bff-9d9b-5fa6-9c19-1ee33c6f845a` | `ensemble-2026-10-26-82a06a1989bd` | pasa | pasa (sin afirmaciones fácticas) | pasa | pasa | no aplica (5 evidencias) | Claude Code, a pedido de Rodrigo Rivera; **pendiente de ratificación humana** |
 
-Por cada fila, añadir debajo un bloque de notas con, para cada comprobación, el fragmento
-revisado del texto y el `evidence.id` que lo respalda (o `top_shap_features` en la comprobación
-de relación con el modelo). Los fallos se reportan con su `match_id` y su `model_version`.
+### Notas de la ejecución del 26/10/2026
+
+- **Integridad temporal:** las 5 evidencias tienen `published_at` entre el 19/09 y el 23/10/2026, todas
+  anteriores al kickoff (27/10/2026 06:51 UTC). Los 5 enlaces de The Guardian responden HTTP 200.
+  Evidencias: `b71303e2…` (17/10), `c4a6023b…` (19/09), `49bcd4fc…` (19/09), `29e75b18…` (23/10),
+  `7352a463…` (21/10).
+- **Soporte factual:** el texto guardado no afirma hechos del mundo; solo repite las cifras de la
+  predicción (local 65 %, empate 22 %, visitante 13 %) y aclara que la evidencia es contexto, no garantía.
+  El criterio "pasa" es por ausencia de afirmaciones, no porque el texto aporte contexto.
+- **Relación con el modelo:** la señal citada, `goles_favor_reciente_local` (0.118), es la primera de
+  `top_shap_features` (`goles_favor_reciente_local`, `forma_visitante`, `forma_local`).
+- **No contradicción:** las cifras del texto coinciden con 1X2 de la predicción.
+
+**Hallazgos que no son fallos de las 5 comprobaciones, pero hay que mirar:**
+
+1. El texto guardado es idéntico a la plantilla determinista de seguridad de
+   `explanations_service.py`; es decir, el texto libre de Claude fue descartado por la guarda de
+   contradicción (`_contains_prediction_contradiction`). No se verificó qué había escrito el modelo.
+2. De las 5 noticias, 4 son relevantes para el partido (resultados de Aston Villa y la lesión de Saka
+   en Arsenal); una es de bajo valor (guía de canales para ver un Tottenham–Aston Villa).
+3. El texto cita la variable SHAP con su nombre interno, poco legible para un usuario.
+4. **Muestra de 1 partido**, el único con predicción. Hay que repetir la revisión con más partidos.
 
 ## 5. Alerta
 
