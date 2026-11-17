@@ -216,3 +216,53 @@ async def test_follow_up_rejects_claim_that_contradicts_prediction(
     assert response.status_code == 200
     assert "90%" not in response.json()["answer"]
     assert "no puedo" in response.json()["answer"].lower()
+
+
+async def test_explanation_and_follow_up_are_committed(
+    client: AsyncClient, db_session: AsyncSession, monkeypatch
+) -> None:
+    """Sin commit la explicación se pierde al cerrar la sesión y el seguimiento da 404."""
+    from app.services import explanations_service
+
+    _mock_cache(monkeypatch, explanations_service)
+    match, _ = await _crear_partido_con_prediccion(db_session)
+    db_session.add(
+        Evidencia(
+            url=f"https://news.example/{uuid4()}",
+            titulo="El local llega en racha",
+            texto_sanitizado="El equipo local suma cuatro victorias seguidas.",
+            fecha_publicacion=match.fecha_kickoff - timedelta(days=1),
+            embedding=[0.01] * 1024,
+            fuente="News test",
+            equipo_relacionado_id=match.equipo_local_id,
+            partido_relacionado_id=match.id,
+        )
+    )
+    await db_session.flush()
+
+    async def fake_generation(_: str) -> str:
+        return "La forma_local pesa en la señal; no es una garantía."
+
+    monkeypatch.setattr(explanations_service, "generar_texto", fake_generation)
+    monkeypatch.setattr(explanations_service, "generar_embedding", _fake_embedding)
+
+    commits = 0
+    original_commit = db_session.commit
+
+    async def counting_commit() -> None:
+        nonlocal commits
+        commits += 1
+        await original_commit()
+
+    monkeypatch.setattr(db_session, "commit", counting_commit)
+
+    explanation = await client.get(f"/api/matches/{match.id}/explanation")
+    assert explanation.status_code == 200
+    assert commits == 1, "la explicación generada debe confirmarse en la base"
+
+    follow_up = await client.post(
+        f"/api/matches/{match.id}/explanation/follow-up",
+        json={"question": "Por que pesa la forma reciente del local"},
+    )
+    assert follow_up.status_code == 200
+    assert commits == 2, "la pregunta de seguimiento debe confirmarse en la base"
