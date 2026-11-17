@@ -10,11 +10,11 @@ Sin división por track — el equipo completo trabaja sobre el mismo objetivo e
 | Quién | Qué |
 |---|---|
 | **Los 5** | Ejecutar manualmente los 4 `quickstart.md` (uno por feature) de punta a punta y registrar el resultado |
-| **Rodrigo** | Verificar que `docker compose up` + `alembic upgrade head` reproduce el entorno completo desde cero, sin pasos manuales no documentados |
+| **Octavio** | Verificar que `docker compose up` + `alembic upgrade head` reproduce el entorno completo desde cero, sin pasos manuales no documentados |
 | **Leandro** | Preparar la evidencia de MLflow (pesos del ensamble, métricas de backtesting) y el `docs/adr/` correspondiente como material de defensa académica |
 | **Einar** | Muestra final de groundedness/faithfulness de RAG documentada y reproducible |
 | **Carol** | Pulido final de UI encontrado durante la regresión; cierre del tablero de ClickUp con la evidencia de las 126 tareas |
-| **Octavio** | Ensayo de la demo de defensa, Sprint Review final, y Retro de todo el proyecto (qué funcionó del reparto por tracks, qué se ajustaría en una próxima iteración) |
+| **Rodrigo** | Ensayo de la demo de defensa, Sprint Review final, y Retro de todo el proyecto (qué funcionó del reparto por tracks, qué se ajustaría en una próxima iteración) |
 
 ## Riesgos y dependencias
 

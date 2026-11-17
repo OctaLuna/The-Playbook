@@ -10,24 +10,23 @@ el charter no tenía porque se escribió antes de que existieran las 126 tareas 
 
 | Persona | Rol declarado (charter) | Track técnico | Feature(s) |
 |---|---|---|---|
-| **Octavio Luna** | Valor/Producto — líder de equipo | Product Owner / Scrum Master | Ninguna fija — coordina las 4 |
-| **Rodrigo Rivera** | Proceso | Backend-core | `001` — capa de aplicación |
+| **Rodrigo Rivera** | Proceso | Product Owner / Scrum Master | Ninguna fija — coordina las 4 |
+| **Octavio Luna** | Valor/Producto — líder de equipo | Backend-core | `001` — capa de aplicación |
 | **Leandro Colque** | Modelo/IA | ML del modelo | `001` — capa de ML, **+ `003` completo** |
 | **Einar Guillen** | Datos | RAG/LLM | `002` completo |
 | **Carol Zevallos** | Ingeniería | Frontend | `004` completo |
 
 ## Por qué este reparto
 
-**Octavio sin track fijo.** Es el líder de equipo declarado en el charter; en Scrum eso es
-Product Owner (prioriza el backlog, decide qué entra en cada sprint) y, dado el tamaño del
-equipo, también Scrum Master (facilita ceremonias, destraba bloqueos entre tracks). Un PO/SM
-con tareas técnicas fijas tiende a priorizar su propio código sobre destrabar a los demás —
-mejor que su capacidad quede libre para eso.
+**Rodrigo sin track fijo.** Es Product Owner (prioriza el backlog, decide qué entra en cada sprint) y, dado el
+tamaño del equipo, también Scrum Master (facilita ceremonias, destraba bloqueos entre tracks). El charter
+declara roles iniciales distintos; este reparto refleja el acuerdo vigente del equipo al 26/10/2026. Un PO/SM
+con tareas técnicas fijas tiende a priorizar su propio código sobre destrabar a los demás — mejor que su
+capacidad quede libre para eso.
 
-**Rodrigo lleva el Backend-core.** Es el track más transversal: el Grupo 0 de `001/tasks.md`
+**Octavio lleva el Backend-core.** Es el track más transversal: el Grupo 0 de `001/tasks.md`
 (`B01`-`B09`) que arranca el stack vive aquí, y bloquea a los otros tres tracks hasta que esté
-listo. Conviene que lo posea alguien cuyo rol ya es "Proceso" — no es un dato menor que quien
-más impacto tiene en destrabar a los demás sea, precisamente, el rol orientado a eso.
+listo. Por eso lo posee quien tiene la capacidad técnica y la disponibilidad para destrabar a los demás.
 
 **Leandro lleva ML + `003` completo, no solo ML.** `003-track-record-publico` reutiliza
 `backend/ml/evaluation/` (log-loss, Brier) que Leandro mismo construye para `001` — la tarea T009
@@ -59,7 +58,7 @@ por intuición:
 
 | Persona | Tareas | Detalle |
 |---|---|---|
-| Rodrigo | 31 | Grupo 0 (9) + Grupo 1-2 de 001 (11) + T014-T016 (3) + Grupo 4-5 de 001 (8) |
+| Octavio | 31 | Grupo 0 (9) + Grupo 1-2 de 001 (11) + T014-T016 (3) + Grupo 4-5 de 001 (8) |
 | Leandro | 33 | T012a-T012e, T012, T013, T025 de 001 (8) + `003` completo (25) |
 | Einar | 28 | `002` completo |
 | Carol | 34 | `004` completo |
@@ -77,7 +76,7 @@ directorios y no necesita tocar el de otro para avanzar.
 
 | Persona | Escribe en | Nunca escribe en |
 |---|---|---|
-| Rodrigo | `backend/app/{api,services,schemas,db,core}/`, `backend/app/models/{partido,equipo,prediccion,calibracion_historica}.py`, `backend/workers/tasks/generate_predictions.py`, `backend/alembic/`, `infra/`, `backend/tests/{contract,integration}/test_leagues.py`, `test_matches_*.py` | `backend/ml/`, `backend/rag/`, `frontend/` |
+| Octavio | `backend/app/{api,services,schemas,db,core}/`, `backend/app/models/{partido,equipo,prediccion,calibracion_historica}.py`, `backend/workers/tasks/generate_predictions.py`, `backend/alembic/`, `infra/`, `backend/tests/{contract,integration}/test_leagues.py`, `test_matches_*.py` | `backend/ml/`, `backend/rag/`, `frontend/` |
 | Leandro | `backend/ml/`, `backend/app/models/{evaluacion_prediccion,track_record_agregado,cuota_mercado}.py`, `backend/app/services/track_record_service.py`, `backend/app/api/track_record.py`, `backend/workers/tasks/update_track_record.py` | `backend/app/api/matches.py`, `backend/rag/`, `frontend/` |
 | Einar | `backend/rag/`, `backend/app/models/{explicacion,evidencia,pregunta_seguimiento,explicacion_evidencia}.py`, `backend/app/services/explanations_service.py`, `backend/app/api/explanations.py`, `backend/workers/tasks/{ingest_news,reindex_rag}.py` | `backend/ml/`, `backend/app/api/matches.py`, `frontend/` |
 | Carol | `frontend/` completo | Cualquier cosa bajo `backend/` |
@@ -86,7 +85,7 @@ directorios y no necesita tocar el de otro para avanzar.
 
 No hay archivos compartidos entre tracks salvo estos tres puntos, cada uno con su regla:
 
-1. **`backend/pyproject.toml`.** Rodrigo lo crea en `B01` (Grupo 0). Leandro añade sus
+1. **`backend/pyproject.toml`.** Octavio lo crea en `B01` (Grupo 0). Leandro añade sus
    dependencias de ML en `T012a` y Einar las de RAG en `T004b` — **cada uno en su propio commit,
    después** de que `B01` esté fusionado a `develop`, nunca en paralelo con él. Es el único
    archivo que los tres tracks tocan.
@@ -94,7 +93,7 @@ No hay archivos compartidos entre tracks salvo estos tres puntos, cada uno con s
    `003` (T009 de `003/tasks.md`) — no es una zona de cruce entre personas, es la razón por la
    que `003` es de Leandro y no de otra persona (ver arriba).
 3. **`specs/001-prediccion-partido/data-model.md` y `contracts/matches-api.md`.** Son de
-   lectura obligatoria para Leandro (define qué campos persiste `Predicción`) y para Rodrigo
+   lectura obligatoria para Leandro (define qué campos persiste `Predicción`) y para Octavio
    (define qué expone la API) al mismo tiempo. Ninguno de los dos los edita sin avisar al otro
    — cualquier cambio de contrato en mitad de un sprint es el tipo de bloqueo que
    `docs/team-charter.md` §4 pide reportar como Issue, no resolver en silencio.

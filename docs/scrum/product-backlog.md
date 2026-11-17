@@ -8,7 +8,7 @@ en `specs/001-prediccion-partido/tasks.md`, no aquí.
 126 tareas totales. El reparto por persona y su porqué están en
 [`equipo-y-tracks.md`](equipo-y-tracks.md).
 
-## Rodrigo — Backend-core de `001` (31 tareas)
+## Octavio — Backend-core de `001` (31 tareas)
 
 Fuente: [`specs/001-prediccion-partido/tasks.md`](../../specs/001-prediccion-partido/tasks.md)
 
@@ -72,7 +72,7 @@ Fuente: [`specs/004-interfaz-web/tasks.md`](../../specs/004-interfaz-web/tasks.m
 | Grupo 5 — Track record | `T024`-`T028` | Panel de los 3 mercados, detalle partido a partido |
 | Grupo 6 — Accesibilidad | `T029`-`T034` | Teclado, lectores de pantalla, contraste, responsive, verificación de que nada se calcula en el cliente |
 
-## Octavio — Product Owner / Scrum Master
+## Rodrigo — Product Owner / Scrum Master
 
 Sin tareas de `specs/` asignadas. Su trabajo por sprint está en cada `sprint-0X.md`: prioriza
 qué entra, facilita Planning/Review/Retro, y resuelve los bloqueos que crucen tracks (protocolo

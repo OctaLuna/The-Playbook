@@ -27,9 +27,9 @@ estos archivos — el plan de sprints no cambia sprint a sprint salvo que el equ
 Sprint 0 ya corrido, quedan 16 semanas ÷ 8 sprints = 2 semanas exactas cada uno.
 
 **Roles:**
-- **Product Owner / Scrum Master:** Octavio. Prioriza el backlog, facilita las ceremonias,
+- **Product Owner / Scrum Master:** Rodrigo. Prioriza el backlog, facilita las ceremonias,
   resuelve bloqueos entre tracks. Sin sprint técnico fijo.
-- **4 tracks técnicos, uno por persona:** Rodrigo (Backend-core), Leandro (ML + Track Record),
+- **4 tracks técnicos, uno por persona:** Octavio (Backend-core), Leandro (ML + Track Record),
   Einar (RAG/LLM), Carol (Frontend). Ver el porqué de cada uno en `equipo-y-tracks.md`.
 
 **Ceremonias, ajustadas a la disponibilidad real del equipo.** `docs/team-charter.md` §1
