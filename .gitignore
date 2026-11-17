@@ -50,3 +50,9 @@ desktop.ini
 !.vscode/extensions.json
 
 CLAUDE.local.md
+
+# Artefactos locales de la demo
+api-demo.log
+celery-demo.log
+tunnel-demo.log
+.vercel
