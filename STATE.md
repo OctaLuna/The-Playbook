@@ -1,51 +1,58 @@
 # STATE — The Playbook (actualizado 2026-11-17)
 
-Rol de quien lo lee: Rodrigo, Product Owner / Scrum Master. Verificado contra `specs/*/tasks.md`,
-git, `gh pr` y CI; no contra ClickUp (fuente oficial de avance según `docs/team-charter.md` §2).
+Para Rodrigo (Product Owner / Scrum Master). Verificado contra git, `gh pr` y CI; no contra ClickUp
+(fuente oficial de avance según `docs/team-charter.md` §2). Repo público: aquí no va nada sensible.
 
 ## Estado
-Rama `develop`. Estamos en el **Sprint 6** (003 + panel de track record). Sprints 1-5 cumplidos.
+Rama `develop`, **Sprint 6** en curso (003 + panel de track record). Sprints 7 y 8 pendientes.
 
-| Feature | Dueño | `[x]` / pendientes | Situación |
-|---|---|---|---|
-| 001 predicción | Octavio + Leandro | 39 / 0 | Done |
-| 002 explicación | Einar | 26 / 2 | Abiertas: T004 (Red, a propósito) y T022 (muestra real de groundedness: la primera ejecución fue 1 partido, el texto fue la plantilla de seguridad y el revisor figura como "Claude Code"; falta ampliar la muestra y revisión humana) |
-| 003 track record | Leandro | 9 en `develop` / 25 de 25 en el PR #29 | **PR #29 abierto** (15-nov) con Grupos 3-5 (servicio, job Celery, router, tests, ADR 0002). CI Backend en rojo: T014 y T017 por `flush` faltante en `recalcular_track_record_agregado`. Diagnóstico y arreglo de 3 líneas comentados en el PR (verificado en local: 212 passed). Sin review aún. |
-| 004 web | Carol | 4 / 30 | `frontend/` ya tiene scaffold y rutas (`partidos`, `track-record`), pero los checkboxes no reflejan eso |
+| Feature | Dueño | Situación |
+|---|---|---|
+| 001 predicción | Octavio + Leandro | Done. Abiertos: #32 (línea base solo con partidos jugados) y #37 (tabla de alias de 20 clubes) |
+| 002 explicación | Einar | 26 hechas / 2 abiertas: T004 (Red, a propósito) y **T022** (ver abajo). Abiertos: #31 (commit de la explicación) y #38 (log de la guarda, apilado sobre #31) |
+| 003 track record | Leandro | **#29** con Grupos 3-5 (25/25). CI Backend rojo: falta `flush` en `recalcular_track_record_agregado` (arreglo de 3 líneas y diagnóstico comentados en el PR; Leandro sin responder). Bloquea a Carol (T024-T028) |
+| 004 web | Carol | 4/30 marcadas. 55 pruebas pasan, pero las de T020-T023 definen su propia función y no ejercitan la UI real: no marcar sin verificar en el navegador. Falta accesibilidad AA (T029-T034), única fecha dura del Sprint 7; sin PR visible |
 
-## Qué supervisar (Sprints 6-8)
-**Sprint 6**
-- Leandro: Grupo 3 de 003 (T009-T012) **primero**; luego Grupo 4 (T013-T019, T013b, T017b) y Grupo 5. Si a mitad de sprint no cierra: recortar a Grupo 3-4 y mover el 5 al Sprint 7.
-- Carol (T024-T028): depende del Grupo 3 de Leandro. Mientras, trabajar con datos de ejemplo del contrato.
-- Octavio: activar el job `frontend` de `ci.yml` (hoy `if: false`), revisar PR de Leandro en <24 h, preparar `infra/` para las 5 ligas.
-- Einar: libre. Apoyo a Carol con el bloque de explicación.
+## PRs abiertos (esperan review de Octavio, ya avisado)
+#29 Leandro · #30 guion Sprint 8 · #31, #32 fixes · #33 roles + STATE · #34 hook `isolation-guard` que `develop` ya
+referenciaba pero no existía, + revisor temporal + skills · #35 guion/láminas EC2 · #36 PRODUCT.md · #37 alias · #38.
+Orden sugerido: #31, #32, #34, #37. #31/#38 tocan archivos de Einar; #32/#37 están en `backend/ml/`.
 
-**Sprint 7**
-- Carol: accesibilidad AA (T029-T034), **única fecha dura**. Leandro/Einar la apoyan.
-- Octavio/Leandro/Einar: pagar deuda técnica; Octavio sustituye datos de prueba por datos reales.
-- Tú: Sprint Review con demo lista → ficha → explicación → panel.
-
-**Sprint 8**
-- Los 5 ejecutan su quickstart y registran evidencia. Carol cierra ClickUp con las 126 tareas.
-- Octavio: reproducir entorno desde cero. Leandro: evidencia MLflow + ADR. Einar: muestra de groundedness.
-- Un defecto de regresión se trata como bloqueo, no como "fuera de sprint".
-
-## Dependencias críticas
-Leandro → Carol (Grupo 3 de 003 antes del panel) · Octavio → Carol (CI frontend) · Octavio → Leandro (revisión de PR) · todos → Carol (evidencia en ClickUp) · todos → tu demo.
+## T022 (002): dueño Einar · N=10 y firma de la revisión: Rodrigo
+- Primera ejecución (26/10): 1 partido, texto = plantilla de seguridad, revisor "Claude Code" → insuficiente. Sigue `[ ]`.
+- La guarda `_contains_prediction_contradiction` descarta **cualquier** frase de resultado (aunque esté negada) y **cualquier**
+  porcentaje ajeno al modelo (aunque venga de una noticia), y no dejaba rastro. #38 registra motivo y texto original
+  (WARNING); la lógica no cambió. Afinarla es decisión del equipo/Einar.
+- Muestra = 10 partidos de **demostración** (emparejamientos sintéticos de equipos reales). El calendario real no sirve: el
+  loader exige goles y solo se predice a <24 h. El registro debe decirlo.
+- **BLOQUEADO:** AWS rechaza las credenciales de `backend/.env` (`UnrecognizedClientException: security token invalid`);
+  embeddings (Titan) y generación (`us.anthropic.claude-sonnet-4-6`) usan Bedrock. Salidas: renovar claves (más
+  `AWS_SESSION_TOKEN` si empiezan con `ASIA`; probar con `aws sts get-caller-identity`) o autorizar explícitamente el perfil de `~/.aws`.
+- Hecho en local (worktree `..\pb-t022` = rama del #38 + `equipo_alias.csv` del #37): compose del proyecto arriba (volumen
+  `postgres_data`), `E0.csv` cargado (100 partidos), 10 partidos creados con `C:\Users\Lenovo\Downloads\crear_muestra_t022.py`
+  (equipos por orden alfabético en parejas, Brighton de visitante, uuid5), 10 predicciones generadas.
+- **Kickoff de la muestra: 18/11 11:34-12:19 UTC.** Si se retoma después, recrear los partidos y regenerar predicciones
+  (la ventana de ingesta y predicción es de 24 h).
+- Falta: ingesta con `NEWS_RSS_FEEDS` (19 feeds `theguardian.com/football/<slug>/rss`: arsenal, aston-villa, bournemouth,
+  brentford, chelsea, everton, fulham, liverpool, manchester-united, sunderland, tottenham-hotspur, coventry, manchestercity,
+  newcastleunited, nottinghamforest, crystalpalace, leedsunited, hullcity, ipswichtown; Brighton no tiene) → `reindex_rag()` →
+  10 × `GET /api/matches/{id}/explanation` → paquete (JSON, evidencia, SHAP, WARNING de la guarda) → revisión humana con la tabla de
+  `groundedness-review.md`. Marcar `[x]` solo después.
 
 ## Problemas conocidos
-- `npm test` del frontend: falla (`Cannot read properties of undefined (reading 'config')`) si se corre desde una terminal con la unidad en minúscula (`c:\...`, p. ej. Git Bash); **pasa desde PowerShell con `C:\...`** (21 archivos, 55 pruebas; lint y typecheck limpios). Causa: capitalización de la letra de unidad en Windows. OJO: las 4 pruebas "de componentes" de 004 T020-T023 (`explanation`, `follow-up`, `explanation-absence`, `match-status`) definen su propia función dentro del test y no ejercitan la UI real, así que no bastan para marcar esas tareas.
-- Ramas remotas sin PR/mergear: `Octa-dev` (guion Sprint 8, ahora con PR), `pupi` (alternativa de 002 ya superada; rescatar solo `test_chunking.py`, `test_sanitizer.py`, `test_explanations_service.py`), `feature/pupi-sprint-3` (`docs/c4-diagrams.md`). Ramas `feature/001-*`/`T012*` parecen obsoletas: borrar solo con confirmación.
-- Sprint 7: no hay PR de Carol para T029-T034 (accesibilidad AA, fecha dura). Sprint 8: falta muestra real de groundedness con Bedrock (T022 según Octavio; STATE decía solo T004: aclarar con Einar) y entorno Docker/Postgres reproducible.
-- PR #29 bloqueado por CI rojo hasta que Leandro aplique el `flush`; bloquea a Carol (T024-T028). Sin review de Octavio pasadas >24 h.
-- `tasks.md` de 004 desfasado frente al código de `frontend/`.
-- `CLAUDE.md` §8 desactualizado: dice que lo siguiente es el Grupo 1 de 001.
-- 25 archivos modificados sin commit en `develop` (docs/scrum, `explanations_service.py`, etc.) y varios `.png`, `dev.log`, `mlflow.log` sueltos.
-- Grafo graphify con última corrida del 2026-10-26.
+- `Equipo.nombre` guarda el slug (`manchester-united`) y la API lo devuelve como nombre: verificar si la UI lo formatea.
+- Al generar predicciones salen avisos de `sklearn` ("y_prob values do not sum to one"): no investigado (`backend/ml/`, Leandro).
+- Pruebas del frontend: solo pasan desde PowerShell con `C:\` en mayúscula (en `c:` fallan por la unidad en minúscula).
+- Limpieza local pendiente: 5 volúmenes Docker anónimos (`docker volume prune`), contenedores del compose y worktree `pb-t022` activos.
+- Informes `arquitectura-y-seguridad` y `estado-backlog` quedan locales a propósito (riesgos sin resolver; repo público).
+  graphify y `caveman-mode` no se versionan. `CLAUDE.md` §8 sigue desactualizado.
 
 ## Próximo objetivo
-Destrabar PR #29: Leandro aplica el `flush`, CI en verde, review (Octavio) y merge a `develop`. Luego Carol sigue con T024-T028 sobre el contrato real.
+Destrabar #29 y mergear los PR. Reanudar T022 cuando haya credenciales AWS válidas. Seguimiento a Carol por Sprint 7.
 
 ## Decisiones
-- `tasks.md` de `specs/` es lo único que se marca `[x]`; `docs/scrum/` solo dice quién y cuándo.
-- Rodrigo sin track técnico, para tener capacidad de destrabar (ver `docs/scrum/equipo-y-tracks.md`).
+- Solo `specs/*/tasks.md` se marca `[x]`. T022 y 004 T020-T023 siguen abiertas hasta tener evidencia.
+- Reparto vigente (26/10): Rodrigo PO/SM sin track técnico; Octavio Backend-core. El charter aún dice otra cosa.
+- T022 con N=10, fixtures por script local (no en el repo, para no sumar código sin tarea; si se repite cada sprint, crear
+  tarea en 002 Grupo 4) y firma humana de Rodrigo.
+- La tabla de alias de demo conserva "Manchester Utd" sin alias a propósito (el notebook lo usa para mostrar la inconsistencia).
