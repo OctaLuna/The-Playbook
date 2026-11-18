@@ -14,7 +14,13 @@ from app.core.config import get_settings
 
 def _bedrock_client():
     settings = get_settings()
-    return boto3.client("bedrock-runtime", region_name=settings.aws_region)
+    client_kwargs = {"region_name": settings.aws_region}
+    if settings.aws_access_key_id and settings.aws_secret_access_key:
+        client_kwargs["aws_access_key_id"] = settings.aws_access_key_id
+        client_kwargs["aws_secret_access_key"] = settings.aws_secret_access_key
+        if settings.aws_session_token:
+            client_kwargs["aws_session_token"] = settings.aws_session_token
+    return boto3.client("bedrock-runtime", **client_kwargs)
 
 
 def _embed_text_sync(text: str) -> list[float]:

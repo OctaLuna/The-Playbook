@@ -130,3 +130,9 @@ markers = [
 # exige el Artículo III. En CI se usa `-m 'not pendiente_implementacion'` para que el
 # build gatee sobre los guardianes sin quedar rojo de forma permanente y perder sentido.
 addopts = "-q --strict-markers"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+    "pytest-asyncio>=1.4.1.post1",
+]

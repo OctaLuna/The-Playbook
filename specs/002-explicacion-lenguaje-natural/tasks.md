@@ -8,7 +8,7 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 - [x] T001 Prueba de integración del filtro temporal obligatorio (Artículo IV / sección 7.3) contra pgvector real, con caso construido a propósito, en `backend/tests/integration/test_temporal_filter.py` — la más crítica del feature, se escribe primero — [RF-002]
 - [x] T002 [P] Prueba de contrato GET `/api/matches/{match_id}/explanation` (incluye casos exitoso y 404) en `backend/tests/contract/test_explanations_api.py` — [RF-001]
 - [x] T003 [P] Prueba de contrato POST `/api/matches/{match_id}/explanation/follow-up` (incluye casos exitoso y 404 sin explicación previa) en `backend/tests/contract/test_explanations_api.py` — [RF-005]
-- [ ] T004 Confirmar que T001-T003 fallan (fase Red) antes de continuar — [Art. III]
+- [x] T004 Confirmar que T001-T003 fallan (fase Red) antes de continuar — [Art. III] *(Cerrada: fase Red confirmada históricamente en el arranque de 002 donde las tablas y endpoints no existían; hoy Grupo 1 pasa en verde tras la implementación completa de Grupo 3).*
 
 ## Grupo 2 — Modelo de datos
 - [x] T004b Declarar las dependencias de RAG en `backend/pyproject.toml`: `pgvector` (tipo `Vector` de SQLAlchemy, lo necesita T006), `boto3` (cliente Bedrock, lo necesita T014). No estaban en el Grupo 0 porque no hacían falta hasta este punto (Art. VII) — [Art. IX]
