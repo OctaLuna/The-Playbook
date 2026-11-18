@@ -253,6 +253,9 @@ async def recalcular_track_record_agregado(
         anteriores = list((await session.execute(delete_stmt)).scalars())
         for ant in anteriores:
             await session.delete(ant)
+        # SQLAlchemy ejecuta los INSERT antes que los DELETE en un mismo flush;
+        # forzamos el borrado primero para no violar la restricción única.
+        await session.flush()
 
         # 1X2
         aciertos_1x2 = sum(1 for ev in evaluaciones if ev.acierto_1x2)
