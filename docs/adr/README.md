@@ -28,3 +28,4 @@ Secciones: **Estado** · **Contexto** · **Decisión** · **Consecuencias** · *
 | ADR | Título | Estado | Fecha |
 |---|---|---|---|
 | [0001](0001-badge-confianza-calibrado.md) | Nivel de confianza derivado de calibración empírica, no de distancia a uniforme | Aceptado | 2026-09-06 |
+| [0002](0002-exclusion-partidos-sin-cuota-baseline.md) | Exclusión de partidos sin cuota únicamente del baseline de mercado | Aceptado | 2026-11-15 |

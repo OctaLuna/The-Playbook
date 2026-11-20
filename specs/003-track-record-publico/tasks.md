@@ -18,26 +18,26 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 - [x] T008 [P] Crear schemas Pydantic (`TrackRecordSummaryOut` con el array `markets`, `TrackRecordMatchOut`) en `backend/app/schemas/track_record.py`, siguiendo `contracts/track-record-api.md` — [RF-001, RF-003]
 
 ## Grupo 3 — Implementación (hace pasar las pruebas del Grupo 1)
-- [ ] T009 Implementar `backend/app/services/track_record_service.py`: evalúa los tres mercados reutilizando `backend/ml/evaluation/` (log-loss, Brier) ya existente para 001 — no reimplementar las métricas — [RF-001, RF-002]
-- [ ] T010 Implementar el cálculo de `log_loss_mercado_1x2` a partir de `CuotaMercado`, solo cuando `tiene_cuota_mercado = true` y aplicando la precedencia de fuentes de `data-model.md` — [RF-004]
-- [ ] T011 Implementar `backend/workers/tasks/update_track_record.py`: job diario de Celery que recalcula `TrackRecordAgregado` para cada `(liga, mercado)` a partir de partidos con `estado = jugado`, excluyendo pospuestos y cancelados — [RF-001, RF-002, RF-006, RF-007, RF-008, RF-011]
-- [ ] T012 Implementar routers de `backend/app/api/track_record.py` (2 endpoints, filtro `league`) — solo lectura de `TrackRecordAgregado`/`EvaluaciónPredicción`, debe hacer pasar T001-T002 — [RF-001, RF-003, RF-007]
+- [x] T009 Implementar `backend/app/services/track_record_service.py`: evalúa los tres mercados reutilizando `backend/ml/evaluation/` (log-loss, Brier) ya existente para 001 — no reimplementar las métricas — [RF-001, RF-002]
+- [x] T010 Implementar el cálculo de `log_loss_mercado_1x2` a partir de `CuotaMercado`, solo cuando `tiene_cuota_mercado = true` y aplicando la precedencia de fuentes de `data-model.md` — [RF-004]
+- [x] T011 Implementar `backend/workers/tasks/update_track_record.py`: job diario de Celery que recalcula `TrackRecordAgregado` para cada `(liga, mercado)` a partir de partidos con `estado = jugado`, excluyendo pospuestos y cancelados — [RF-001, RF-002, RF-006, RF-007, RF-008, RF-011]
+- [x] T012 Implementar routers de `backend/app/api/track_record.py` (2 endpoints, filtro `league`) — solo lectura de `TrackRecordAgregado`/`EvaluaciónPredicción`, debe hacer pasar T001-T002 — [RF-001, RF-003, RF-007]
 
 ## Grupo 4 — Integración
-- [ ] T013 Prueba de integración: Historia 1, escenario 1 — el agregado de los últimos 50 partidos devuelve las **tres** entradas de `markets` (1x2, over_under_2_5, btts), cada una con `hit_rate`, `avg_brier_score` y `avg_log_loss` — [RF-001, RF-002]
-- [ ] T013b Prueba de integración: un partido con `resultado_real` conocido produce el `acierto_over_under_2_5` y el `acierto_btts` correctos — con un caso de cada signo, no solo aciertos — [RF-001]
-- [ ] T014 Prueba de integración: Historia 1, escenario 2 — el job diario actualiza `TrackRecordAgregado` tras marcar un nuevo partido como jugado — [RF-008]
-- [ ] T015 Prueba de integración: Historia 2 — el detalle partido a partido muestra las tres predicciones y `real_result` juntos — [RF-003]
-- [ ] T016 Prueba de integración: Historia 3 — `avg_market_log_loss` se calcula correctamente y es comparable a `avg_log_loss` en la entrada `1x2`, y es `null` en las otras dos — [RF-004]
-- [ ] T017 Prueba de integración: caso límite — partido `pospuesto` no se incluye en ninguna métrica hasta que cambia a `jugado` — [RF-011]
-- [ ] T017b Prueba de integración: caso límite — simular un reentrenamiento a mitad de la ventana de 50 partidos (dos `version_modelo` distintas dentro del mismo período) y verificar que `EvaluaciónPredicción` conserva la versión correcta por partido, que `GET /api/track-record/matches` la refleja sin mezclarlas, y que el agregado expone las dos en `model_versions` (hallazgo #6 de Analyze) — [RF-003, RF-010]
-- [ ] T018 Prueba de integración: caso límite — partido sin `CuotaMercado` cuenta para `hit_rate`/`avg_brier_score` pero no para `avg_market_log_loss` — [RF-004]
-- [ ] T019 Verificar que esta feature reutiliza (no reintroduce) el test existente en `backend/ml/features/` que bloquea columnas de odds en el feature set de entrenamiento (Artículo V) — confirma que no se abre una vía nueva de fuga de cuotas hacia el modelo
+- [x] T013 Prueba de integración: Historia 1, escenario 1 — el agregado de los últimos 50 partidos devuelve las **tres** entradas de `markets` (1x2, over_under_2_5, btts), cada una con `hit_rate`, `avg_brier_score` y `avg_log_loss` — [RF-001, RF-002]
+- [x] T013b Prueba de integración: un partido con `resultado_real` conocido produce el `acierto_over_under_2_5` y el `acierto_btts` correctos — con un caso de cada signo, no solo aciertos — [RF-001]
+- [x] T014 Prueba de integración: Historia 1, escenario 2 — el job diario actualiza `TrackRecordAgregado` tras marcar un nuevo partido como jugado — [RF-008]
+- [x] T015 Prueba de integración: Historia 2 — el detalle partido a partido muestra las tres predicciones y `real_result` juntos — [RF-003]
+- [x] T016 Prueba de integración: Historia 3 — `avg_market_log_loss` se calcula correctamente y es comparable a `avg_log_loss` en la entrada `1x2`, y es `null` en las otras dos — [RF-004]
+- [x] T017 Prueba de integración: caso límite — partido `pospuesto` no se incluye en ninguna métrica hasta que cambia a `jugado` — [RF-011]
+- [x] T017b Prueba de integración: caso límite — simular un reentrenamiento a mitad de la ventana de 50 partidos (dos `version_modelo` distintas dentro del mismo período) y verificar que `EvaluaciónPredicción` conserva la versión correcta por partido, que `GET /api/track-record/matches` la refleja sin mezclarlas, y que el agregado expone las dos en `model_versions` (hallazgo #6 de Analyze) — [RF-003, RF-010]
+- [x] T018 Prueba de integración: caso límite — partido sin `CuotaMercado` cuenta para `hit_rate`/`avg_brier_score` pero no para `avg_market_log_loss` — [RF-004]
+- [x] T019 Verificar que esta feature reutiliza (no reintroduce) el test existente en `backend/ml/features/` que bloquea columnas de odds en el feature set de entrenamiento (Artículo V) — confirma que no se abre una vía nueva de fuga de cuotas hacia el modelo
 
 ## Grupo 5 — Pulido
-- [ ] T020 [P] Manejo del caso `matches_included < 50` (aún no hay suficientes partidos jugados para completar la ventana) en la respuesta de `GET /api/track-record` — [RF-006, RF-009]
-- [ ] T021 [P] Actualizar `quickstart.md` con comandos definitivos una vez implementado — [Art. IX]
-- [ ] T022 [P] Registrar en `docs/adr/` la decisión de excluir partidos sin cuota solo del baseline de mercado (trazabilidad para la defensa académica) — [RF-004]
+- [x] T020 [P] Manejo del caso `matches_included < 50` (aún no hay suficientes partidos jugados para completar la ventana) en la respuesta de `GET /api/track-record` — [RF-006, RF-009]
+- [x] T021 [P] Actualizar `quickstart.md` con comandos definitivos una vez implementado — [Art. IX]
+- [x] T022 [P] Registrar en `docs/adr/` la decisión de excluir partidos sin cuota solo del baseline de mercado (trazabilidad para la defensa académica) — [RF-004]
 
 ---
 **Regla:** cada tarea debe ser lo bastante concreta para completarla sin

@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.explanations import router as explanations_router
 from app.api.matches import router as matches_router
+from app.api.track_record import router as track_record_router
 from app.core.config import get_settings
 
 app = FastAPI(title="The Playbook")
@@ -16,6 +17,7 @@ app.add_middleware(
 )
 app.include_router(matches_router)
 app.include_router(explanations_router)
+app.include_router(track_record_router)
 
 
 @app.get("/health")

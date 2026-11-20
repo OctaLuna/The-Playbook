@@ -54,7 +54,9 @@ Notas del contrato:
 - `model_versions` con más de un elemento significa que la ventana abarca un reentrenamiento y
   la serie no es continua. El panel debe decirlo en vez de presentarla como una sola.
 - `matches_included` puede ser menor que `window_size` mientras no haya 50 partidos jugados
-  (RF-009).
+  (RF-009). Sin datos (`matches_included == 0`), los valores de métricas se devuelven en 0.0 por
+  esquema, pero el frontend DEBE mostrar estado "sin datos" o muestra insuficiente, nunca un 0%
+  como si el modelo hubiera fallado todas las predicciones.
 
 ## GET /api/track-record/matches
 Query params: `league` (opcional), `page`, `page_size`.
