@@ -7,11 +7,11 @@
 
 | Persona | Tareas |
 |---|---|
-| **Rodrigo** | `001` Grupo 4: `T017`-`T022` (pruebas de integración de las 4 historias y los casos límite). Grupo 5: `T023`, `T024` (404 documentados, `quickstart.md`). **`001` queda Done al cierre del sprint** |
+| **Octavio** | `001` Grupo 4: `T017`-`T022` (pruebas de integración de las 4 historias y los casos límite). Grupo 5: `T023`, `T024` (404 documentados, `quickstart.md`). **`001` queda Done al cierre del sprint** |
 | **Leandro** | `003` Grupo 1-2 completo si no arrancó en el Sprint 4: `T001`-`T003` (contratos, incl. la prueba negativa anti-cuotas) y `T004`-`T008` (modelos, migración, schemas) |
 | **Einar** | `002` Grupo 4: `T019`-`T022` (evidencia real, fallback honesto, preguntas de seguimiento, no-contradicción con la predicción — la prueba `T021b` es constitucionalmente sensible, no se apura). Grupo 5: `T023`-`T025`. **`002` queda Done al cierre del sprint** |
 | **Carol** | `004` resto de Grupo 4: `T020`-`T023` (aviso de datos insuficientes, bloque de explicación con evidencia enlazable —ahora sí con `002` disponible—, preguntas de seguimiento, estado del partido) |
-| **Octavio** | Sprint Review con demo de `002`: una explicación real, citando evidencia real, con enlace verificable. Retro breve sobre cómo fue el sprint más pesado (Sprint 3-4) para ajustar el ritmo de lo que queda |
+| **Rodrigo** | Sprint Review con demo de `002`: una explicación real, citando evidencia real, con enlace verificable. Retro breve sobre cómo fue el sprint más pesado (Sprint 3-4) para ajustar el ritmo de lo que queda |
 
 ## Puede adelantarse sin esperar
 

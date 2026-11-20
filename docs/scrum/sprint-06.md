@@ -1,21 +1,21 @@
 # Sprint 6 — Cerrar 003, avanzar el panel de track record
 
 **Semanas:** 11-12 · **Objetivo:** `003` queda **Done**. El panel público de `004` muestra
-datos reales de desempeño. Rodrigo y Einar, libres de sus features, refuerzan al resto.
+datos reales de desempeño. Octavio y Einar, libres de sus features, refuerzan al resto.
 
 ## Por persona
 
 | Persona | Tareas |
 |---|---|
 | **Leandro** | El sprint más cargado de `003`: Grupo 3 (`T009`-`T012`, servicio + baseline de mercado + worker diario + routers), Grupo 4 (`T013`-`T019` + `T013b` + `T017b`, incluido el caso de reentrenamiento a mitad de ventana), Grupo 5 (`T020`-`T022`). **`003` queda Done al cierre del sprint** |
-| **Rodrigo** | Libre de `001` desde el Sprint 5. Este sprint: revisor de PR de Leandro en `003` (segundo par de ojos, especialmente en el worker diario y el baseline de mercado), activa el job `frontend` de `.github/workflows/ci.yml` (hoy desactivado con `if: false`), prepara `infra/` para datos reales de las 5 ligas |
+| **Octavio** | Libre de `001` desde el Sprint 5. Este sprint: revisor de PR de Leandro en `003` (segundo par de ojos, especialmente en el worker diario y el baseline de mercado), activa el job `frontend` de `.github/workflows/ci.yml` (hoy desactivado con `if: false`), prepara `infra/` para datos reales de las 5 ligas |
 | **Einar** | Libre de `002` desde el Sprint 5. QA de RAG: la prueba manual de groundedness (`T022` de `002`, si no se completó), y soporte a Carol en la integración del bloque de explicación si aparece fricción |
 | **Carol** | `004` Grupo 5 completo: `T024`-`T028` (panel de track record con los 3 mercados por separado). **Depende de que Leandro tenga al menos el Grupo 3 de `003` listo** — coordinar el momento exacto a inicio de sprint |
-| **Octavio** | Es el sprint más cargado para una sola persona (Leandro) del proyecto — vigilar de cerca, y decidir temprano si Rodrigo pasa de "revisor" a "pairing activo" si hace falta |
+| **Rodrigo** | Es el sprint más cargado para una sola persona (Leandro) del proyecto — vigilar de cerca, y decidir temprano si Octavio pasa de "revisor" a "pairing activo" si hace falta |
 
 ## Puede adelantarse sin esperar
 
-Rodrigo y Einar no tienen tareas propias de `tasks.md` este sprint — su trabajo es de soporte,
+Octavio y Einar no tienen tareas propias de `tasks.md` este sprint — su trabajo es de soporte,
 explícitamente para no dejar a Leandro solo en el sprint más pesado de `003`.
 
 ## Riesgos y dependencias
