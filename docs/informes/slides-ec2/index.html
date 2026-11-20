@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Playbook — Defensa EC2</title>
+<style>
+:root{
+  --bg:#0c1714; --bg2:#101d1a; --card:#13221e; --line:#25382f;
+  --gold:#e8d6a7; --gold2:#c9a94f; --green:#3ecf7a; --teal:#1f6b5c;
+  --text:#d5dad6; --mute:#a2b3aa; --red:#e0665a;
+  --serif: "Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --sans: "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  --mono: "Cascadia Mono",Consolas,"SF Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#050a08;color:var(--text);font-family:var(--sans);overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center;}
+.slide{position:absolute;inset:0;display:none;padding:56px 72px 64px;background:
+  radial-gradient(900px 500px at 85% -10%,rgba(62,207,122,.10),transparent 60%),
+  linear-gradient(180deg,var(--bg2),var(--bg));overflow:hidden}
+.slide.on{display:flex;flex-direction:column}
+.slide::before{content:"";position:absolute;inset:18px;border:1px solid var(--line);border-radius:6px;pointer-events:none}
+.pitch{position:absolute;right:-120px;bottom:-120px;width:520px;height:520px;border:2px solid rgba(232,214,167,.07);border-radius:50%;pointer-events:none}
+.pitch::after{content:"";position:absolute;inset:auto;left:50%;top:-1px;bottom:-1px;width:0;border-left:2px solid rgba(232,214,167,.07)}
+.tag{font:600 13px var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--gold2);margin-bottom:10px;display:flex;gap:12px;align-items:center}
+.tag b{display:inline-block;min-width:34px;text-align:center;padding:3px 8px;border:1px solid var(--gold2);border-radius:4px;font-family:var(--mono);letter-spacing:0}
+h1,h2{font-family:var(--serif);font-weight:400;color:var(--gold);letter-spacing:.01em}
+h2{font-size:46px;line-height:1.08;margin-bottom:26px;text-transform:uppercase}
+p,li{font-size:21px;line-height:1.45}
+.mute{color:var(--mute)}
+.grid{display:grid;gap:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:22px 24px}
+.card h3{font:600 14px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--gold2);margin-bottom:10px}
+.card p,.card li{font-size:19px}
+ul{list-style:none}
+ul li{padding-left:22px;position:relative;margin:7px 0}
+ul li::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:8px;border-radius:50%;background:var(--green)}
+.num{font-family:var(--serif);color:var(--gold);font-size:54px;line-height:1}
+.pill{display:inline-block;font:600 13px var(--sans);letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:999px;border:1px solid var(--line);color:var(--mute)}
+.ok{color:#0b1a12;background:var(--green);border-color:var(--green)}
+.warn{color:#2a1d05;background:var(--gold2);border-color:var(--gold2)}
+.bad{color:#2a0d09;background:var(--red);border-color:var(--red)}
+code,.mono{font-family:var(--mono);font-size:.88em;color:var(--gold)}
+.foot{position:absolute;left:72px;right:72px;bottom:26px;display:flex;justify-content:space-between;font:12px var(--mono);color:var(--mute);letter-spacing:.06em}
+.node{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;text-align:center}
+.node b{display:block;font:600 14px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.node span{font-size:15px;color:var(--mute)}
+.arrow{color:var(--gold2);font-size:26px;align-self:center;text-align:center}
+table{border-collapse:collapse;width:100%}
+th{font:600 13px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--gold2);text-align:left;padding:10px 14px;border-bottom:1px solid var(--line)}
+td{padding:12px 14px;border-bottom:1px solid var(--line);font-size:20px}
+td.n{font-family:var(--mono);text-align:right}
+th.n{text-align:right}
+.hl{color:var(--green)}
+.bar{height:10px;border-radius:5px;background:var(--line);position:relative;overflow:hidden}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--green)}
+.shot{border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.shot img{display:block;width:100%}
+#hud{position:fixed;right:14px;bottom:10px;font:12px var(--mono);color:#8fa197;z-index:9}
+#notes{position:fixed;left:0;right:0;bottom:0;background:#050a08ee;border-top:1px solid var(--line);color:var(--text);padding:14px 28px;font-size:16px;line-height:1.45;display:none;z-index:8;max-height:30vh;overflow:auto}
+#notes.on{display:block}
+@media print{
+  html,body{overflow:visible;background:#fff}
+  #stage{position:static;transform:none!important;width:auto;height:auto}
+  .slide{display:flex!important;position:relative;width:1280px;height:720px;page-break-after:always;break-after:page}
+  #hud,#notes{display:none!important}
+  @page{size:1280px 720px;margin:0}
+}
+</style>
+</head>
+<body>
+<div id="stage">
+<!-- 1 PORTADA -->
+<section class="slide" data-notes="PRESENTA: Rodrigo (0:30).
+DECIR: Presentamos un MVP que predice, explica y mide. Hoy mostramos en vivo lo que funciona y declaramos lo que todavía no está. Cada cifra es real.
+Estructura: 15 min de presentación y demo, 10 min de evidencias, 5 min de preguntas.">
+  <div class="pitch"></div>
+  <div style="margin:auto 0">
+    <div class="tag">Defensa EC2 · Demostración del MVP y Sprint Review 2</div>
+    <h1 style="font-size:132px;line-height:.95;text-transform:uppercase">The<br>Playbook</h1>
+    <p style="font-size:30px;margin-top:26px;color:var(--gold)">Predice. Explica. Publica su propio track record.</p>
+    <p class="mute" style="margin-top:30px;font-size:18px">Equipo The-Playbook · Taller de Sistemas Inteligentes · SIS-352 · UCB «San Pablo» · Semestre 2-2026<br>lunes 26 de octubre de 2026</p>
+    <p style="margin-top:22px;font-size:22px;color:var(--gold);letter-spacing:.02em">Rodrigo Rivera · Octavio Luna · Einar Guillen · Leandro Colque · Carolina Zeballos</p>
+  </div>
+</section>
+
+<!-- new equipo -->
+<section class="slide" data-notes="PRESENTA: Rodrigo (1:00).
+DECIR: Presenta a los cinco, una frase cada uno: Rodrigo PO y Scrum Master; Octavio backend-core; Leandro ML y track record; Einar RAG/LLM; Carolina frontend y ClickUp.
+CIERRE: todos respondemos sobre cualquier parte del proyecto.">
+  <div class="pitch"></div>
+  <div class="tag"><b class="n"></b> Equipo y contribuciones</div>
+  <h2 style="margin-bottom:18px">Cinco personas, cinco tracks</h2>
+  <div class="card" style="padding:14px 22px"><table>
+    <tr><th>Integrante</th><th>Rol</th><th>Responsable de</th></tr>
+    <tr><td><b>Rodrigo Rivera</b></td><td>Product Owner y Scrum Master</td><td style="font-size:17px">Backlog, ceremonias, trazabilidad SDD, revisión de PRs</td></tr>
+    <tr><td><b>Octavio Luna</b></td><td>Backend-core</td><td style="font-size:17px">API, base de datos, worker y pipeline de la feature 001</td></tr>
+    <tr><td><b>Leandro Colque</b></td><td>ML y track record</td><td style="font-size:17px">Modelos, evaluación y línea base (001); esquema de 003</td></tr>
+    <tr><td><b>Einar Guillen</b></td><td>RAG / LLM</td><td style="font-size:17px">Ingesta de noticias, retrieval y explicación (002)</td></tr>
+    <tr><td><b>Carolina Zeballos</b></td><td>Frontend y ClickUp</td><td style="font-size:17px">Interfaz web (004) y tablero con la evidencia de tareas</td></tr>
+  </table></div>
+  <p class="mute" style="margin-top:14px;font-size:16px">Roles vigentes del equipo al 26 de octubre de 2026.</p>
+  <div class="foot"><span>THE PLAYBOOK</span><span></span></div>
+</section>
+
+<!-- 2 PILARES -->
+<section class="slide" data-notes="PRESENTA: Einar (0:45).
+DECIR: Todo feature se traza a un pilar: predicción (001), explicación (002), medición (003). La interfaz (004) los muestra. Honestidad temporal: ninguna parte usa información posterior a la hora real de la predicción.
+NO DECIR: que el track record (pilar 3) está completo.">
+  <div class="pitch"></div>
+  <div class="tag"><b class="n"></b> Qué es</div>
+  <h2>Tres pilares de valor</h2>
+  <div class="grid" style="grid-template-columns:repeat(3,1fr);margin-top:6px">
+    <div class="card"><div class="num">1</div><h3 style="margin-top:14px">Predicción</h3><p>Resultado 1X2, más/menos de 2.5 goles, ambos marcan y goles esperados (xG), con un badge de confianza calibrado.</p></div>
+    <div class="card"><div class="num">2</div><h3 style="margin-top:14px">Explicación</h3><p>Cada predicción se explica en lenguaje natural con evidencia verificable y <b>temporalmente honesta</b>.</p></div>
+    <div class="card"><div class="num">3</div><h3 style="margin-top:14px">Transparencia</h3><p>El sistema publica su desempeño real frente a una línea base, para que cualquiera lo audite.</p></div>
+  </div>
+  <p class="mute" style="margin-top:30px;font-size:18px">Cuatro features del MVP: <code>001</code> predicción · <code>002</code> explicación · <code>003</code> track record · <code>004</code> interfaz web</p>
+  <div class="foot"><span>THE PLAYBOOK</span><span>02 / 12</span></div>
+</section>
+
+<!-- 3 MVP DESPLEGADO -->
+<section class="slide" data-notes="PRESENTA: Octavio (1:15).
+DECIR: Frontend en Vercel con URL pública. Backend en nuestra infraestructura local con Docker, expuesto con un túnel temporal. Es un despliegue parcial. Consultamos al docente si bastaba y no tuvimos respuesta.
+NO DECIR: que está desplegado en producción.">
+  <div class="pitch"></div>
+  <div class="tag"><b class="n"></b> Requisito · MVP desplegado y accesible</div>
+  <h2>Frontend público, backend con túnel</h2>
+  <div style="display:grid;grid-template-columns:1fr 40px 1fr 40px 1.2fr;gap:6px;margin-top:10px;align-items:stretch">
+    <div class="node"><b>Vercel</b><span>Next.js 15 · App Router</span><br><span class="mono" style="font-size:13px">frontend-rouge-five-39.vercel.app</span></div>
+    <div class="arrow">→</div>
+    <div class="node"><b>Túnel Cloudflare</b><span>HTTPS temporal</span><br><span class="pill warn" style="margin-top:8px">temporal</span></div>
+    <div class="arrow">→</div>
+    <div class="node" style="text-align:left"><b>Backend (Docker local)</b>
+      <ul style="margin-top:8px"><li style="font-size:16px;margin:3px 0">FastAPI (delgada, sin lógica)</li><li style="font-size:16px;margin:3px 0">Postgres 16 + pgvector</li><li style="font-size:16px;margin:3px 0">Redis + worker Celery</li></ul></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:30px">
+    <div class="card"><h3>Qué funciona hoy</h3><ul><li>Interfaz accesible por URL pública</li><li>API con CORS por orígenes exactos</li><li>Predicción real generada por el pipeline</li></ul></div>
+    <div class="card"><h3>Lo que declaramos</h3><ul><li>El backend depende de esta laptop y del túnel</li><li>Hosting permanente: siguiente paso</li></ul></div>
+  </div>
+  <div class="foot"><span>THE PLAYBOOK</span><span>03 / 12</span></div>
+</section>
+
+<!-- 4 API -->
+<section class="slide" data-notes="PRESENTA: Octavio (1:15).
+DECIR: La API es delgada: los routers no tienen lógica y delegan en services. Contratos de prueba escritos antes que los endpoints (Art. III). CORS por orígenes exactos.
+EN VIVO (20 s): en la terminal, curl localhost:8000/api/matches/upcoming.">
+  <div class="pitch"></div>
+  <div class="tag"><b class="n"></b> Requisito · API funcional y validada</div>
+  <h2>Contratos primero, endpoints después</h2>
+  <div class="grid" style="grid-template-columns:1.25fr 1fr">
+    <div class="card">
+      <h3>Endpoints</h3>
+      <table>
+        <tr><td class="mono" style="font-size:16px">GET /api/leagues</td><td class="mute" style="font-size:16px">Ligas disponibles</td></tr>
+        <tr><td class="mono" style="font-size:16px">GET /api/matches/upcoming</td><td class="mute" style="font-size:16px">Próximos partidos</td></tr>
+        <tr><td class="mono" style="font-size:16px">GET /api/matches/{id}</td><td class="mute" style="font-size:16px">Detalle del partido</td></tr>
+        <tr><td class="mono" style="font-size:16px">GET /api/matches/{id}/prediction</td><td class="mute" style="font-size:16px">4 señales + confianza</td></tr>
+        <tr><td class="mono" style="font-size:16px">GET /api/matches/{id}/explanation</td><td class="mute" style="font-size:16px">Explicación + evidencia citada</td></tr>
+        <tr><td class="mono" style="font-size:16px">GET /health</td><td class="mute" style="font-size:16px">Estado del servicio</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Cómo se valida</h3>
+      <ul><li>Pruebas de contrato por endpoint, escritas antes de implementar</li><li>Esquemas Pydantic como único contrato (sin DTOs paralelos)</li><li>CORS con lista exacta de orígenes</li><li>Routers delgados: la lógica vive en <code>services</code></li></ul>
+    </div>
+  </div>
+  <div class="foot"><span>THE PLAYBOOK</span><span>04 / 12</span></div>
+</section>
+
+<!-- 5 INTERFAZ -->
+<section class="slide" data-notes="PRESENTA: Carolina (0:45).
+DECIR: Lista, ficha y panel. Ficha real de Arsenal vs Aston Villa servida por la API, no datos de ejemplo.
+NO ABRIR: Historial. Esa página queda cargando porque el backend del track record (003) no existe todavía.
+Las 55 pruebas de frontend las cuenta ella en la slide 12.">
+  <div class="pitch"></div>
+  <div class="tag"><b class="n"></b> Requisito · Interfaz mínima funcional</div>
+  <h2 style="margin-bottom:18px">Lista, ficha y panel</h2>
+  <div class="grid" style="grid-template-columns:1.55fr 1fr;align-items:start">
+    <div class="shot"><img src="ficha-real.png" alt="Ficha real de Arsenal contra Aston Villa"></div>
+    <div>
+      <div class="card"><h3>Ficha de partido</h3><ul><li>1X2, más/menos 2.5, ambos marcan y xG</li><li>Badge de confianza y versión del modelo</li><li>Explicación con evidencia citada (fuente y fecha)</li><li>Preguntas de seguimiento</li></ul></div>
+      <div class="card" style="margin-top:16px"><h3>Calidad</h3><ul><li>55 pruebas de frontend</li><li>Lint y typecheck en verde</li></ul></div>
+    </div>
+  </div>
+  <div class="foot"><span>Captura: ficha real, datos de la API · apoyo, la demo es en vivo</span><span>05 / 12</span></div>
+</section>
+
+<!-- 6 COMPONENTE INTELIGENTE -->
+<section class="slide" data-notes="PRESENTA: Leandro (2:00).
+ENSAMBLE: Dixon-Coles más XGBoost, calibración, peso w=0.4 elegido por grilla sobre un tramo pequeño. Confianza por calibración empírica, no por distancia al reparto uniforme. Split cronológico y cuotas fuera del modelo.
+RAG (visión general): retrieval con fecha_noticia menor que kickoff en SQL, Titan v2 para embeddings y Claude Sonnet 4.6 en Bedrock. El detalle lo da Einar en la demo y en la slide 14.
+NO DECIR: que da análisis táctico profundo.">
+  <div class="pitch"></div>
+  <div class="tag"><b class="n"></b> Requisito · Componente inteligente integrado</div>
+  <h2>Ensamble estadístico + RAG</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr">
+    <div class="card"><h3>Predicción</h3>
+      <div style="display:flex;gap:10px;align-items:center;margin:6px 0 14px"><span class="pill">Dixon-Coles</span><span style="color:var(--gold2)">+</span><span class="pill">XGBoost</span><span style="color:var(--gold2)">→</span><span class="pill ok">Ensamble calibrado</span></div>
+      <ul><li>Split cronológico: nunca se entrena con el futuro</li><li>Las cuotas no son feature (Art. V)</li><li>Confianza por calibración empírica, no por distancia al reparto uniforme</li></ul></div>
+    <div class="card"><h3>Explicación (RAG)</h3>
+      <ul><li>Retrieval con <code>fecha_noticia &lt; kickoff</code> a nivel SQL</li><li>Contenido scrapeado delimitado como dato no confiable</li><li>Embeddings con Titan v2; si hay poca evidencia, lo declara en vez de inventar</li></ul>
+      <p style="margin-top:12px"><span class="pill ok">Hoy</span> <span style="font-size:17px">Claude Sonnet 4.6 en Bedrock · 5 evidencias citadas</span></p></div>
+  </div>
+  <div class="foot"><span>THE PLAYBOOK</span><span>06 / 12</span></div>
+</section>
+
+<!-- 7 PIPELINE -->
+<section class="slide" data-notes="PRESENTA: Octavio (1:00).
+DECIR: Cada paso es un comando documentado en el quickstart de 001. La predicción tarda unos 20 segundos. Los experimentos quedan registrados en MLflow. No se ejecutan en esta slide.">
+  <div class="pitch"></div>
+  <div class="tag"><b class="n"></b> Requisito · Pipeline reproducible</div>
+  <h2>De cero a una predicción, en comandos</h2>
+  <div class="card" style="padding:26px 30px">
+    <table>
+      <tr><td class="num" style="font-size:34px;width:60px">1</td><td class="mono">docker compose up -d postgres redis</td><td class="mute" style="font-size:17px">Postgres 16 + pgvector y Redis</td></tr>
+      <tr><td class="num" style="font-size:34px">2</td><td class="mono">alembic upgrade head</td><td class="mute" style="font-size:17px">Esquema versionado</td></tr>
+      <tr><td class="num" style="font-size:34px">3</td><td class="mono">python -m ml.data.demo_fixture --apply</td><td class="mute" style="font-size:17px">Partido de demo con equipos del histórico</td></tr>
+      <tr><td class="num" style="font-size:34px">4</td><td class="mono">generate_predictions.delay()</td><td class="mute" style="font-size:17px">Worker Celery entrena y persiste (~20 s)</td></tr>
+      <tr><td class="num" style="font-size:34px">5</td><td class="mono">python -m ml.evaluation.baseline_demo</td><td class="mute" style="font-size:17px">Línea base, registrada en MLflow</td></tr>
+    </table>
+  </div>
+  <div class="foot"><span>THE PLAYBOOK</span><span>07 / 12</span></div>
+</section>
+
+<!-- 9 DEMO -->
+<section class="slide" data-notes="PRESENTA: Einar (3:30). Conduce la demo completa.
+1) Abrir la app en Vercel: lista con 1 partido en agenda. Decir: es un partido de demostración creado localmente con equipos del histórico, sin resultado.
+2) Entrar a la ficha: 65/22/13, más de 2.5 al 49%, ambos marcan 40%, xG 1.52 a 0.81, confianza baja (lo correcto con 84 partidos).
+3) Bajar a las 5 noticias, todas anteriores al kickoff, filtradas en SQL.
+4) Escribir una pregunta de seguimiento; mientras responde, explicar el filtro temporal.
+SI BEDROCK FALLA: la ficha dice que no hay explicación en vez de inventarla. Si el seguimiento tarda, seguir sin repetirlo.
+NO ABRIR: Historial.">
+  <div class="pitch"></div>
+  <div class="tag"><b class="n"></b> Requisito · Demo extremo a extremo en vivo</div>
+  <h2 style="margin-bottom:16px">Arsenal vs Aston Villa</h2>
+  <div class="grid" style="grid-template-columns:1.1fr 1fr;align-items:start">
+    <div class="card">
+      <h3>Mercado 1X2</h3>
+      <div style="display:flex;height:30px;border-radius:6px;overflow:hidden;margin:8px 0 6px">
+        <div style="width:65%;background:var(--teal)"></div><div style="width:22%;background:#4a554f"></div><div style="width:13%;background:var(--gold2)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:18px"><span>Local <b>65 %</b></span><span>Empate <b>22 %</b></span><span>Visitante <b>13 %</b></span></div>
+      <table style="margin-top:14px">
+        <tr><td>Más / menos de 2.5</td><td class="n">49 % / 51 %</td></tr>
+        <tr><td>Ambos marcan</td><td class="n">Sí 40 %</td></tr>
+        <tr><td>xG</td><td class="n">1.52 — 0.81</td></tr>
+        <tr><td>Confianza</td><td class="n"><span class="pill warn">Baja</span></td></tr>
+      </table>
+    </div>
+    <div class="card"><h3>Recorrido en vivo</h3>
+      <ul><li>Lista de próximos partidos</li><li>Ficha con las 4 señales</li><li>Modelo <code>ensemble-2026-10-26</code></li></ul>
+      <p class="mute" style="margin-top:14px;font-size:17px">Partido de demostración creado localmente con equipos del histórico, sin resultado. La confianza es baja por la muestra pequeña: es el comportamiento correcto.</p></div>
+  </div>
+  <div class="foot"><span>Valores reales de la API del 26/10</span><span>09 / 12</span></div>
+</section>
+
+<!-- 10 LINEA BASE -->
+<section class="slide" data-notes="PRESENTA: Leandro (2:00).
+EN VIVO: python -m ml.evaluation.baseline_demo premier_league (unos 30 s), y abrir mlflow ui en localhost:5000.
+DECIR: 64 partidos de entrenamiento y 20 de validación. 1X2 1.15 contra 1.099 de referencia. En over/under y BTTS el ensamble no mejora al mejor modelo solo. NO afirmamos que supere al azar: con 20 partidos son diferencias de ruido. La referencia uniforme es cálculo propio, no una línea base de mercado.">
+  <div class="pitch"></div>
+  <div class="tag"><b class="n"></b> Requisito · Resultados comparados con línea base</div>
+  <h2>Log-loss: honestidad sobre la muestra</h2>
+  <div class="card" style="padding:18px 24px">
+    <table>
+      <tr><th>Mercado</th><th class="n">Dixon-Coles</th><th class="n">XGBoost</th><th class="n">Ensamble</th><th class="n">Ref. uniforme</th></tr>
+      <tr><td>1X2</td><td class="n">1.22</td><td class="n">1.17</td><td class="n hl">1.15</td><td class="n">1.099</td></tr>
+      <tr><td>Más/menos 2.5</td><td class="n">0.76</td><td class="n">0.98</td><td class="n hl">0.82</td><td class="n">0.693</td></tr>
+      <tr><td>Ambos marcan</td><td class="n">0.78</td><td class="n">0.67</td><td class="n hl">0.69</td><td class="n">0.693</td></tr>
+    </table>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:20px">
+    <div class="card"><h3>Muestra</h3><p>64 partidos de entrenamiento y 20 de validación, una liga. Menor log-loss es mejor.</p></div>
+    <div class="card"><h3>Lectura</h3><p><b>No afirmamos que supere al azar.</b> Con 20 partidos las diferencias son ruido. La referencia es cálculo propio, no una línea base de mercado.</p></div>
+  </div>
+  <div class="foot"><span>Corrida real del 26/10 · <code>baseline_demo</code> · w = 0.4</span><span>10 / 12</span></div>
+</section>
+
+<!-- 12 RIESGOS -->
+<section class="slide" data-notes="PRESENTA: Rodrigo (1:00), cierre de la presentación.
+DECIR: Lo que no funciona todavía: muestra pequeña, despliegue parcial con túnel temporal, dependencia de Bedrock con cuenta de prueba, track record (003) solo con esquema, línea base de mercado sin verificar, y dos pruebas locales de persistencia que dependen del estado de la base. Mitigación: más datos, cuenta propia de Bedrock, cerrar 003 y desplegar el backend.">
+  <div class="pitch"></div>
+  <div class="tag"><b class="n"></b> Requisito · Riesgos y limitaciones declarados</div>
+  <h2 style="margin-bottom:18px">Lo que no funciona todavía</h2>
+  <div class="grid" style="grid-template-columns:1.25fr 1fr">
+    <div class="card"><h3>Limitaciones</h3>
+      <ul style="font-size:18px">
+        <li><b>Muestra pequeña:</b> 84 partidos, 20 de validación; métricas no concluyentes</li>
+        <li><b>Despliegue parcial:</b> backend local con túnel temporal</li>
+        <li><b>Explicación:</b> depende de Bedrock (cuenta de prueba con créditos) y de noticias vía RSS; texto cauteloso</li>
+        <li><b>Track record (003):</b> solo esquema; endpoints y panel pendientes</li>
+        <li><b>Línea base de mercado:</b> definida (Art. V), sin verificar</li>
+        <li><b>Pruebas locales:</b> 2 de persistencia dependen del estado de la base</li>
+      </ul></div>
+    <div class="card"><h3>Mitigación</h3>
+      <ul><li>Más temporadas y ligas</li><li>Cuenta propia de Bedrock y más fuentes de noticias</li><li>Cerrar la feature 003</li><li>Desplegar el backend de forma permanente</li></ul></div>
+  </div>
+  <div class="foot"><span>THE PLAYBOOK</span><span>12 / 12</span></div>
+</section>
+
+<!-- 8 PRUEBAS -->
+<section class="slide" data-notes="PRESENTA: Carolina (2:00). Empieza el bloque de evidencias (10 min).
+DECIR: CI en GitHub con tres jobs en verde (consistencia SDD, backend, frontend). 55 pruebas de frontend, lint y typecheck en verde. Guardianes de la constitución: split cronológico y filtro temporal (Art. IV), cuotas fuera del feature set (Art. V).
+NO DECIR: que todas las pruebas pasan en local; algunas dependen del estado de la base.">
+  <div class="pitch"></div>
+  <div class="tag"><b class="n"></b> Requisito · Pruebas automatizadas</div>
+  <h2>La constitución se hace cumplir con pruebas</h2>
+  <div class="grid" style="grid-template-columns:1fr 1.3fr">
+    <div class="card"><h3>CI en GitHub</h3>
+      <ul><li><b>Consistencia SDD</b> — grafo de referencias y trazabilidad</li><li><b>Backend</b> — pytest con servicios reales</li><li><b>Frontend</b> — lint, typecheck y 55 pruebas</li></ul>
+      <p style="margin-top:12px"><span class="pill ok">3 jobs en verde</span></p></div>
+    <div class="card"><h3>Guardianes de los artículos</h3>
+      <table>
+        <tr><td class="mono" style="font-size:15px">test_split_cronologico</td><td class="mute" style="font-size:16px">Art. IV · sin fuga temporal</td></tr>
+        <tr><td class="mono" style="font-size:15px">test_temporal_filter</td><td class="mute" style="font-size:16px">Art. IV · SQL en pgvector real</td></tr>
+        <tr><td class="mono" style="font-size:15px">test_no_odds_en_feature_set</td><td class="mute" style="font-size:16px">Art. V · cuotas ≠ feature</td></tr>
+        <tr><td class="mono" style="font-size:15px">pruebas de contrato</td><td class="mute" style="font-size:16px">Art. IX · antes de implementar</td></tr>
+      </table></div>
+  </div>
+  <div class="foot"><span>THE PLAYBOOK</span><span>08 / 12</span></div>
+</section>
+
+<!-- 11 REPO -->
+<section class="slide" data-notes="PRESENTA: Rodrigo (2:00).
+DECIR: 39 requisitos, 126 tareas, 100 por ciento trazadas con npm run audit:sdd. PRs mergeados a develop: 23, 24, 25, 27 y 28. El 26 se cerró porque partía de una base vieja y creaba dos heads de Alembic.">
+  <div class="pitch"></div>
+  <div class="tag"><b class="n"></b> Requisito · Repositorio actualizado y trazable</div>
+  <h2>Cada tarea cita el requisito que cubre</h2>
+  <div class="grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="card"><div class="num">39</div><h3 style="margin-top:10px">Requisitos (EARS)</h3></div>
+    <div class="card"><div class="num">126</div><h3 style="margin-top:10px">Tareas, 100 % trazadas</h3></div>
+    <div class="card"><div class="num">9</div><h3 style="margin-top:10px">Artículos de constitución</h3></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:20px">
+    <div class="card"><h3>Fuente de verdad</h3><ul><li>Constitución → specs → docs → ADR</li><li><code>npm run audit:sdd</code> en CI y tras cada edición</li></ul></div>
+    <div class="card"><h3>Flujo de trabajo</h3><ul><li>Ramas por feature y PRs mergeados a <code>develop</code></li><li>CI en verde en cada merge</li></ul></div>
+  </div>
+  <div class="foot"><span>THE PLAYBOOK</span><span>11 / 12</span></div>
+</section>
+
+<!-- new decisiones -->
+<section class="slide" data-notes="PRESENTAN: Octavio, Leandro y Einar (1:00 cada uno), por filas de la tabla.
+OCTAVIO: API delgada con services, Postgres con pgvector, Celery con Redis.
+LEANDRO: ensamble Dixon-Coles más XGBoost, split cronológico, cuotas fuera del modelo.
+EINAR: RAG con Bedrock, evidencia citada, contenido scrapeado como dato no confiable.
+Cada decisión viene de un artículo de la constitución; elegimos lo más simple que cumple la regla (Art. VII).">
+  <div class="pitch"></div>
+  <div class="tag"><b class="n"></b> Requisito · Evidencias técnicas</div>
+  <h2 style="margin-bottom:18px">Qué decidimos y por qué</h2>
+  <div class="card" style="padding:14px 22px"><table>
+    <tr><th>Decisión</th><th>Por qué</th></tr>
+    <tr><td style="font-size:18px"><b>API delgada + services</b></td><td style="font-size:17px">Art. I y VIII: ML y RAG aislados; el router no tiene lógica y todo se prueba por contrato</td></tr>
+    <tr><td style="font-size:18px"><b>Postgres + pgvector</b></td><td style="font-size:17px">Art. IV y VII: un solo motor, y el filtro temporal va en SQL, no en memoria</td></tr>
+    <tr><td style="font-size:18px"><b>Celery + Redis</b></td><td style="font-size:17px">Art. VI: nada pesado en el proceso HTTP; entrenar e indexar van al worker</td></tr>
+    <tr><td style="font-size:18px"><b>Ensamble Dixon-Coles + XGBoost</b></td><td style="font-size:17px">Un modelo estadístico interpretable y otro de features; el peso se eligió por grilla (muestra pequeña)</td></tr>
+    <tr><td style="font-size:18px"><b>Split cronológico, sin cuotas</b></td><td style="font-size:17px">Art. IV y V: ninguna parte usa información posterior a la predicción</td></tr>
+    <tr><td style="font-size:18px"><b>RAG con Bedrock</b></td><td style="font-size:17px">Evidencia citada; el contenido scrapeado va delimitado como dato no confiable (Art. VI)</td></tr>
+  </table></div>
+  <div class="foot"><span>THE PLAYBOOK</span><span></span></div>
+</section>
+
+<!-- new mapa -->
+<section class="slide" data-notes="PRESENTA: Carolina (3:00).
+DECIR: Cada afirmación tiene un archivo o una URL. Abrir GitHub Actions y mostrar la CI; mostrar el tablero de ClickUp, que es la fuente válida de qué se hizo y quién lo hizo (confirmar antes que 004 esté marcada con evidencia).
+PREGUNTAS PROBABLES: por qué el ensamble no gana siempre (20 partidos, ruido); por qué no usan cuotas (Art. V); cómo evitan la fuga temporal (split cronológico y filtro en SQL).">
+  <div class="pitch"></div>
+  <div class="tag"><b class="n"></b> Requisito · Evidencias técnicas</div>
+  <h2 style="margin-bottom:18px">Dónde está cada prueba</h2>
+  <div class="card" style="padding:14px 22px"><table>
+    <tr><th>Qué se prueba</th><th>Dónde verlo</th></tr>
+    <tr><td style="font-size:18px">CI con 3 jobs</td><td class="mono" style="font-size:15px">GitHub Actions · .github/workflows/ci.yml</td></tr>
+    <tr><td style="font-size:18px">Trazabilidad requisito ↔ tarea</td><td class="mono" style="font-size:15px">npm run audit:sdd</td></tr>
+    <tr><td style="font-size:18px">Sin fuga temporal (Art. IV)</td><td class="mono" style="font-size:15px">test_split_cronologico.py · test_temporal_filter.py</td></tr>
+    <tr><td style="font-size:18px">Cuotas fuera del modelo (Art. V)</td><td class="mono" style="font-size:15px">test_no_odds_en_feature_set.py</td></tr>
+    <tr><td style="font-size:18px">Contratos de la API</td><td class="mono" style="font-size:15px">backend/tests/contract/</td></tr>
+    <tr><td style="font-size:18px">Frontend (55 pruebas)</td><td class="mono" style="font-size:15px">frontend/tests · npm test</td></tr>
+    <tr><td style="font-size:18px">Línea base y experimentos</td><td class="mono" style="font-size:15px">baseline_demo.py · mlflow ui</td></tr>
+    <tr><td style="font-size:18px">Specs, plan, tareas y ADR</td><td class="mono" style="font-size:15px">specs/ · docs/adr/ · memory/constitution.md</td></tr>
+  </table></div>
+  <div class="foot"><span>THE PLAYBOOK</span><span></span></div>
+</section>
+
+</div>
+<div id="notes"></div>
+<div id="hud">← → navegar · F pantalla completa · N notas · Ctrl+P PDF</div>
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide')),stage=document.getElementById('stage'),
+      notes=document.getElementById('notes'),i=0;
+  try{var s=parseInt(location.hash.slice(1),10);if(s>=1&&s<=slides.length)i=s-1;}catch(e){}
+  function fit(){var k=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform='translate(-50%,-50%) scale('+k+')';}
+  function show(n){i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach(function(el,k){el.classList.toggle('on',k===i)});
+    notes.textContent=slides[i].getAttribute('data-notes')||'';
+    try{history.replaceState(null,'','#'+(i+1))}catch(e){}}
+  addEventListener('resize',fit);
+  addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown')show(i+1);
+    else if(e.key==='ArrowLeft'||e.key==='PageUp')show(i-1);
+    else if(e.key==='Home')show(0);else if(e.key==='End')show(slides.length-1);
+    else if(e.key==='n'||e.key==='N')notes.classList.toggle('on');
+    else if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}
+  });
+  addEventListener('click',function(e){show(e.clientX>innerWidth/2?i+1:i-1)});
+  setTimeout(function(){document.getElementById('hud').style.opacity='0'},6000);
+  if(/clean/.test(location.search))document.getElementById('hud').style.display='none';
+  slides.forEach(function(el,k){var f=el.querySelector('.foot span:last-child');if(f)f.textContent=String(k+1).padStart(2,'0')+' / '+slides.length;var b=el.querySelector('.tag b.n');if(b)b.textContent=String(k).padStart(2,'0');});
+  fit();show(i);
+})();
+</script>
+</body>
+</html>
