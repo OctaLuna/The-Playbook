@@ -27,6 +27,7 @@ const SPEC_TECNICO = "docs/project_spec.md";
 const IGNORE_DIRS = new Set([
   ".git", "node_modules", ".venv", "venv", "__pycache__",
   ".next", ".pytest_cache", ".ruff_cache", ".mypy_cache", "mlruns",
+  "graphify-out", // reportes generados por graphify, ignorados por git: no son documentación
 ]);
 
 const errors = [];
