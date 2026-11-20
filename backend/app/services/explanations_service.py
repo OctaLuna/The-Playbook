@@ -188,9 +188,11 @@ async def obtener_o_generar_explicacion(
             ]
         )
         await session.flush()
+        created = True
     else:
         evidence = await _load_evidence_for_explanation(session, explanation.id)
-    return ExplanationOut(
+        created = False
+    result = ExplanationOut(
         match_id=match.id,
         text=explanation.texto,
         is_fallback_no_evidence=explanation.es_fallback_sin_evidencia,
@@ -198,6 +200,10 @@ async def obtener_o_generar_explicacion(
         generated_at=explanation.generado_en,
         updated_at=explanation.actualizado_en,
     )
+    if created:
+        # Sin commit la explicación se pierde al cerrar la sesión y el seguimiento da 404.
+        await session.commit()
+    return result
 
 
 def _contains_prediction_contradiction(text: str, prediction: Predicción) -> bool:
@@ -296,10 +302,12 @@ async def responder_seguimiento(
         )
     )
     await session.flush()
-    return FollowUpOut(
+    result = FollowUpOut(
         match_id=match.id,
         question=question,
         answer=answer,
         evidence=_to_evidence_out(evidence),
         generated_at=generated_at,
     )
+    await session.commit()
+    return result
