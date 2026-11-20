@@ -19,3 +19,79 @@ Newcastle,newcastle,premier_league
 Nott'm Forest,nottingham-forest,premier_league
 Sunderland,sunderland,premier_league
 Tottenham,tottenham,premier_league
+Alaves,alaves,laliga
+Ath Bilbao,athletic-bilbao,laliga
+Ath Madrid,atletico-madrid,laliga
+Barcelona,barcelona,laliga
+Betis,real-betis,laliga
+Celta,celta-vigo,laliga
+Elche,elche,laliga
+Espanol,espanyol,laliga
+Getafe,getafe,laliga
+La Coruna,deportivo-la-coruna,laliga
+Levante,levante,laliga
+Malaga,malaga,laliga
+Osasuna,osasuna,laliga
+Real Madrid,real-madrid,laliga
+Santander,racing-santander,laliga
+Sevilla,sevilla,laliga
+Sociedad,real-sociedad,laliga
+Valencia,valencia,laliga
+Vallecano,rayo-vallecano,laliga
+Villarreal,villarreal,laliga
+Atalanta,atalanta,serie_a
+Bologna,bologna,serie_a
+Cagliari,cagliari,serie_a
+Como,como,serie_a
+Fiorentina,fiorentina,serie_a
+Frosinone,frosinone,serie_a
+Genoa,genoa,serie_a
+Inter,inter,serie_a
+Juventus,juventus,serie_a
+Lazio,lazio,serie_a
+Lecce,lecce,serie_a
+Milan,ac-milan,serie_a
+Monza,monza,serie_a
+Napoli,napoli,serie_a
+Parma,parma,serie_a
+Roma,as-roma,serie_a
+Sassuolo,sassuolo,serie_a
+Torino,torino,serie_a
+Udinese,udinese,serie_a
+Venezia,venezia,serie_a
+Augsburg,augsburg,bundesliga
+Bayern Munich,bayern-munich,bundesliga
+Dortmund,borussia-dortmund,bundesliga
+Ein Frankfurt,eintracht-frankfurt,bundesliga
+Elversberg,elversberg,bundesliga
+FC Koln,koln,bundesliga
+Freiburg,freiburg,bundesliga
+Hamburg,hamburg,bundesliga
+Hoffenheim,hoffenheim,bundesliga
+Leverkusen,bayer-leverkusen,bundesliga
+M'gladbach,borussia-monchengladbach,bundesliga
+Mainz,mainz,bundesliga
+Paderborn,paderborn,bundesliga
+RB Leipzig,rb-leipzig,bundesliga
+Schalke 04,schalke-04,bundesliga
+Stuttgart,stuttgart,bundesliga
+Union Berlin,union-berlin,bundesliga
+Werder Bremen,werder-bremen,bundesliga
+Angers,angers,ligue_1
+Auxerre,auxerre,ligue_1
+Brest,brest,ligue_1
+Le Havre,le-havre,ligue_1
+Le Mans,le-mans,ligue_1
+Lens,lens,ligue_1
+Lille,lille,ligue_1
+Lorient,lorient,ligue_1
+Lyon,lyon,ligue_1
+Marseille,marseille,ligue_1
+Monaco,monaco,ligue_1
+Nice,nice,ligue_1
+Paris FC,paris-fc,ligue_1
+Paris SG,paris-saint-germain,ligue_1
+Rennes,rennes,ligue_1
+Strasbourg,strasbourg,ligue_1
+Toulouse,toulouse,ligue_1
+Troyes,troyes,ligue_1
