@@ -313,12 +313,12 @@ export default function MatchDetailPage() {
                   value={question}
                   onChange={(event) => setQuestion(event.target.value)}
                   placeholder="¿Por qué pesa tanto la forma reciente?"
-                  className="flex-grow rounded-[3px] border border-input bg-[#0f1310] px-3.5 py-3 text-sm text-foreground placeholder:text-[#565f5b]"
+                  className="flex-grow rounded-[3px] border border-input bg-[#0f1310] px-3.5 py-3 text-sm text-foreground placeholder:text-[#aeb6b0]"
                 />
                 <button
                   type="submit"
                   disabled={isSubmitting || !question.trim()}
-                  className="rounded-[3px] bg-primary px-5 text-[13px] font-bold uppercase tracking-wide text-primary-foreground transition hover:bg-[#35da7c] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-[3px] bg-[#b49a62] px-5 text-[13px] font-bold uppercase tracking-wide text-[#17221e] transition hover:bg-[#c8b175] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {isSubmitting ? "Consultando..." : "Preguntar"}
                 </button>
@@ -346,7 +346,7 @@ export default function MatchDetailPage() {
                             href={item.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-sm text-primary underline underline-offset-4"
+                            className="text-sm text-[#b49a62] underline underline-offset-4 hover:text-[#d3bd88]"
                           >
                             {item.title}
                           </a>
@@ -363,3 +363,5 @@ export default function MatchDetailPage() {
     </main>
   );
 }
+
+

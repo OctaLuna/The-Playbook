@@ -190,7 +190,7 @@ function HomeContent() {
                     <p className="font-serif text-3xl text-[#b49a62]">
                       {String(index + 1).padStart(2, "0")}
                     </p>
-                    <p className="mt-1 text-xs uppercase tracking-[0.16em] text-[#77827c]">
+                    <p className="mt-1 text-xs uppercase tracking-[0.16em] text-[#8f9a94]">
                       {formatDate(match.kickoff_at)}
                     </p>
                   </div>
@@ -203,7 +203,7 @@ function HomeContent() {
 
                       <span className="h-1 w-1 rounded-full bg-[#b49a62]/60" />
 
-                      <span className="text-xs uppercase tracking-[0.12em] text-[#77827c]">
+                      <span className="text-xs uppercase tracking-[0.12em] text-[#8f9a94]">
                         {statusLabel(match.status)}
                       </span>
                     </div>
@@ -232,7 +232,7 @@ function HomeContent() {
                         Predicción lista
                       </span>
                     ) : (
-                      <span className="text-xs uppercase tracking-[0.14em] text-[#68736d]">
+                      <span className="text-xs uppercase tracking-[0.14em] text-[#8f9a94]">
                         Predicción pendiente
                       </span>
                     )}
@@ -252,7 +252,7 @@ function HomeContent() {
       </section>
 
       <footer className="border-t border-[#f4f0e6]/10">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-7 text-xs uppercase tracking-[0.16em] text-[#68736d] sm:flex-row sm:items-center sm:justify-between sm:px-8">
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-7 text-xs uppercase tracking-[0.16em] text-[#8f9a94] sm:flex-row sm:items-center sm:justify-between sm:px-8">
           <span>The Playbook</span>
           <span>Consultable · Auditable · Inteligencia futbolística</span>
         </div>

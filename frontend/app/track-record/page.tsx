@@ -108,7 +108,7 @@ function TrackRecordContent() {
           <section>
             <div className="mb-5 flex items-end justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#77827c]">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#8f9a94]">
                   Seleccionar liga
                 </p>
                 <h2 className="mt-2 font-serif text-2xl text-[#f4f0e6]">
@@ -132,7 +132,7 @@ function TrackRecordContent() {
                   >
                     <div className="flex items-center justify-between gap-4">
                       <div>
-                        <p className="text-xs uppercase tracking-[0.18em] text-[#77827c]">
+                        <p className="text-xs uppercase tracking-[0.18em] text-[#8f9a94]">
                           Competición
                         </p>
 
@@ -184,7 +184,7 @@ function TrackRecordContent() {
   const data = trackRecordQuery.data;
   const matches = matchesQuery.data?.matches ?? [];
 
-  if (!data || data.markets.length === 0) {
+  if (!data || data.matches_included === 0 || data.markets.length === 0) {
     return (
       <main className="min-h-[calc(100vh-76px)] bg-[#101c18] px-5 py-12 text-[#f4f0e6]">
         <div className="mx-auto max-w-6xl">
@@ -208,7 +208,7 @@ function TrackRecordContent() {
         <div className="mb-10">
           <Link
             href="/track-record"
-            className="text-xs font-semibold uppercase tracking-[0.18em] text-[#77827c] transition hover:text-[#b49a62]"
+            className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8f9a94] transition hover:text-[#b49a62]"
           >
             ← Historial
           </Link>
@@ -233,7 +233,7 @@ function TrackRecordContent() {
 
             <div className="grid grid-cols-2 border-t border-[#315044] lg:border-l lg:border-t-0">
               <div className="border-b border-r border-[#315044] p-6">
-                <p className="text-[11px] uppercase tracking-[0.16em] text-[#81918a]">
+                <p className="text-[11px] uppercase tracking-[0.16em] text-[#aeb6b0]">
                   Ventana
                 </p>
 
@@ -241,11 +241,11 @@ function TrackRecordContent() {
                   {data.window_size}
                 </p>
 
-                <p className="mt-1 text-sm text-[#8e9b95]">partidos</p>
+                <p className="mt-1 text-sm text-[#aeb6b0]">partidos</p>
               </div>
 
               <div className="border-b border-[#315044] p-6">
-                <p className="text-[11px] uppercase tracking-[0.16em] text-[#81918a]">
+                <p className="text-[11px] uppercase tracking-[0.16em] text-[#aeb6b0]">
                   Partidos incluidos
                 </p>
 
@@ -253,11 +253,11 @@ function TrackRecordContent() {
                   {data.matches_included}
                 </p>
 
-                <p className="mt-1 text-sm text-[#8e9b95]">evaluados</p>
+                <p className="mt-1 text-sm text-[#aeb6b0]">evaluados</p>
               </div>
 
               <div className="border-r border-[#315044] p-6">
-                <p className="text-[11px] uppercase tracking-[0.16em] text-[#81918a]">
+                <p className="text-[11px] uppercase tracking-[0.16em] text-[#aeb6b0]">
                   Modelos
                 </p>
 
@@ -265,13 +265,13 @@ function TrackRecordContent() {
                   {data.model_versions.length}
                 </p>
 
-                <p className="mt-1 text-sm text-[#8e9b95]">
+                <p className="mt-1 text-sm text-[#aeb6b0]">
                   versión{data.model_versions.length === 1 ? "" : "es"}
                 </p>
               </div>
 
               <div className="p-6">
-                <p className="text-[11px] uppercase tracking-[0.16em] text-[#81918a]">
+                <p className="text-[11px] uppercase tracking-[0.16em] text-[#aeb6b0]">
                   Actualizado
                 </p>
 
@@ -324,7 +324,7 @@ function TrackRecordContent() {
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#77827c]">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8f9a94]">
                       Mercado
                     </p>
 
@@ -339,7 +339,7 @@ function TrackRecordContent() {
                 </div>
 
                 <div className="mt-8 border-t border-[#2d4038] pt-6">
-                  <p className="text-[11px] uppercase tracking-[0.16em] text-[#77827c]">
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-[#8f9a94]">
                     Tasa de aciertos
                   </p>
 
@@ -396,7 +396,7 @@ function TrackRecordContent() {
               </h2>
             </div>
 
-            <p className="text-sm text-[#77827c]">
+            <p className="text-sm text-[#8f9a94]">
               {matches.length} registro{matches.length === 1 ? "" : "s"}{" "}
               visibles
             </p>
@@ -417,13 +417,13 @@ function TrackRecordContent() {
                   <div className="grid lg:grid-cols-[1.2fr_0.8fr]">
                     <div className="p-6 sm:p-7">
                       <div className="flex flex-wrap items-center gap-3">
-                        <span className="text-[11px] uppercase tracking-[0.16em] text-[#77827c]">
+                        <span className="text-[11px] uppercase tracking-[0.16em] text-[#8f9a94]">
                           {match.league}
                         </span>
 
                         <span className="h-1 w-1 rounded-full bg-[#b49a62]" />
 
-                        <span className="text-[11px] text-[#77827c]">
+                        <span className="text-[11px] text-[#8f9a94]">
                           {formatDate(match.kickoff_at)}
                         </span>
                       </div>
@@ -434,7 +434,7 @@ function TrackRecordContent() {
                             {match.home_team}
                           </p>
 
-                          <p className="mt-1 text-xs uppercase tracking-[0.14em] text-[#77827c]">
+                          <p className="mt-1 text-xs uppercase tracking-[0.14em] text-[#8f9a94]">
                             Local
                           </p>
                         </div>
@@ -445,7 +445,7 @@ function TrackRecordContent() {
                             {match.real_result.away_goals}
                           </p>
 
-                          <p className="mt-1 text-[10px] uppercase tracking-[0.16em] text-[#77827c]">
+                          <p className="mt-1 text-[10px] uppercase tracking-[0.16em] text-[#8f9a94]">
                             Marcador final
                           </p>
                         </div>
@@ -455,7 +455,7 @@ function TrackRecordContent() {
                             {match.away_team}
                           </p>
 
-                          <p className="mt-1 text-xs uppercase tracking-[0.14em] text-[#77827c]">
+                          <p className="mt-1 text-xs uppercase tracking-[0.14em] text-[#8f9a94]">
                             Visitante
                           </p>
                         </div>
@@ -463,7 +463,7 @@ function TrackRecordContent() {
 
                       <div className="mt-7 border-t border-[#2d4038] pt-5">
                         <div className="flex flex-wrap items-center justify-between gap-3">
-                          <p className="text-[11px] uppercase tracking-[0.16em] text-[#77827c]">
+                          <p className="text-[11px] uppercase tracking-[0.16em] text-[#8f9a94]">
                             Versión del modelo
                           </p>
 
@@ -477,7 +477,7 @@ function TrackRecordContent() {
                     <div className="border-t border-[#2d4038] lg:border-l lg:border-t-0">
                       <div className="grid grid-cols-3 border-b border-[#2d4038]">
                         <div className="border-r border-[#2d4038] p-4">
-                          <p className="text-[10px] uppercase tracking-[0.14em] text-[#77827c]">
+                          <p className="text-[10px] uppercase tracking-[0.14em] text-[#8f9a94]">
                             1X2
                           </p>
 
@@ -486,7 +486,7 @@ function TrackRecordContent() {
                             {resultLabel(match.hit_1x2)}
                           </p>
 
-                          <p className="mt-3 text-xs text-[#77827c]">
+                          <p className="mt-3 text-xs text-[#8f9a94]">
                             L {percentage(match.predicted_1x2.home)} · E{" "}
                             {percentage(match.predicted_1x2.draw)} · V{" "}
                             {percentage(match.predicted_1x2.away)}
@@ -494,7 +494,7 @@ function TrackRecordContent() {
                         </div>
 
                         <div className="border-r border-[#2d4038] p-4">
-                          <p className="text-[10px] uppercase tracking-[0.14em] text-[#77827c]">
+                          <p className="text-[10px] uppercase tracking-[0.14em] text-[#8f9a94]">
                             Más/menos 2,5
                           </p>
 
@@ -503,7 +503,7 @@ function TrackRecordContent() {
                             {resultLabel(match.hit_over_under_2_5)}
                           </p>
 
-                          <p className="mt-3 text-xs text-[#77827c]">
+                          <p className="mt-3 text-xs text-[#8f9a94]">
                             Más {percentage(match.predicted_over_under_2_5.over)}{" "}
                             · Menos{" "}
                             {percentage(match.predicted_over_under_2_5.under)}
@@ -511,7 +511,7 @@ function TrackRecordContent() {
                         </div>
 
                         <div className="p-4">
-                          <p className="text-[10px] uppercase tracking-[0.14em] text-[#77827c]">
+                          <p className="text-[10px] uppercase tracking-[0.14em] text-[#8f9a94]">
                             Ambos marcan
                           </p>
 
@@ -520,7 +520,7 @@ function TrackRecordContent() {
                             {resultLabel(match.hit_btts)}
                           </p>
 
-                          <p className="mt-3 text-xs text-[#77827c]">
+                          <p className="mt-3 text-xs text-[#8f9a94]">
                             Sí {percentage(match.predicted_btts.yes)} · No{" "}
                             {percentage(match.predicted_btts.no)}
                           </p>
@@ -528,7 +528,7 @@ function TrackRecordContent() {
                       </div>
 
                       <div className="p-5">
-                        <p className="text-[10px] uppercase tracking-[0.16em] text-[#77827c]">
+                        <p className="text-[10px] uppercase tracking-[0.16em] text-[#8f9a94]">
                           Estado de las predicciones
                         </p>
 
@@ -559,7 +559,7 @@ function TrackRecordContent() {
                         </div>
 
                         <div className="mt-5 border-t border-[#2d4038] pt-4">
-                          <p className="text-[10px] uppercase tracking-[0.16em] text-[#77827c]">
+                          <p className="text-[10px] uppercase tracking-[0.16em] text-[#8f9a94]">
                             Referencia del mercado
                           </p>
 
@@ -572,7 +572,7 @@ function TrackRecordContent() {
                               {percentage(match.market_implied_1x2.away)}
                             </p>
                           ) : (
-                            <p className="mt-2 text-xs leading-5 text-[#77827c]">
+                            <p className="mt-2 text-xs leading-5 text-[#8f9a94]">
                               No disponible para este partido.
                             </p>
                           )}
@@ -587,7 +587,7 @@ function TrackRecordContent() {
         </section>
 
         <footer className="mt-16 border-t border-[#2d4038] pt-6">
-          <div className="flex flex-col gap-2 text-xs text-[#69766f] sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-2 text-xs text-[#8f9a94] sm:flex-row sm:items-center sm:justify-between">
             <p>THE PLAYBOOK · Historial público del modelo</p>
 
             <p>

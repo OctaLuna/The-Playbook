@@ -1,4 +1,4 @@
-﻿interface ErrorStateProps {
+interface ErrorStateProps {
   error: unknown;
   onRetry: () => void;
 }
@@ -23,7 +23,7 @@ export function Error({ error, onRetry }: ErrorStateProps) {
       className="rounded-lg border p-5"
     >
       <p className="font-medium">Ocurrió un error</p>
-      <p className="mt-2 text-sm text-muted-foreground">
+      <p className="mt-2 text-sm text-[#aeb6b0]">
         {getErrorMessage(error)}
       </p>
       <button

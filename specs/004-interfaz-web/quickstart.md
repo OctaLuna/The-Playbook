@@ -1,33 +1,98 @@
 # Quickstart: Validación manual de la Interfaz Web
 
-**Basado en:** `specs/004-interfaz-web/spec.md` y `plan.md`
+**Basado en:** `specs/004-interfaz-web/spec.md`, `plan.md` y los contratos de API de 001, 002 y 003.
 
 ## Requisitos
 
-* Node.js instalado.
-* Dependencias del frontend instaladas.
-* Backend de las features 001, 002 y 003 disponible y ejecutándose.
-* `frontend/.env.local` configurado con la URL real del backend.
+- Docker Desktop en ejecución.
+- Python 3.12 y Node.js 20 o posterior.
+- Backend y frontend instalados según los pasos siguientes.
+- Una base local configurada en `backend/.env`.
+- `frontend/.env.local` con `NEXT_PUBLIC_API_URL=http://localhost:8000`.
 
-## Preparar el frontend
+## 1. Iniciar PostgreSQL y Redis
 
-Desde la carpeta `frontend/`:
-
-```powershell
-npm install
-```
-
-Crear el archivo `.env.local` a partir del ejemplo:
+Desde la raíz del repositorio:
 
 ```powershell
-Copy-Item .env.example .env.local
+docker compose -f infra/docker-compose.yml up -d postgres redis
 ```
 
-Revisar que `NEXT_PUBLIC_API_URL` apunte a la URL real donde está ejecutándose el backend.
+El compose está en `infra/docker-compose.yml`; inicia PostgreSQL y Redis, no la API FastAPI.
+
+## 2. Preparar el backend (solo la primera vez)
+
+Desde la raíz del repositorio, entra a backend, copia la configuración solo si no existe y crea el entorno solo si aún no está:
+
+~~~powershell
+cd backend
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
+if (-not (Test-Path .venv/Scripts/python.exe)) { py -3.12 -m venv .venv }
+.venv/Scripts/python.exe -m pip install -e ".[dev]"
+.venv/Scripts/python.exe -m alembic upgrade heads
+cd ..
+~~~
+
+El paso de instalación se ejecuta la primera vez o cuando cambian las dependencias. Las migraciones preparan el esquema de la base; no cargan partidos ni predicciones.
+
+## 3. Iniciar la API
+
+En una terminal desde la raíz del repositorio:
+
+```powershell
+cd backend
+.venv/Scripts/python.exe -m uvicorn app.main:app --reload --port 8000
+```
+
+La API queda disponible en `http://localhost:8000`. En otra terminal, comprueba:
+
+```powershell
+Invoke-RestMethod http://localhost:8000/health
+Invoke-RestMethod http://localhost:8000/api/leagues
+$r = Invoke-RestMethod 'http://localhost:8000/api/matches/upcoming?page=1&page_size=20'
+$r | ConvertTo-Json -Depth 5
+```
+
+La salud debe devolver `status: ok` y ligas debe devolver las cinco ligas. En una base recién migrada, `matches` puede estar vacío y `total` ser 0; eso indica que faltan datos para el recorrido completo, no que la API esté desconectada. La carga de históricos y la generación de fixtures/predicciones se describen en `specs/001-prediccion-partido/quickstart.md`.
+
+## 4. Preparar e iniciar el frontend
+
+Desde la raíz del repositorio, crea la configuración local solo si aún no existe e instala las dependencias bloqueadas:
+
+```powershell
+if (-not (Test-Path frontend/.env.local)) { Copy-Item frontend/.env.example frontend/.env.local }
+cd frontend
+npm ci
+```
+
+Confirma que `frontend/.env.local` contiene `NEXT_PUBLIC_API_URL=http://localhost:8000`. Luego inicia Next.js:
+
+```powershell
+npm run dev
+```
+
+Abre la URL que Next.js indique, normalmente `http://localhost:3000`.
+
+## Modo de demostración del frontend (opcional)
+
+Para revisar el diseño con respuestas de ejemplo sin insertar datos en la base, inicia el frontend en una terminal de PowerShell así:
+
+```powershell
+cd frontend
+$env:NEXT_PUBLIC_DEMO_MODE = "true"
+npm run dev
+```
+
+Las pantallas de este modo usan datos de demostración y no prueban la integración con la API real. Para volver al modo API, detén el frontend con `Ctrl+C`, elimina la variable de esa terminal y vuelve a iniciarlo:
+
+```powershell
+Remove-Item Env:NEXT_PUBLIC_DEMO_MODE -ErrorAction SilentlyContinue
+npm run dev
+```
 
 ## Validación automática
 
-Ejecutar:
+Desde `frontend/`, ejecuta:
 
 ```powershell
 npm run lint
@@ -36,16 +101,6 @@ npm test
 ```
 
 Los tres comandos deben finalizar correctamente.
-
-## Ejecutar la interfaz
-
-Desde `frontend/`:
-
-```powershell
-npm run dev
-```
-
-Abrir la URL que muestre Next.js en la terminal.
 
 ## Escenario 1 — Recorrido completo del producto
 
@@ -62,14 +117,12 @@ Abrir la URL que muestre Next.js en la terminal.
 
 ## Escenario 2 — API no disponible
 
-1. Con la interfaz abierta, detener el backend utilizando el procedimiento correspondiente al entorno del backend.
+1. Con la interfaz abierta, detener la API en su terminal con `Ctrl+C`.
 2. Recargar la página principal.
 3. Verificar que aparece un mensaje de error distinto del estado de "no hay partidos".
 4. Verificar que aparece la opción **Reintentar**.
-5. Volver a levantar el backend.
+5. Volver a iniciar la API siguiendo el paso 3.
 6. Pulsar **Reintentar** y verificar que la información vuelve a cargar.
-
-> Este repositorio no contiene `docker-compose.yml` ni `docker-compose.yaml`, por lo que no se documenta un comando Docker específico para el backend.
 
 ## Escenario 3 — Partido sin explicación
 
@@ -109,7 +162,7 @@ Abrir la URL que muestre Next.js en la terminal.
 
 ## Comprobación final
 
-Antes de considerar la feature lista, ejecutar:
+Antes de considerar la feature lista, ejecutar desde `frontend/`:
 
 ```powershell
 npm run lint
@@ -118,3 +171,5 @@ npm test
 ```
 
 Los tres comandos deben terminar sin errores.
+
+
