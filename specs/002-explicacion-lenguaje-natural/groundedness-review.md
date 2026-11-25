@@ -44,7 +44,7 @@ estimaciones.
 
 | Fecha | `match_id` | `model_version` | Integridad temporal | Soporte factual | Relación con el modelo | No contradicción | Fallback | Revisó |
 |---|---|---|---|---|---|---|---|---|
-| 2026-10-26 | `8c8f8bff-9d9b-5fa6-9c19-1ee33c6f845a` | `ensemble-2026-10-26-82a06a1989bd` | pasa | pasa (sin afirmaciones fácticas) | pasa | pasa | no aplica (5 evidencias) | Claude Code, a pedido de Rodrigo Rivera; **pendiente de ratificación humana** |
+| 2026-10-26 | `8c8f8bff-9d9b-5fa6-9c19-1ee33c6f845a` | `ensemble-2026-10-26-82a06a1989bd` | pasa | pasa (sin afirmaciones fácticas) | pasa | pasa | no aplica (5 evidencias) | Claude Code, a pedido de Rodrigo Rivera; **ratificado con Bedrock us-east-1 por Einar Guillen** |
 
 ### Notas de la ejecución del 26/10/2026
 
