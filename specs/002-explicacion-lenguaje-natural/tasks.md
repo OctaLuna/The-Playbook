@@ -35,7 +35,7 @@ del mismo grupo (no comparten archivos ni dependen entre sí).
 - [x] T020 Prueba de integración: Historia 2 — equipo/liga sin cobertura mediática devuelve `is_fallback_no_evidence: true`
 - [x] T021 Prueba de integración: Historia 4 — pregunta de seguimiento se ancla a la misma evidencia/SHAP, sin introducir predicción nueva
 - [x] T021b Prueba de integración: RF-004 — para un partido de prueba, comparar el texto generado contra `probabilities_1x2`/`over_under_2_5`/`btts` de la Predicción (001) y verificar que la explicación no afirma un resultado, mercado ganador o número distinto al ya calculado (hallazgo #2 de Analyze) — ver `plan.md` para el criterio exacto de "contradicción" a implementar (comparación de aserciones de resultado, no de texto libre)
-- [ ] T022 Prueba manual documentada de groundedness/faithfulness sobre una muestra de explicaciones (sección 7.6) — no bloqueante para el MVP, pero debe quedar reproducible — [RF-001]
+- [x] T022 Prueba manual documentada de groundedness/faithfulness sobre una muestra de explicaciones (sección 7.6) — no bloqueante para el MVP, pero debe quedar reproducible — [RF-001] *(Cerrada: ejecutada y ratificada con credenciales Bedrock activas us-east-1 en groundedness-review.md).*
 
 ## Grupo 5 — Pulido
 - [x] T023 [P] Manejo de error 404 (partido sin predicción, explicación sin generar) documentado en `backend/app/api/explanations.py` — [RF-001]
